@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShieldDose — Issue Tracking Dashboard</title>
+<style>
+/* ═══════════════════════════════════════ */
+/* HOBIS v4.15 Dark Theme                 */
+/* ═══════════════════════════════════════ */
+:root {
+  --bg: #0a0a0c;
+  --panel: #111418;
+  --border: #2a3b47;
+  --cyan: #00f7ff;
+  --green: #00ff33;
+  --text: #c0d0d0;
+  --dim: #5f7481;
+  --alert: #ff3300;
+  --warn: #ffcc00;
+  --input: #0f1215;
+  --heading-font: 'Orbitron', 'Helvetica Neue', sans-serif;
+  --body-font: 'Share Tech Mono', 'Menlo', 'Courier New', monospace;
+  --purple: #bc8cff;
+  --orange: #db6d28;
+  --pink: #e06c75;
+  --teal: #39d2c0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ═══ Top Bar (cross-page nav) ═══ */
+.top-bar {
+  background: #060608;
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.top-bar a {
+  display: block;
+  padding: 10px 20px;
+  color: var(--dim);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+.top-bar a:hover { color: var(--cyan); }
+.top-bar a.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+/* ═══ Dashboard Nav ═══ */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(10,10,12,0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+nav ul {
+  display: flex; list-style: none; padding: 0;
+  min-width: max-content;
+}
+nav a {
+  display: block; padding: 12px 16px;
+  color: var(--dim); text-decoration: none;
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+nav a:hover, nav a.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+/* ═══ Layout ═══ */
+.container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+
+h1 {
+  font-family: var(--heading-font);
+  font-size: clamp(24px, 4vw, 36px);
+  color: var(--cyan);
+  text-align: center;
+  padding: 30px 0 6px;
+  letter-spacing: 2px;
+}
+h1 .sub {
+  display: block;
+  font-size: 13px;
+  color: var(--dim);
+  letter-spacing: 4px;
+  margin-top: 6px;
+}
+h2 {
+  font-family: var(--heading-font);
+  font-size: clamp(18px, 3vw, 24px);
+  color: var(--cyan);
+  margin: 30px 0 16px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+h3 { color: var(--green); font-size: 16px; margin: 20px 0 10px; }
+
+/* ═══ Summary Cards ═══ */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+}
+.card .num {
+  font-family: var(--heading-font);
+  font-size: 28px;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.card .label {
+  font-size: 11px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ═══ Progress Bar ═══ */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+.progress-row .label { width: 60px; font-size: 13px; color: var(--dim); flex-shrink: 0; }
+.progress-row .bar {
+  flex: 1;
+  height: 18px;
+  background: var(--input);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-row .fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s;
+}
+.progress-row .pct {
+  width: 50px;
+  text-align: right;
+  font-size: 13px;
+  font-family: var(--body-font);
+}
+
+/* ═══ Panels ═══ */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  position: relative;
+}
+.panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 12px; height: 12px;
+  border-top: 2px solid var(--cyan);
+  border-left: 2px solid var(--cyan);
+}
+.panel::after {
+  content: '';
+  position: absolute; bottom: 0; right: 0;
+  width: 12px; height: 12px;
+  border-bottom: 2px solid var(--cyan);
+  border-right: 2px solid var(--cyan);
+}
+
+/* ═══ Taxonomy Tree ═══ */
+.tree {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 16px 0;
+  overflow-x: auto;
+}
+.tree pre {
+  font-family: var(--body-font);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* ═══ Tabs ═══ */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin: 24px 0 0;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.tab-btn:hover, .tab-btn.active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+.tab-content { display: none; padding: 16px 0; }
+.tab-content.active { display: block; }
+
+/* ═══ Tables ═══ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 12px 0;
+}
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  color: var(--cyan);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+tr:hover { background: rgba(0,247,255,0.03); }
+
+/* ═══ Status badges ═══ */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge-resolved { background: rgba(0,255,51,0.15); color: var(--green); }
+.badge-unresolved { background: rgba(255,51,0,0.15); color: var(--alert); }
+.badge-confirmed { background: rgba(219,109,40,0.15); color: var(--orange); }
+.badge-anticipated { background: rgba(188,140,255,0.15); color: var(--purple); }
+.badge-wontfix { background: rgba(95,116,129,0.15); color: var(--dim); }
+.badge-partial { background: rgba(255,204,0,0.15); color: var(--warn); }
+.badge-done { background: rgba(0,255,51,0.15); color: var(--green); }
+.badge-not_started { background: rgba(95,116,129,0.15); color: var(--dim); }
+.badge-superseded { background: rgba(95,116,129,0.15); color: var(--dim); }
+
+.sev-C { color: var(--alert); font-weight: 700; }
+.sev-H { color: var(--warn); font-weight: 700; }
+.sev-M { color: var(--cyan); }
+.sev-m { color: var(--dim); }
+
+.xref { color: var(--purple); font-size: 12px; }
+
+.priority-3 { color: var(--alert); }
+.priority-2 { color: var(--warn); }
+.priority-1 { color: var(--dim); }
+
+/* ═══ Filter ═══ */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.filter-btn {
+  padding: 4px 12px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--dim);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.filter-btn:hover, .filter-btn.active {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+
+/* ═══ Cross-Ref Clusters ═══ */
+.cluster {
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 8px 0;
+}
+.cluster-title {
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.cluster-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.cluster-tag {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag-iss { background: rgba(88,166,255,0.15); color: #58a6ff; }
+.tag-pit { background: rgba(219,109,40,0.15); color: var(--orange); }
+.tag-lt { background: rgba(188,140,255,0.15); color: var(--purple); }
+
+/* ═══ Timeline ═══ */
+.timeline-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(42,59,71,0.4);
+}
+.timeline-date {
+  color: var(--dim);
+  font-family: var(--body-font);
+  font-size: 12px;
+}
+.timeline-stats { font-size: 12px; }
+.timeline-stats span { margin-right: 12px; }
+
+/* ═══ Footer ═══ */
+.footer {
+  text-align: center;
+  padding: 40px 0 20px;
+  color: var(--dim);
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ Top Bar ═══ -->
+<div class="top-bar">
+  <a href="index.html">Manual</a>
+  <a href="dashboard.html" class="active">Dashboard</a>
+</div>
+
+<!-- ═══ Dashboard Navigation ═══ -->
+<nav>
+<ul>
+  <li><a onclick="showTab('overview')" class="nav-link active" data-tab="overview">Overview</a></li>
+  <li><a onclick="showTab('xref')" class="nav-link" data-tab="xref">Cross-Ref</a></li>
+  <li><a onclick="showTab('iss')" class="nav-link" data-tab="iss">ISS</a></li>
+  <li><a onclick="showTab('pit')" class="nav-link" data-tab="pit">PIT</a></li>
+  <li><a onclick="showTab('lt')" class="nav-link" data-tab="lt">LT Roadmap</a></li>
+  <li><a onclick="showTab('req')" class="nav-link" data-tab="req">REQ</a></li>
+  <li><a onclick="showTab('mod')" class="nav-link" data-tab="mod">MOD</a></li>
+  <li><a onclick="showTab('timeline')" class="nav-link" data-tab="timeline">Timeline</a></li>
+</ul>
+</nav>
+
+<div class="container">
+
+<h1>
+  ISSUE TRACKING DASHBOARD
+  <span class="sub">SHIELDDOSE &mdash; ALL SYSTEMS</span>
+</h1>
+
+<div id="loading" style="text-align:center; padding:40px; color:var(--dim);">Loading data.json...</div>
+<div id="app" style="display:none;">
+
+<!-- ═══ OVERVIEW TAB ═══ -->
+<div class="tab-content active" id="tab-overview">
+
+<h2>ID Taxonomy</h2>
+<div class="tree"><pre id="taxonomy-tree"></pre></div>
+
+<h2>Summary</h2>
+<div class="cards" id="summary-cards"></div>
+
+<h2>Resolution Progress</h2>
+<div id="progress-bars"></div>
+
+</div>
+
+<!-- ═══ CROSS-REF TAB ═══ -->
+<div class="tab-content" id="tab-xref">
+<h2>Cross-Reference Clusters</h2>
+<p style="color:var(--dim); font-size:13px; margin-bottom:16px;">
+  ISS, PIT, LT items that reference each other are grouped by topic.
+</p>
+<div id="xref-clusters"></div>
+
+<h2>Audit ID &harr; ISS Mapping</h2>
+<div id="audit-map"></div>
+</div>
+
+<!-- ═══ ISS TAB ═══ -->
+<div class="tab-content" id="tab-iss">
+<h2>Issue Tracking (ISS)</h2>
+<div class="filter-bar" id="iss-filters"></div>
+<table><thead>
+<tr><th>ID</th><th>Sev</th><th>Status</th><th>Title</th><th>Session</th><th>XRef</th></tr>
+</thead><tbody id="iss-tbody"></tbody></table>
+</div>
+
+<!-- ═══ PIT TAB ═══ -->
+<div class="tab-content" id="tab-pit">
+<h2>MC Pitfalls (PIT)</h2>
+<div class="filter-bar" id="pit-filters"></div>
+<table><thead>
+<tr><th>ID</th><th>Status</th><th>Category</th><th>Title</th><th>XRef</th></tr>
+</thead><tbody id="pit-tbody"></tbody></table>
+</div>
+
+<!-- ═══ LT TAB ═══ -->
+<div class="tab-content" id="tab-lt">
+<h2>Long-Term Roadmap (LT)</h2>
+<div class="filter-bar" id="lt-filters"></div>
+<table><thead>
+<tr><th>ID</th><th>Priority</th><th>Status</th><th>Title</th><th>Phase</th><th>Session</th><th>XRef</th></tr>
+</thead><tbody id="lt-tbody"></tbody></table>
+</div>
+
+<!-- ═══ REQ TAB ═══ -->
+<div class="tab-content" id="tab-req">
+<h2>Requirements (REQ)</h2>
+<table><thead>
+<tr><th>ID</th><th>Category</th><th>Title</th><th>Coverage</th></tr>
+</thead><tbody id="req-tbody"></tbody></table>
+</div>
+
+<!-- ═══ MOD TAB ═══ -->
+<div class="tab-content" id="tab-mod">
+<h2>Reusable Modules (MOD)</h2>
+<p style="color:var(--dim); font-size:13px; margin-bottom:16px;">
+  Global cross-project modules &mdash; independently callable from any project.
+</p>
+<table><thead>
+<tr><th>ID</th><th>Name</th><th>Version</th><th>Origin</th><th>Dependencies</th><th>Used By</th></tr>
+</thead><tbody id="mod-tbody"></tbody></table>
+</div>
+
+<!-- ═══ TIMELINE TAB ═══ -->
+<div class="tab-content" id="tab-timeline">
+<h2>Session Timeline</h2>
+<div id="timeline-list"></div>
+</div>
+
+</div><!-- #app -->
+
+<div class="footer" id="footer"></div>
+
+</div><!-- .container -->
+
+<script>
+// ═══ Tab switching ═══
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+  const tab = document.getElementById('tab-' + name);
+  if (tab) tab.classList.add('active');
+  const link = document.querySelector(`.nav-link[data-tab="${name}"]`);
+  if (link) link.classList.add('active');
+}
+
+// ═══ Helpers ═══
+function badge(status) {
+  const labels = {
+    resolved: 'Resolved', unresolved: 'Unresolved', confirmed: 'Confirmed',
+    anticipated: 'Anticipated', wontfix: "Won't-fix", superseded: 'Superseded',
+    partial: 'Partial', done: 'Done', not_started: 'Not Started'
+  };
+  return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
+}
+function sevSpan(s) { return `<span class="sev-${s}">${s}</span>`; }
+function xrefSpan(arr) {
+  if (!arr || arr.length === 0) return '';
+  return arr.map(x => `<span class="xref">${x}</span>`).join(' ');
+}
+
+// ═══ Data loading ═══
+fetch('data.json').then(r => r.json()).then(data => {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  render(data);
+}).catch(err => {
+  document.getElementById('loading').innerHTML = '<span style="color:var(--alert)">Failed to load data.json: ' + err.message + '</span>';
+});
+
+function render(D) {
+  // ═══ TAXONOMY TREE ═══
+  document.getElementById('taxonomy-tree').innerHTML =
+`<span style="color:var(--cyan); font-weight:bold">ShieldDose Tracking Systems (${D.meta.totalItems} items)</span>
+<span style="color:var(--dim)">├──</span> <span style="color:var(--teal)">P</span>  Session IDs ........... <span style="color:var(--teal)">${D.systems[0].count}</span>
+<span style="color:var(--dim)">├──</span> <span style="color:#58a6ff">ISS</span> Issue Tracking ........ <span style="color:#58a6ff">${D.systems[1].count}</span>
+<span style="color:var(--dim)">│   └──</span> <span style="color:#58a6ff">Audit ID</span> (1:1 ISS mapping) <span style="color:#58a6ff">${D.systems[2].count}</span>
+<span style="color:var(--dim)">│       ├──</span> C-PHY / C-DAT / C-FUN / C-STB
+<span style="color:var(--dim)">│       ├──</span> M-CLI / M-GUI / M-DAT
+<span style="color:var(--dim)">│       └──</span> m (minor)
+<span style="color:var(--dim)">├──</span> <span style="color:var(--orange)">PIT</span> MC Pitfalls ........... <span style="color:var(--orange)">${D.systems[3].count}</span>
+<span style="color:var(--dim)">├──</span> <span style="color:var(--purple)">LT</span>  Long-Term Roadmap ..... <span style="color:var(--purple)">${D.systems[4].count}</span>
+<span style="color:var(--dim)">├──</span> <span style="color:var(--pink)">REQ</span> Requirements .......... <span style="color:var(--pink)">${D.systems[5].count}</span>
+<span style="color:var(--dim)">└──</span> <span style="color:var(--green)">MOD</span> Reusable Modules ...... <span style="color:var(--green)">${D.systems[6].count}</span>`;
+
+  // ═══ SUMMARY CARDS ═══
+  const cardsDef = [
+    { num: D.meta.totalItems, label: 'Total Items', color: 'var(--cyan)' },
+    { num: D.systems[1].count, label: 'ISS Issues', color: '#58a6ff' },
+    { num: D.systems[1].resolved, label: 'ISS Resolved', color: 'var(--green)' },
+    { num: D.systems[3].count, label: 'PIT Pitfalls', color: 'var(--orange)' },
+    { num: D.systems[4].count, label: 'LT Tasks', color: 'var(--purple)' },
+    { num: D.systems[5].count, label: 'REQ Items', color: 'var(--pink)' },
+    { num: D.systems[6].count, label: 'MOD Modules', color: 'var(--green)' },
+    { num: D.systems[0].count, label: 'Sessions', color: 'var(--teal)' }
+  ];
+  document.getElementById('summary-cards').innerHTML = cardsDef.map(c =>
+    `<div class="card"><span class="num" style="color:${c.color}">${c.num}</span><span class="label">${c.label}</span></div>`
+  ).join('');
+
+  // ═══ PROGRESS BARS ═══
+  const issRes = D.systems[1].resolved || 0;
+  const issTotal = D.systems[1].count;
+  const issPct = Math.round(issRes / issTotal * 100);
+
+  const pitRes = D.systems[3].resolved || 0;
+  const pitTotal = D.systems[3].count;
+  const pitPct = Math.round(pitRes / pitTotal * 100);
+
+  const ltImpl = D.systems[4].implemented || 0;
+  const ltTotal = D.systems[4].count;
+  const ltPct = Math.round(ltImpl / ltTotal * 100);
+
+  const bars = [
+    { label: 'ISS', pct: issPct, color: '#58a6ff', detail: `${issRes}/${issTotal}` },
+    { label: 'PIT', pct: pitPct, color: 'var(--orange)', detail: `${pitRes}/${pitTotal} resolved` },
+    { label: 'LT', pct: ltPct, color: 'var(--purple)', detail: `${ltImpl}/${ltTotal} implemented` }
+  ];
+  document.getElementById('progress-bars').innerHTML = bars.map(b =>
+    `<div class="progress-row">
+      <span class="label">${b.label}</span>
+      <div class="bar"><div class="fill" style="width:${b.pct}%; background:${b.color};"></div></div>
+      <span class="pct">${b.pct}% <span style="color:var(--dim); font-size:11px">(${b.detail})</span></span>
+    </div>`
+  ).join('');
+
+  // ═══ CROSS-REF CLUSTERS ═══
+  const clusters = [
+    { title: 'Buildup Factor', items: ['ISS-002','ISS-030','ISS-061','PIT-021','PIT-027','PIT-028','LT-09'] },
+    { title: 'Neutron / Cf-252', items: ['PIT-023','PIT-024','PIT-025','LT-04','ISS-020','ISS-021'] },
+    { title: 'Detector Physics', items: ['PIT-001','PIT-002','PIT-006','PIT-018','PIT-019','PIT-020'] },
+    { title: 'Source Definition', items: ['PIT-005','PIT-012','PIT-014','PIT-016'] },
+    { title: 'Dosimetry', items: ['PIT-003','PIT-004','PIT-017','ISS-024'] },
+    { title: 'Stability / MT', items: ['PIT-007','PIT-011','LT-12','ISS-037'] },
+    { title: 'Geometry', items: ['PIT-013','PIT-026','LT-06'] }
+  ];
+  document.getElementById('xref-clusters').innerHTML = clusters.map(c => {
+    const tags = c.items.map(id => {
+      let cls = 'tag-iss';
+      if (id.startsWith('PIT')) cls = 'tag-pit';
+      if (id.startsWith('LT')) cls = 'tag-lt';
+      return `<span class="cluster-tag ${cls}">${id}</span>`;
+    }).join('');
+    return `<div class="cluster"><div class="cluster-title">${c.title}</div><div class="cluster-items">${tags}</div></div>`;
+  }).join('');
+
+  // Audit ID mapping table
+  const auditCats = {};
+  for (const [aid, iss] of Object.entries(D.auditMapping)) {
+    const cat = aid.replace(/-\d+$/, '');
+    if (!auditCats[cat]) auditCats[cat] = [];
+    auditCats[cat].push({ aid, iss });
+  }
+  let auditHtml = '';
+  for (const [cat, items] of Object.entries(auditCats)) {
+    auditHtml += `<h3>${cat}</h3><table><thead><tr><th>Audit ID</th><th>ISS #</th></tr></thead><tbody>`;
+    items.forEach(i => {
+      auditHtml += `<tr><td>${i.aid}</td><td>${i.iss}</td></tr>`;
+    });
+    auditHtml += '</tbody></table>';
+  }
+  document.getElementById('audit-map').innerHTML = auditHtml;
+
+  // ═══ ISS TABLE ═══
+  let issFilter = 'all';
+  const issFilters = ['all','C','H','M','m','unresolved'];
+  document.getElementById('iss-filters').innerHTML = issFilters.map(f =>
+    `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterISS('${f}',this)">${f === 'all' ? 'All' : f === 'unresolved' ? 'Unresolved' : 'Sev ' + f}</button>`
+  ).join('');
+  window.filterISS = function(f, btn) {
+    issFilter = f;
+    document.querySelectorAll('#iss-filters .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderISS();
+  };
+  function renderISS() {
+    const filtered = D.iss.filter(i => {
+      if (issFilter === 'all') return true;
+      if (issFilter === 'unresolved') return i.status === 'unresolved';
+      return i.sev === issFilter;
+    });
+    document.getElementById('iss-tbody').innerHTML = filtered.map(i =>
+      `<tr><td style="white-space:nowrap; font-family:var(--body-font); font-size:12px;">${i.id}${i.audit ? '<br><span style="color:var(--dim); font-size:11px;">'+i.audit+'</span>' : ''}</td>
+       <td>${sevSpan(i.sev)}</td>
+       <td>${badge(i.status)}</td>
+       <td>${i.title}</td>
+       <td style="color:var(--dim); font-size:12px;">${i.session}${i.resolved_in ? '<br>&rarr; '+i.resolved_in : ''}</td>
+       <td>${xrefSpan(i.xref)}</td></tr>`
+    ).join('');
+  }
+  renderISS();
+
+  // ═══ PIT TABLE ═══
+  let pitFilter = 'all';
+  const pitFilters = ['all','confirmed','anticipated','resolved'];
+  document.getElementById('pit-filters').innerHTML = pitFilters.map(f =>
+    `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterPIT('${f}',this)">${f === 'all' ? 'All' : f.charAt(0).toUpperCase()+f.slice(1)}</button>`
+  ).join('');
+  window.filterPIT = function(f, btn) {
+    pitFilter = f;
+    document.querySelectorAll('#pit-filters .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPIT();
+  };
+  function renderPIT() {
+    const filtered = D.pit.filter(i => pitFilter === 'all' || i.status === pitFilter);
+    document.getElementById('pit-tbody').innerHTML = filtered.map(i =>
+      `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
+       <td>${badge(i.status)}</td>
+       <td style="color:var(--dim);">${i.cat || ''}</td>
+       <td>${i.title}${i.note ? '<br><span style="color:var(--dim); font-size:11px;">'+i.note+'</span>' : ''}</td>
+       <td>${xrefSpan(i.xref)}</td></tr>`
+    ).join('');
+  }
+  renderPIT();
+
+  // ═══ LT TABLE ═══
+  let ltFilter = 'all';
+  const ltFilters = ['all','priority-3','priority-2','partial','done','not_started'];
+  document.getElementById('lt-filters').innerHTML = ltFilters.map(f => {
+    const labels = { all:'All', 'priority-3':'Priority ★★★', 'priority-2':'Priority ★★', partial:'Partial', done:'Done', not_started:'Not Started' };
+    return `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterLT('${f}',this)">${labels[f]}</button>`;
+  }).join('');
+  window.filterLT = function(f, btn) {
+    ltFilter = f;
+    document.querySelectorAll('#lt-filters .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLT();
+  };
+  function renderLT() {
+    const filtered = D.lt.filter(i => {
+      if (ltFilter === 'all') return true;
+      if (ltFilter === 'priority-3') return i.priority === 3;
+      if (ltFilter === 'priority-2') return i.priority === 2;
+      return i.status === ltFilter;
+    });
+    document.getElementById('lt-tbody').innerHTML = filtered.map(i =>
+      `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
+       <td><span class="priority-${i.priority}">${'★'.repeat(i.priority)}</span></td>
+       <td>${badge(i.status)}</td>
+       <td>${i.title}</td>
+       <td style="color:var(--dim); font-size:12px;">${i.phase || '-'}</td>
+       <td style="color:var(--dim); font-size:12px;">${i.session || '-'}</td>
+       <td>${xrefSpan(i.xref)}</td></tr>`
+    ).join('');
+  }
+  renderLT();
+
+  // ═══ REQ TABLE ═══
+  document.getElementById('req-tbody').innerHTML = D.req.map(i => {
+    const covNum = parseInt(i.coverage) || 0;
+    const covColor = covNum >= 80 ? 'var(--green)' : covNum >= 40 ? 'var(--warn)' : covNum > 0 ? 'var(--orange)' : 'var(--dim)';
+    return `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
+     <td style="color:var(--dim);">${i.cat}</td>
+     <td>${i.title}</td>
+     <td style="color:${covColor}; font-weight:600;">${i.coverage}</td></tr>`;
+  }).join('');
+
+  // ═══ MOD TABLE ═══
+  document.getElementById('mod-tbody').innerHTML = D.mod.map(i =>
+    `<tr><td style="font-family:var(--body-font); color:var(--green);">${i.id}</td>
+     <td>${i.name}</td>
+     <td style="color:var(--cyan);">${i.version}</td>
+     <td style="color:var(--dim);">${i.origin}</td>
+     <td style="color:var(--dim); font-size:12px;">${i.deps}</td>
+     <td style="color:var(--purple); font-size:12px;">${(i.usedBy || []).join(', ') || '-'}</td></tr>`
+  ).join('');
+
+  // ═══ TIMELINE ═══
+  document.getElementById('timeline-list').innerHTML = D.sessions.map(s => {
+    let stats = [];
+    if (s.issNew) stats.push(`<span style="color:#58a6ff;">+${s.issNew} ISS</span>`);
+    if (s.issResolved) stats.push(`<span style="color:var(--green);">${s.issResolved} resolved</span>`);
+    if (s.pitNew) stats.push(`<span style="color:var(--orange);">+${s.pitNew} PIT</span>`);
+    if (s.pitResolved) stats.push(`<span style="color:var(--green);">${s.pitResolved} PIT resolved</span>`);
+    if (s.ltDone) stats.push(`<span style="color:var(--purple);">${s.ltDone}</span>`);
+    return `<div class="timeline-row">
+      <div class="timeline-date"><strong style="color:var(--cyan);">${s.id}</strong><br>${s.date}</div>
+      <div><strong>${s.title}</strong><div class="timeline-stats">${stats.join(' &middot; ') || '<span style="color:var(--dim);">-</span>'}</div></div>
+    </div>`;
+  }).join('');
+
+  // ═══ FOOTER ═══
+  document.getElementById('footer').innerHTML =
+    `Updated: ${D.meta.updated} &middot; Session: ${D.meta.session} &middot; ${D.meta.totalItems} items tracked<br>
+     Edit <code>data.json</code> to update &middot; Changes deploy automatically via GitHub Pages`;
+}
+</script>
+
+</body>
+</html>
