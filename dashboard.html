@@ -365,6 +365,194 @@ tr:hover { background: rgba(0,247,255,0.03); }
 .timeline-stats { font-size: 12px; }
 .timeline-stats span { margin-right: 12px; }
 
+/* ═══ Clickable rows ═══ */
+tr[data-clickable] { cursor: pointer; transition: background 0.15s; }
+tr[data-clickable]:hover { background: rgba(0,247,255,0.06) !important; }
+
+/* ═══ Modal Overlay ═══ */
+.modal-overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  max-width: 720px;
+  width: 100%;
+  position: relative;
+  animation: modalIn 0.2s ease-out;
+}
+@keyframes modalIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+
+.modal-sev-bar {
+  height: 4px;
+  border-radius: 12px 12px 0 0;
+}
+.modal-header {
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header .modal-id {
+  font-family: var(--body-font);
+  font-size: 13px;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+.modal-header .modal-title {
+  font-family: var(--heading-font);
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: var(--cyan);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.modal-header .modal-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.modal-close {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  color: var(--dim); font-size: 24px;
+  cursor: pointer; line-height: 1;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--cyan); }
+
+.modal-body { padding: 20px 24px; }
+.modal-section {
+  margin-bottom: 18px;
+}
+.modal-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--dim);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.modal-section-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.modal-impact {
+  background: rgba(255,51,0,0.08);
+  border-left: 3px solid var(--alert);
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+.modal-fix {
+  background: rgba(0,255,51,0.08);
+  border-left: 3px solid var(--green);
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+.modal-todo {
+  background: rgba(255,204,0,0.08);
+  border-left: 3px solid var(--warn);
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 14px;
+  color: var(--text);
+}
+.modal-location {
+  font-family: var(--body-font);
+  font-size: 12px;
+  color: var(--cyan);
+  background: var(--input);
+  padding: 6px 12px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.modal-xref-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.modal-xref-tag {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal-xref-tag:hover { filter: brightness(1.3); transform: translateY(-1px); }
+.modal-xref-tag.tag-iss { background: rgba(88,166,255,0.2); color: #58a6ff; }
+.modal-xref-tag.tag-pit { background: rgba(219,109,40,0.2); color: var(--orange); }
+.modal-xref-tag.tag-lt { background: rgba(188,140,255,0.2); color: var(--purple); }
+.modal-xref-tag.tag-req { background: rgba(224,108,117,0.2); color: var(--pink); }
+
+.modal-timeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-top: 6px;
+}
+.modal-timeline-node {
+  text-align: center;
+  font-size: 11px;
+  min-width: 80px;
+}
+.modal-timeline-node .dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  margin: 0 auto 4px;
+}
+.modal-timeline-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  min-width: 20px;
+}
+.modal-phases {
+  display: grid;
+  gap: 8px;
+}
+.modal-phase {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--input);
+  border-radius: 6px;
+  font-size: 13px;
+}
+.modal-phase-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.modal-deps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.modal-dep-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  background: rgba(188,140,255,0.12);
+  color: var(--purple);
+  font-weight: 600;
+}
+
 /* ═══ Footer ═══ */
 .footer {
   text-align: center;
@@ -490,6 +678,11 @@ tr:hover { background: rgba(0,247,255,0.03); }
 
 </div><!-- .container -->
 
+<!-- ═══ MODAL ═══ -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-content"></div>
+</div>
+
 <script>
 // ═══ Tab switching ═══
 function showTab(name) {
@@ -516,8 +709,165 @@ function xrefSpan(arr) {
   return arr.map(x => `<span class="xref">${x}</span>`).join(' ');
 }
 
+// ═══ Modal system ═══
+let _DATA = null;
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+function sevColor(s) {
+  return { C: 'var(--alert)', H: 'var(--warn)', M: 'var(--cyan)', m: 'var(--dim)' }[s] || 'var(--dim)';
+}
+function sevLabel(s) {
+  return { C: 'Critical', H: 'High', M: 'Major', m: 'Minor' }[s] || s;
+}
+function xrefTags(arr) {
+  if (!arr || !arr.length) return '';
+  return arr.map(x => {
+    let cls = 'tag-iss';
+    if (x.startsWith('PIT')) cls = 'tag-pit';
+    else if (x.startsWith('LT')) cls = 'tag-lt';
+    else if (x.startsWith('REQ')) cls = 'tag-req';
+    const onclick = cls === 'tag-pit' ? `showPITDetail('${x}')` :
+                    cls === 'tag-lt' ? `showLTDetail('${x}')` :
+                    cls === 'tag-iss' ? `showISSDetailByShort('${x}')` : '';
+    return `<span class="modal-xref-tag ${cls}" onclick="${onclick}">${x}</span>`;
+  }).join('');
+}
+
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function showISSDetail(id) {
+  const item = _DATA.iss.find(i => i.id === id);
+  if (!item) return;
+  const col = sevColor(item.sev);
+  const timeline = item.resolved_in ? `
+    <div class="modal-section">
+      <div class="modal-section-title">Timeline</div>
+      <div class="modal-timeline">
+        <div class="modal-timeline-node"><div class="dot" style="background:var(--orange)"></div><span style="color:var(--dim)">${item.session}</span><br><span style="color:var(--dim);font-size:10px">Discovered</span></div>
+        <div class="modal-timeline-line"></div>
+        <div class="modal-timeline-node"><div class="dot" style="background:var(--green)"></div><span style="color:var(--green)">${item.resolved_in}</span><br><span style="color:var(--dim);font-size:10px">Resolved</span></div>
+      </div>
+    </div>` : `
+    <div class="modal-section">
+      <div class="modal-section-title">Timeline</div>
+      <div class="modal-timeline">
+        <div class="modal-timeline-node"><div class="dot" style="background:var(--orange)"></div><span style="color:var(--dim)">${item.session}</span><br><span style="color:var(--dim);font-size:10px">Discovered</span></div>
+        <div class="modal-timeline-line" style="background:var(--alert);opacity:0.4"></div>
+        <div class="modal-timeline-node"><div class="dot" style="background:var(--alert);box-shadow:0 0 8px var(--alert)"></div><span style="color:var(--alert)">Unresolved</span></div>
+      </div>
+    </div>`;
+
+  openModal(`
+    <div class="modal-sev-bar" style="background:${col}"></div>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-header">
+      <div class="modal-id">${item.id}${item.audit ? ' &middot; <span style="color:var(--cyan)">'+item.audit+'</span>' : ''}</div>
+      <div class="modal-title">${item.title}</div>
+      <div class="modal-meta">
+        <span class="badge badge-${item.status}">${item.status === 'resolved' ? 'Resolved' : item.status === 'unresolved' ? 'Unresolved' : item.status === 'superseded' ? 'Superseded' : item.status}</span>
+        <span class="sev-${item.sev}" style="font-size:12px;padding:2px 8px;background:rgba(255,255,255,0.05);border-radius:4px;">${sevLabel(item.sev)}</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
+      ${item.impact ? `<div class="modal-section"><div class="modal-section-title">Impact</div><div class="modal-impact">${item.impact}</div></div>` : ''}
+      ${item.cause ? `<div class="modal-section"><div class="modal-section-title">Cause</div><div class="modal-section-content">${item.cause}</div></div>` : ''}
+      ${item.fix ? `<div class="modal-section"><div class="modal-section-title">Fix</div><div class="modal-fix">${item.fix}</div></div>` : ''}
+      ${item.location ? `<div class="modal-section"><div class="modal-section-title">Location</div><span class="modal-location">${item.location}</span></div>` : ''}
+      ${timeline}
+      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
+      ${item.note ? `<div class="modal-section"><div class="modal-section-title">Note</div><div class="modal-section-content" style="color:var(--dim);font-style:italic;">${item.note}</div></div>` : ''}
+    </div>
+  `);
+}
+
+function showISSDetailByShort(shortId) {
+  // e.g. "ISS-002" → find matching item
+  const num = shortId.replace('ISS-','');
+  const item = _DATA.iss.find(i => i.id.endsWith('-ISS-' + num.padStart(3,'0')));
+  if (item) showISSDetail(item.id);
+}
+
+function showPITDetail(id) {
+  const item = _DATA.pit.find(i => i.id === id);
+  if (!item) return;
+  const statusColor = item.status === 'resolved' ? 'var(--green)' : item.status === 'confirmed' ? 'var(--orange)' : 'var(--purple)';
+
+  openModal(`
+    <div class="modal-sev-bar" style="background:${statusColor}"></div>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-header">
+      <div class="modal-id">${item.id} &middot; <span style="color:var(--dim)">${item.cat || 'General'}</span></div>
+      <div class="modal-title">${item.title}</div>
+      <div class="modal-meta">
+        ${badge(item.status)}
+        <span style="font-size:12px;padding:2px 8px;background:rgba(219,109,40,0.15);border-radius:4px;color:var(--orange);">MC Pitfall</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
+      ${item.symptoms ? `<div class="modal-section"><div class="modal-section-title">Symptoms</div><div class="modal-section-content">${item.symptoms}</div></div>` : ''}
+      ${item.impact ? `<div class="modal-section"><div class="modal-section-title">Quantitative Impact</div><div class="modal-impact">${item.impact}</div></div>` : ''}
+      ${item.todo ? `<div class="modal-section"><div class="modal-section-title">System Response (TODO)</div><div class="modal-todo">${item.todo}</div></div>` : ''}
+      ${item.note ? `<div class="modal-section"><div class="modal-section-title">Note</div><div class="modal-fix">${item.note}</div></div>` : ''}
+      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
+    </div>
+  `);
+}
+
+function showLTDetail(id) {
+  const item = _DATA.lt.find(i => i.id === id);
+  if (!item) return;
+  const prColor = item.priority === 3 ? 'var(--alert)' : item.priority === 2 ? 'var(--warn)' : 'var(--dim)';
+  const stColor = item.status === 'done' ? 'var(--green)' : item.status === 'partial' ? 'var(--warn)' : 'var(--dim)';
+
+  let phasesHtml = '';
+  if (item.done || item.remaining) {
+    phasesHtml = '<div class="modal-section"><div class="modal-section-title">Progress</div><div class="modal-phases">';
+    if (item.done) phasesHtml += `<div class="modal-phase"><span class="modal-phase-icon">✅</span><div><strong style="color:var(--green)">Done</strong><br><span style="color:var(--text)">${item.done}</span></div></div>`;
+    if (item.remaining) phasesHtml += `<div class="modal-phase"><span class="modal-phase-icon">⏳</span><div><strong style="color:var(--warn)">Remaining</strong><br><span style="color:var(--text)">${item.remaining}</span></div></div>`;
+    phasesHtml += '</div></div>';
+  }
+
+  let depsHtml = '';
+  if (item.deps && item.deps.length) {
+    depsHtml = `<div class="modal-section"><div class="modal-section-title">Dependencies</div><div class="modal-deps">${
+      item.deps.map(d => `<span class="modal-dep-tag" onclick="showLTDetail('${d}')" style="cursor:pointer">${d}</span>`).join('')
+    }</div></div>`;
+  }
+
+  openModal(`
+    <div class="modal-sev-bar" style="background:${stColor}"></div>
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div class="modal-header">
+      <div class="modal-id">${item.id}${item.session ? ' &middot; <span style="color:var(--dim)">'+item.session+'</span>' : ''}</div>
+      <div class="modal-title">${item.title}</div>
+      <div class="modal-meta">
+        ${badge(item.status)}
+        <span style="font-size:12px;padding:2px 8px;border-radius:4px;color:${prColor};background:rgba(255,255,255,0.05);">${'★'.repeat(item.priority)} Priority</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
+      ${phasesHtml}
+      ${depsHtml}
+      ${item.phase ? `<div class="modal-section"><div class="modal-section-title">Phase Status</div><div class="modal-section-content" style="font-family:var(--body-font);font-size:13px;color:var(--cyan)">${item.phase}</div></div>` : ''}
+      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
+    </div>
+  `);
+}
+
 // ═══ Data loading ═══
 fetch('data.json').then(r => r.json()).then(data => {
+  _DATA = data;
   document.getElementById('loading').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   render(data);
@@ -594,9 +944,10 @@ function render(D) {
   document.getElementById('xref-clusters').innerHTML = clusters.map(c => {
     const tags = c.items.map(id => {
       let cls = 'tag-iss';
-      if (id.startsWith('PIT')) cls = 'tag-pit';
-      if (id.startsWith('LT')) cls = 'tag-lt';
-      return `<span class="cluster-tag ${cls}">${id}</span>`;
+      let onclick = `showISSDetailByShort('${id}')`;
+      if (id.startsWith('PIT')) { cls = 'tag-pit'; onclick = `showPITDetail('${id}')`; }
+      if (id.startsWith('LT')) { cls = 'tag-lt'; onclick = `showLTDetail('${id}')`; }
+      return `<span class="cluster-tag ${cls}" style="cursor:pointer" onclick="${onclick}">${id}</span>`;
     }).join('');
     return `<div class="cluster"><div class="cluster-title">${c.title}</div><div class="cluster-items">${tags}</div></div>`;
   }).join('');
@@ -637,7 +988,7 @@ function render(D) {
       return i.sev === issFilter;
     });
     document.getElementById('iss-tbody').innerHTML = filtered.map(i =>
-      `<tr><td style="white-space:nowrap; font-family:var(--body-font); font-size:12px;">${i.id}${i.audit ? '<br><span style="color:var(--dim); font-size:11px;">'+i.audit+'</span>' : ''}</td>
+      `<tr data-clickable onclick="showISSDetail('${i.id}')"><td style="white-space:nowrap; font-family:var(--body-font); font-size:12px;">${i.id}${i.audit ? '<br><span style="color:var(--dim); font-size:11px;">'+i.audit+'</span>' : ''}</td>
        <td>${sevSpan(i.sev)}</td>
        <td>${badge(i.status)}</td>
        <td>${i.title}</td>
@@ -662,7 +1013,7 @@ function render(D) {
   function renderPIT() {
     const filtered = D.pit.filter(i => pitFilter === 'all' || i.status === pitFilter);
     document.getElementById('pit-tbody').innerHTML = filtered.map(i =>
-      `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
+      `<tr data-clickable onclick="showPITDetail('${i.id}')"><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
        <td>${badge(i.status)}</td>
        <td style="color:var(--dim);">${i.cat || ''}</td>
        <td>${i.title}${i.note ? '<br><span style="color:var(--dim); font-size:11px;">'+i.note+'</span>' : ''}</td>
@@ -692,7 +1043,7 @@ function render(D) {
       return i.status === ltFilter;
     });
     document.getElementById('lt-tbody').innerHTML = filtered.map(i =>
-      `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
+      `<tr data-clickable onclick="showLTDetail('${i.id}')"><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
        <td><span class="priority-${i.priority}">${'★'.repeat(i.priority)}</span></td>
        <td>${badge(i.status)}</td>
        <td>${i.title}</td>

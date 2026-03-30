@@ -1,7 +1,7 @@
 {
   "meta": {
-    "updated": "2026-03-30",
-    "session": "P2.12wc",
+    "updated": "2026-03-31",
+    "session": "P2.13wc",
     "totalItems": 179
   },
   "systems": [
@@ -14,104 +14,747 @@
     {"id": "MOD", "name": "Reusable Modules", "count": 3, "note": "Global cross-project", "color": "#56d364"}
   ],
   "iss": [
-    {"id": "P2.2wc-ISS-001", "sev": "C", "status": "resolved", "title": "fFlux_In 미정의 컴파일 오류", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-002", "sev": "C", "status": "resolved", "title": "에너지 이중 집계 (SteppingAction + MFD)", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-003", "sev": "C", "status": "resolved", "title": "Co-60 매크로 감마 1개만 생성 (50% 과소)", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-004", "sev": "C", "status": "resolved", "title": "99.9995% 상대오차 (VR 부재)", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-005", "sev": "C", "status": "resolved", "title": "ntuple 파일 데이터 없음", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-006", "sev": "C", "status": "resolved", "title": "scoring mesh 2500 voxel 중 1개만 비영", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-007", "sev": "C", "status": "resolved", "title": "에너지 벡터 비어있을 때 0 나누기", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-008", "sev": "C", "status": "resolved", "title": "eval 플래그 미초기화 (핵종 간 오염)", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-009", "sev": "H", "status": "resolved", "title": "GPS 다중소스 강도 오류", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-016"]},
-    {"id": "P2.2wc-ISS-010", "sev": "H", "status": "resolved", "title": "Qt BeamOn() UI 스레드 블로킹", "session": "P2.2wc", "resolved_in": "P2.7wc"},
-    {"id": "P2.2wc-ISS-011", "sev": "H", "status": "resolved", "title": "선량률 공식 거리항(1/r²) 누락", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-012", "sev": "C", "status": "resolved", "title": "CADMesh 로드 실패 → null 더미 삽입", "session": "P2.2wc", "resolved_in": "P2.10wc"},
-    {"id": "P2.2wc-ISS-013", "sev": "H", "status": "superseded", "title": "감쇠계수 경험적 스케일링", "session": "P2.2wc", "note": "→ P2.11wc-ISS-002로 승계"},
-    {"id": "P2.2wc-ISS-014", "sev": "H", "status": "resolved", "title": "STL 모드 디텍터 중심 = 바운딩박스 중심", "session": "P2.2wc", "resolved_in": "P2.10wc"},
-    {"id": "P2.2wc-ISS-015", "sev": "M", "status": "resolved", "title": "빌드경로 /Users/ai_claw/ 하드코딩", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-016", "sev": "C", "status": "resolved", "title": "VR 완전 부재", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-017", "sev": "M", "status": "resolved", "title": "Co-60 감마상수 메타데이터 40000배 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-018", "sev": "M", "status": "resolved", "title": "Main/GUI 매크로 감마 가중치 불일치", "session": "P2.2wc", "resolved_in": "P2.3wc"},
-    {"id": "P2.2wc-ISS-019", "sev": "M", "status": "resolved", "title": "감마 전용 소스에 하드론/이온 물리 (40% CPU)", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-020", "sev": "H", "status": "unresolved", "title": "H*(10) 주변선량당량 미구현", "session": "P2.2wc", "xref": ["LT-04", "PIT-024"]},
-    {"id": "P2.2wc-ISS-021", "sev": "H", "status": "unresolved", "title": "ICRP 116 변환계수 부재", "session": "P2.2wc", "xref": ["LT-04"]},
-    {"id": "P2.2wc-ISS-022", "sev": "M", "status": "resolved", "title": "조직 vs 공기 매질 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc", "xref": ["PIT-003"]},
-    {"id": "P2.2wc-ISS-023", "sev": "M", "status": "resolved", "title": "RunAction 선량률 Co-60 1Ci 하드코딩", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.2wc-ISS-024", "sev": "H", "status": "resolved", "title": "mu_en vs mu 혼동 (6.4배 차이)", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-004"]},
-    {"id": "P2.2wc-ISS-025", "sev": "M", "status": "resolved", "title": "과도한 물리 리스트", "session": "P2.2wc", "resolved_in": "P2.4wc"},
-    {"id": "P2.11wc-ISS-001", "sev": "C", "status": "resolved", "audit": "C-PHY-03", "title": "ImportanceGeometry 좌표 불일치", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-002", "sev": "C", "status": "resolved", "audit": "C-PHY-02", "title": "빌드업팩터 에너지 무시", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["PIT-027", "LT-09"]},
-    {"id": "P2.11wc-ISS-003", "sev": "C", "status": "resolved", "audit": "C-PHY-01", "title": "avgEnergy 강도 미가중 산술평균", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-004", "sev": "C", "status": "resolved", "audit": "C-DAT-01", "title": "I-131 GammasPerDecay 오류", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-005", "sev": "C", "status": "resolved", "audit": "C-DAT-02", "title": "커스텀재료 파싱 실패 시 불완전 잔류", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-006", "sev": "C", "status": "resolved", "audit": "C-DAT-03", "title": "가스 밀도 STP 영구 덮어쓰기", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-007", "sev": "C", "status": "resolved", "audit": "C-FUN-01", "title": "maxTracksPerEvent 무효화", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-008", "sev": "C", "status": "resolved", "audit": "C-FUN-02", "title": "NIST 직접입력 크래시", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-009", "sev": "C", "status": "resolved", "audit": "C-STB-01", "title": "0 나누기", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-010", "sev": "C", "status": "resolved", "audit": "C-STB-02", "title": "DataStore dangling ref", "session": "P2.11wc", "resolved_in": "P2.11wc"},
-    {"id": "P2.11wc-ISS-030", "sev": "M", "status": "resolved", "audit": "M-DAT-02", "title": "buildup CSV 6재료×2에너지만", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["LT-09"]},
-    {"id": "P2.11wc-ISS-037", "sev": "m", "status": "unresolved", "audit": "m-06", "title": "Serial 모드 강제 (MT 미지원)", "session": "P2.11wc", "xref": ["LT-12", "PIT-011"]},
-    {"id": "P2.12wc-ISS-055", "sev": "M", "status": "resolved", "title": "FindMaterial isotope 검색 실패", "session": "P2.12wc", "resolved_in": "P2.12wc"},
-    {"id": "P2.12wc-ISS-056", "sev": "M", "status": "resolved", "title": "Sampler use-after-free 삭제 순서", "session": "P2.12wc", "resolved_in": "P2.12wc"},
-    {"id": "P2.12wc-ISS-061", "sev": "M", "status": "resolved", "title": "다층 빌드업 독립곱 가정", "session": "P2.12wc", "resolved_in": "P2.12wc", "xref": ["PIT-028", "LT-09"]}
+    {
+      "id": "P2.2wc-ISS-001", "sev": "C", "status": "resolved", "title": "fFlux_In 미정의 컴파일 오류", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "fFlux_In 변수가 GEANT4 enum에서 정의되지 않아 컴파일 실패",
+      "impact": "빌드 불가 — 시뮬레이션 실행 자체 불가능",
+      "cause": "GEANT4 enum 직접 참조 대신 미정의 변수 사용",
+      "fix": "GEANT4 enum 직접 사용으로 변경",
+      "location": "GEANT4 enum 참조부"
+    },
+    {
+      "id": "P2.2wc-ISS-002", "sev": "C", "status": "resolved", "title": "에너지 이중 집계 (SteppingAction + MFD)", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "SteppingAction과 MFD scorer가 동시에 에너지를 집계하여 이중 카운팅 발생",
+      "impact": "선량 결과 2배 과대평가 가능",
+      "cause": "SteppingAction에서 에너지 집계와 궤적 기록을 동시 수행",
+      "fix": "SteppingAction 역할을 궤적 기록 전용으로 분리",
+      "location": "SteppingAction, MFD scorer"
+    },
+    {
+      "id": "P2.2wc-ISS-003", "sev": "C", "status": "resolved", "title": "Co-60 매크로 감마 1개만 생성 (50% 과소)", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "Co-60 매크로가 붕괴당 감마 1개만 생성 (실제 2개: 1.173+1.332 MeV)",
+      "impact": "선량 50% 과소평가",
+      "cause": "GPS 소스 정의에서 multiplevertex 미사용",
+      "fix": "multiplevertex 방식으로 2개 감마 동시 생성",
+      "location": "Co-60 소스 매크로"
+    },
+    {
+      "id": "P2.2wc-ISS-004", "sev": "C", "status": "resolved", "title": "99.9995% 상대오차 (VR 부재)", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "분산저감(VR) 기법 없이 두꺼운 차폐체 투과 시뮬레이션 수행 → 극단적 통계 오차",
+      "impact": "두꺼운 차폐 결과 의미 없음 (99.9995% 상대오차)",
+      "cause": "Importance biasing 등 VR 기법 미구현",
+      "fix": "Importance biasing 구현",
+      "location": "시뮬레이션 전반",
+      "xref": ["PIT-007"]
+    },
+    {
+      "id": "P2.2wc-ISS-005", "sev": "C", "status": "resolved", "title": "ntuple 파일 데이터 없음", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "출력 ntuple 파일이 생성되나 데이터가 비어있음",
+      "impact": "결과 분석 불가",
+      "cause": "이벤트 기록 로직 오류",
+      "fix": "이벤트 기록 로직 수정",
+      "location": "ntuple 출력부"
+    },
+    {
+      "id": "P2.2wc-ISS-006", "sev": "C", "status": "resolved", "title": "scoring mesh 2500 voxel 중 1개만 비영", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "2500개 복셀 scoring mesh에서 1개만 값이 있고 나머지 전부 0",
+      "impact": "공간 선량 분포 정보 완전 손실",
+      "cause": "Scoring mesh 방식의 구조적 한계",
+      "fix": "MFD(Multi-Functional Detector) 방식으로 전환",
+      "location": "scoring mesh 설정"
+    },
+    {
+      "id": "P2.2wc-ISS-007", "sev": "C", "status": "resolved", "title": "에너지 벡터 비어있을 때 0 나누기", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "에너지 벡터가 비어있을 때 나누기 연산 수행하여 NaN 발생",
+      "impact": "NaN 결과 또는 크래시",
+      "cause": "빈 벡터에 대한 유효성 검사 부재",
+      "fix": "빈 벡터 유효성 검사 추가",
+      "location": "에너지 벡터 처리부"
+    },
+    {
+      "id": "P2.2wc-ISS-008", "sev": "C", "status": "resolved", "title": "eval 플래그 미초기화 (핵종 간 오염)", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "평가 플래그가 초기화되지 않아 이전 핵종의 설정이 다음 핵종에 오염",
+      "impact": "연속 핵종 평가 시 결과 오염",
+      "cause": "초기화 로직 누락",
+      "fix": "초기화 로직 수정",
+      "location": "핵종 평가 루프"
+    },
+    {
+      "id": "P2.2wc-ISS-009", "sev": "H", "status": "resolved", "title": "GPS 다중소스 강도 오류", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-016"],
+      "desc": "GPS 다중소스에서 절대 강도와 비율을 혼동하여 에너지 스펙트럼 왜곡",
+      "impact": "에너지 스펙트럼 왜곡 → 선량 오차",
+      "cause": "GPS 소스 강도의 절대값 vs 비율 혼동",
+      "fix": "Co-60에 대해 multiplevertex 방식 적용",
+      "location": "GPS 소스 설정"
+    },
+    {
+      "id": "P2.2wc-ISS-010", "sev": "H", "status": "resolved", "title": "Qt BeamOn() UI 스레드 블로킹", "session": "P2.2wc", "resolved_in": "P2.7wc",
+      "desc": "Qt 환경에서 BeamOn() 호출 시 UI 스레드가 블로킹되어 GUI 동결",
+      "impact": "시뮬레이션 중 GUI 완전 동결 (응답 없음)",
+      "cause": "시뮬레이션 연산이 UI 스레드에서 직접 실행",
+      "fix": "CLI-spawn 하이브리드 아키텍처로 근본 해결 (별도 프로세스에서 시뮬레이션 실행)",
+      "location": "GUI BeamOn() 호출부"
+    },
+    {
+      "id": "P2.2wc-ISS-011", "sev": "H", "status": "resolved", "title": "선량률 공식 거리항(1/r²) 누락", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "해석적 선량률 계산 공식에서 역제곱 법칙(1/r²) 거리항 누락",
+      "impact": "선량 계산 완전히 오류 — 거리 반영 안 됨",
+      "cause": "해석적 계산식 작성 시 거리항 누락",
+      "fix": "해석적 계산 전체 재작성",
+      "location": "해석적 선량 계산부"
+    },
+    {
+      "id": "P2.2wc-ISS-012", "sev": "C", "status": "resolved", "title": "CADMesh 로드 실패 → null 더미 삽입", "session": "P2.2wc", "resolved_in": "P2.10wc",
+      "desc": "CADMesh STL 로드 실패 시 null 더미 지오메트리를 삽입하여 시뮬레이션 진행",
+      "impact": "잘못된 지오메트리로 시뮬레이션 실행 → 결과 의미 없음",
+      "cause": "에러 처리에서 null 더미 삽입 후 계속 진행하는 로직",
+      "fix": "STL 전용 파서 구현, 에러 시 abort",
+      "location": "STL 로드 모듈"
+    },
+    {
+      "id": "P2.2wc-ISS-013", "sev": "H", "status": "superseded", "title": "감쇠계수 경험적 스케일링", "session": "P2.2wc", "note": "→ P2.11wc-ISS-002로 승계",
+      "desc": "감쇠계수를 경험적 스케일링 공식 (1.25/E)^0.7로 계산",
+      "impact": "광전효과 에지 근처에서 수십% 오차",
+      "cause": "NIST 데이터 대신 경험식 사용",
+      "fix": "P2.11wc-ISS-002 (에너지 의존 빌드업 시스템)로 승계",
+      "location": "AnalyticalCalc 감쇠계수부"
+    },
+    {
+      "id": "P2.2wc-ISS-014", "sev": "H", "status": "resolved", "title": "STL 모드 디텍터 중심 = 바운딩박스 중심", "session": "P2.2wc", "resolved_in": "P2.10wc",
+      "desc": "STL 모드에서 디텍터 중심을 바운딩박스 중심으로 설정하여 위치 오류",
+      "impact": "디텍터 위치 오류 → 선량 결과 부정확",
+      "cause": "STL에서 shield/detector 역할 분류 미구현",
+      "fix": "STL 역할 분류 (shield/detector) 구현",
+      "location": "STL 지오메트리 처리부"
+    },
+    {
+      "id": "P2.2wc-ISS-015", "sev": "M", "status": "resolved", "title": "빌드경로 /Users/ai_claw/ 하드코딩", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "빌드 경로가 특정 사용자 디렉토리로 하드코딩",
+      "impact": "다른 환경에서 빌드 실패",
+      "cause": "CMakeLists.txt에 절대경로 하드코딩",
+      "fix": "CMake 자동 탐지로 변경",
+      "location": "CMakeLists.txt"
+    },
+    {
+      "id": "P2.2wc-ISS-016", "sev": "C", "status": "resolved", "title": "VR 완전 부재", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "분산저감(Variance Reduction) 기법이 전혀 구현되지 않음 — ISS-004의 근본 원인",
+      "impact": "두꺼운 차폐체에서 99.9995% 상대오차",
+      "cause": "Importance biasing 등 VR 기법 미구현",
+      "fix": "Importance biasing 구현",
+      "location": "시뮬레이션 엔진 전반"
+    },
+    {
+      "id": "P2.2wc-ISS-017", "sev": "M", "status": "resolved", "title": "Co-60 감마상수 메타데이터 40000배 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "Co-60 감마상수 메타데이터가 실제 값 대비 40,000배 불일치",
+      "impact": "참고값(감마상수 기반 선량률) 완전히 오류",
+      "cause": "단위 불일치 (R·m²/Ci·h vs Sv·m²/Bq·h 혼동)",
+      "fix": "단위를 Sv·m²/Bq·h로 통일",
+      "location": "감마상수 메타데이터"
+    },
+    {
+      "id": "P2.2wc-ISS-018", "sev": "M", "status": "resolved", "title": "Main/GUI 매크로 감마 가중치 불일치", "session": "P2.2wc", "resolved_in": "P2.3wc",
+      "desc": "Main(CLI)과 GUI에서 사용하는 매크로의 감마 가중치가 불일치",
+      "impact": "CLI와 GUI 결과 불일치",
+      "cause": "소스 매크로 표준화 미비",
+      "fix": "소스 매크로 표준화",
+      "location": "소스 매크로 파일들"
+    },
+    {
+      "id": "P2.2wc-ISS-019", "sev": "M", "status": "resolved", "title": "감마 전용 소스에 하드론/이온 물리 (40% CPU)", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "감마 전용 소스 시뮬레이션에서 불필요한 하드론/이온 물리 리스트가 활성화",
+      "impact": "CPU 40% 낭비",
+      "cause": "물리 리스트 조건부 활성화 미구현",
+      "fix": "PhysicsConfig에서 매크로 스캔 후 조건부 활성화",
+      "location": "PhysicsConfig"
+    },
+    {
+      "id": "P2.2wc-ISS-020", "sev": "H", "status": "unresolved", "title": "H*(10) 주변선량당량 미구현", "session": "P2.2wc", "xref": ["LT-04", "PIT-024"],
+      "desc": "중성자에 대한 H*(10) 주변선량당량 환산 미구현",
+      "impact": "규제 선량 단위(중성자 H*(10))로 보고 불가",
+      "cause": "에너지 의존 중성자 선량 환산 계수 미구현",
+      "fix": "LT-04 Phase 2에서 ICRP-74 H*(10) 에너지 의존 환산 구현 예정",
+      "location": "선량 평가 모듈"
+    },
+    {
+      "id": "P2.2wc-ISS-021", "sev": "H", "status": "unresolved", "title": "ICRP 116 변환계수 부재", "session": "P2.2wc", "xref": ["LT-04"],
+      "desc": "ICRP 116 에너지 의존 중성자 선량 변환 계수 미구현",
+      "impact": "에너지 의존 중성자 선량 변환 불가",
+      "cause": "ICRP 116 데이터 테이블 및 변환 로직 미구현",
+      "fix": "LT-04 Phase 2에서 구현 예정",
+      "location": "선량 변환 모듈"
+    },
+    {
+      "id": "P2.2wc-ISS-022", "sev": "M", "status": "resolved", "title": "조직 vs 공기 매질 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc", "xref": ["PIT-003"],
+      "desc": "MC 출력은 water dose이나 감마상수는 air kerma 기준 → 매질 불일치",
+      "impact": "~10% 오차",
+      "cause": "MC 디텍터 매질과 해석적 기준 매질 불일치",
+      "fix": "PIT-003 문서화 + 사용자 선택 기능",
+      "location": "디텍터 매질 설정"
+    },
+    {
+      "id": "P2.2wc-ISS-023", "sev": "M", "status": "resolved", "title": "RunAction 선량률 Co-60 1Ci 하드코딩", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "RunAction에서 선량률 계산 시 Co-60 1Ci 기준으로 하드코딩",
+      "impact": "다른 핵종/방사능에서 결과 오류",
+      "cause": "핵종별 방사능 파라미터화 미구현",
+      "fix": "매크로를 통한 핵종별 방사능 파라미터화",
+      "location": "RunAction"
+    },
+    {
+      "id": "P2.2wc-ISS-024", "sev": "H", "status": "resolved", "title": "mu_en vs mu 혼동 (6.4배 차이)", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-004"],
+      "desc": "질량 에너지 흡수 계수(μ_en)와 총 감쇠 계수(μ)를 혼동",
+      "impact": "Se-75 120keV에서 μ/ρ≈0.167 vs μ_en/ρ≈0.026 → 6.4배 차이",
+      "cause": "계수 혼동 (총 감쇠 vs 에너지 흡수)",
+      "fix": "올바른 μ_en 데이터 적용",
+      "location": "선량 변환 계수 참조부"
+    },
+    {
+      "id": "P2.2wc-ISS-025", "sev": "M", "status": "resolved", "title": "과도한 물리 리스트", "session": "P2.2wc", "resolved_in": "P2.4wc",
+      "desc": "ISS-019와 동일 — 감마 전용 소스에 불필요한 물리 프로세스 활성화",
+      "impact": "CPU 낭비 (40%)",
+      "cause": "물리 리스트 조건부 활성화 미구현",
+      "fix": "ISS-019와 동일 (PhysicsConfig 조건부 활성화)",
+      "location": "PhysicsConfig"
+    },
+    {
+      "id": "P2.11wc-ISS-001", "sev": "C", "status": "resolved", "audit": "C-PHY-03", "title": "ImportanceGeometry 좌표 불일치", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "Importance biasing 레이어 위치가 전면(front face) 기준으로 계산되어 실제 차폐체 기하구조(중심 기준)와 불일치",
+      "impact": "VR 효율 저하, 수렴 속도 감소",
+      "cause": "레이어 좌표를 front face 기준으로 계산",
+      "fix": "중심(center) 기준 좌표 계산으로 수정",
+      "location": "ImportanceGeometry.cc:45"
+    },
+    {
+      "id": "P2.11wc-ISS-002", "sev": "C", "status": "resolved", "audit": "C-PHY-02", "title": "빌드업팩터 에너지 무시", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["PIT-027", "LT-09"],
+      "desc": "GetBuildupFactor()가 에너지 인자를 무시하고 항상 Co-60 값만 반환",
+      "impact": "Cs-137+Pb 차폐 투과율 2-3배 과대평가",
+      "cause": "에너지 파라미터를 함수 내부에서 무시",
+      "fix": "P2.12wc LT-09에서 에너지 의존 빌드업 시스템 구현 (86행 CSV, 이중선형 보간)",
+      "location": "AnalyticalCalc.cc:15"
+    },
+    {
+      "id": "P2.11wc-ISS-003", "sev": "C", "status": "resolved", "audit": "C-PHY-01", "title": "avgEnergy 강도 미가중 산술평균", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "평균 에너지를 강도 가중 없이 단순 산술 평균으로 계산",
+      "impact": "다선 핵종(Se-75, Ir-192)에서 평균 에너지 오류 → 감쇠/빌드업 계산 오류",
+      "cause": "avgEnergy_MeV()에서 intensity 가중 미적용",
+      "fix": "강도 가중 평균 계산으로 수정",
+      "location": "DataTypes.hh:50-55"
+    },
+    {
+      "id": "P2.11wc-ISS-004", "sev": "C", "status": "resolved", "audit": "C-DAT-01", "title": "I-131 GammasPerDecay 오류", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "gamma_constants.csv에서 I-131의 GammasPerDecay 값이 0.812로 잘못 기재 (정확값: 0.989)",
+      "impact": "I-131 선량 ~18% 과소평가",
+      "cause": "CSV 데이터 입력 오류",
+      "fix": "NNDC 기준값 0.989로 수정",
+      "location": "gamma_constants.csv:5"
+    },
+    {
+      "id": "P2.11wc-ISS-005", "sev": "C", "status": "resolved", "audit": "C-DAT-02", "title": "커스텀재료 파싱 실패 시 불완전 잔류", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "커스텀 재료 파싱 중간에 실패하면 불완전한 G4Material이 등록된 채 잔류",
+      "impact": "후속 시뮬레이션에서 잘못된 재료 사용",
+      "cause": "파싱 실패 시 롤백 미구현 (부분 등록 허용)",
+      "fix": "Atomic transaction 패턴 적용 (성공 시에만 등록)",
+      "location": "DetectorConstruction.cc:501"
+    },
+    {
+      "id": "P2.11wc-ISS-006", "sev": "C", "status": "resolved", "audit": "C-DAT-03", "title": "가스 밀도 STP 영구 덮어쓰기", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "가스 재료의 온도/압력 보정 밀도(effectiveDensity)가 STP 기본 밀도를 영구적으로 덮어씀",
+      "impact": "후속 계산에서 잘못된 밀도 사용",
+      "cause": "effectiveDensity()가 base STP density 자체를 수정",
+      "fix": "별도의 effective density 저장소 분리",
+      "location": "CustomMaterialDialog.cc:572"
+    },
+    {
+      "id": "P2.11wc-ISS-007", "sev": "C", "status": "resolved", "audit": "C-FUN-01", "title": "maxTracksPerEvent 무효화", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "IncrementTrackCount()가 한 번도 호출되지 않아 maxTracksPerEvent 제한 기능이 무효화",
+      "impact": "트랙 제한 없음 → 메모리 이슈 가능",
+      "cause": "트랙 카운트 함수가 존재하지만 통합되지 않음",
+      "fix": "적절한 위치에서 IncrementTrackCount() 호출 통합",
+      "location": "TrackingRecorder.hh:55"
+    },
+    {
+      "id": "P2.11wc-ISS-008", "sev": "C", "status": "resolved", "audit": "C-FUN-02", "title": "NIST 직접입력 크래시", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "NIST 직접입력 재료 이름이 Custom_ 접두사 없이 CLI에 전달되어 segfault 발생",
+      "impact": "CLI 크래시 (segfault)",
+      "cause": "MaterialBrowserDialog에서 NIST 재료명에 Custom_ 접두사 미부착",
+      "fix": "접두사 처리 로직 추가",
+      "location": "MaterialBrowserDialog.cc:271"
+    },
+    {
+      "id": "P2.11wc-ISS-009", "sev": "C", "status": "resolved", "audit": "C-STB-01", "title": "0 나누기", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "CalculateAttenuationCurve에서 numPoints==1일 때 (numPoints-1)로 나누기 → 0 나누기",
+      "impact": "NaN 결과 또는 크래시",
+      "cause": "numPoints==1 경계 조건 미처리",
+      "fix": "가드 조건 추가",
+      "location": "AnalyticalCalc.cc:166"
+    },
+    {
+      "id": "P2.11wc-ISS-010", "sev": "C", "status": "resolved", "audit": "C-STB-02", "title": "DataStore dangling ref", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "DataStore Get()이 벡터 원소의 const reference를 반환하는데, push_back 시 재할당으로 dangling reference 발생",
+      "impact": "Use-after-free, undefined behavior",
+      "cause": "벡터 재할당 시 참조 무효화",
+      "fix": "값 반환(return by value) 또는 reserve 사용",
+      "location": "MaterialDataStore.cc:370"
+    },
+    {
+      "id": "P2.11wc-ISS-011", "sev": "M", "status": "resolved", "audit": "M-CLI-01", "title": "G4GeometrySampler 2개 미삭제", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "G4GeometrySampler 인스턴스 2개가 삭제되지 않아 메모리 누수",
+      "impact": "메모리 누수",
+      "cause": "소멸자에서 삭제 누락",
+      "fix": "적절한 삭제 추가",
+      "location": "main.cc:90-99"
+    },
+    {
+      "id": "P2.11wc-ISS-012", "sev": "M", "status": "resolved", "audit": "M-CLI-02", "title": "EnrichIsotopeMaterial 2회 이상 호출 실패", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "동위원소 농축 재료 생성 함수가 2회 이상 호출 시 실패",
+      "impact": "다중 농축 재료 설정 불가",
+      "cause": "상태 초기화 누락",
+      "fix": "함수 내부 상태 초기화 수정",
+      "location": "DetectorConstruction.cc:650"
+    },
+    {
+      "id": "P2.11wc-ISS-022", "sev": "M", "status": "resolved", "audit": "M-DAT-02a", "title": "빌드업팩터 테이블 2개 복사본 (동기화 위험)", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "빌드업팩터 테이블이 AnalyticalCalc과 별도 위치에 2개 존재하여 동기화 위험",
+      "impact": "데이터 불일치 위험",
+      "cause": "빌드업 데이터를 2곳에서 관리",
+      "fix": "MaterialDataStore.cc로 위임 (단일 소스)",
+      "location": "AnalyticalCalc.cc"
+    },
+    {
+      "id": "P2.11wc-ISS-023", "sev": "M", "status": "resolved", "audit": "M-CLI-03a", "title": "ProcessRunner CLI 마지막 줄 수신 실패", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "CLI 프로세스 종료 시 마지막 줄 출력이 수신되지 않음",
+      "impact": "최종 결과 데이터 누락 가능",
+      "cause": "프로세스 종료 시 버퍼 플러시 누락",
+      "fix": "onFinished에서 flush 처리",
+      "location": "ProcessRunner.cc:226"
+    },
+    {
+      "id": "P2.11wc-ISS-025", "sev": "M", "status": "resolved", "audit": "M-GUI-01a", "title": "STL 모드 디텍터 재료 미전달 (기본 WATER)", "session": "P2.11wc", "resolved_in": "P2.11wc",
+      "desc": "STL 모드에서 디텍터 재료가 CLI에 전달되지 않아 기본값 WATER 사용",
+      "impact": "사용자 지정 디텍터 재료 무시",
+      "cause": "GeometryPanel에서 디텍터 재료 파라미터 전달 누락",
+      "fix": "재료 파라미터 전달 추가",
+      "location": "GeometryPanel.cc:404"
+    },
+    {
+      "id": "P2.11wc-ISS-030", "sev": "M", "status": "resolved", "audit": "M-DAT-02", "title": "buildup CSV 6재료×2에너지만", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["LT-09"],
+      "desc": "빌드업팩터 CSV가 6개 재료 × 2개 에너지 포인트만 포함하여 보간 정밀도 극히 낮음",
+      "impact": "빌드업팩터 보간 오차 큼",
+      "cause": "초기 데이터 테이블의 불완전 구축",
+      "fix": "P2.12wc LT-09에서 13재료 × 6-8에너지 (86행)로 확장",
+      "location": "data/buildup_ans643.csv"
+    },
+    {
+      "id": "P2.11wc-ISS-037", "sev": "m", "status": "unresolved", "audit": "m-06", "title": "Serial 모드 강제 (MT 미지원)", "session": "P2.11wc", "xref": ["LT-12", "PIT-011"],
+      "desc": "G4ImportanceBiasing + 평행세계가 MT 모드에서 보장되지 않아 Serial 모드 강제",
+      "impact": "멀티스레딩 활용 불가 → 시뮬레이션 속도 제한",
+      "cause": "GEANT4의 VR + MT 호환성 미보장",
+      "fix": "LT-12에서 해결 예정",
+      "location": "main.cc (MT 비활성화)"
+    },
+    {
+      "id": "P2.12wc-ISS-055", "sev": "M", "status": "resolved", "title": "FindMaterial isotope 검색 실패", "session": "P2.12wc", "resolved_in": "P2.12wc",
+      "desc": "FindMaterial이 _iso 접미사만 검색하여 다중 농축 설정이 반영되지 않음",
+      "impact": "다중 동위원소 농축 재료 검색 실패",
+      "cause": "_iso 접미사만 검색하는 단순 로직",
+      "fix": "다중 농축 반영 검색 로직으로 수정",
+      "location": "DetectorConstruction.cc:157"
+    },
+    {
+      "id": "P2.12wc-ISS-056", "sev": "M", "status": "resolved", "title": "Sampler use-after-free 삭제 순서", "session": "P2.12wc", "resolved_in": "P2.12wc",
+      "desc": "G4GeometrySampler가 RunManager 이후에 삭제되어 use-after-free 발생",
+      "impact": "종료 시 크래시 또는 undefined behavior",
+      "cause": "객체 삭제 순서 오류 (RunManager보다 후순위 삭제)",
+      "fix": "삭제 순서 수정 (Sampler를 RunManager 이전에 삭제)",
+      "location": "main.cc:148"
+    },
+    {
+      "id": "P2.12wc-ISS-061", "sev": "M", "status": "resolved", "title": "다층 빌드업 독립곱 가정", "session": "P2.12wc", "resolved_in": "P2.12wc", "xref": ["PIT-028", "LT-09"],
+      "desc": "다층 차폐에서 각 층의 빌드업팩터를 독립 곱(totalBuildup *= B_i)으로 계산하나, 빌드업은 층간 독립이 아님",
+      "impact": "두꺼운 다층 차폐에서 2-5배 과대평가 가능",
+      "cause": "빌드업팩터의 층간 비독립성 미반영",
+      "fix": "Kalos-Kitazume MFP 가중 등가 단층법 구현",
+      "location": "AnalyticalCalc.cc:94"
+    }
   ],
   "pit": [
-    {"id": "PIT-001", "title": "하전입자평형(CPE) 미성립 — 얇은 디텍터", "status": "confirmed", "cat": "Detector", "xref": ["PIT-002","PIT-006","PIT-020"]},
-    {"id": "PIT-002", "title": "디텍터 자기차폐 — 두꺼운 디텍터", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-020"]},
-    {"id": "PIT-003", "title": "Water Dose ≠ Air Kerma 단위 변환", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004","PIT-005"]},
-    {"id": "PIT-004", "title": "μ_en vs μ 혼동", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-003","PIT-017"]},
-    {"id": "PIT-005", "title": "gammas_per_decay 누락", "status": "confirmed", "cat": "Source", "xref": ["PIT-016"]},
-    {"id": "PIT-006", "title": "디텍터-소스 거리 대비 크기 편향", "status": "confirmed", "cat": "Detector", "xref": ["PIT-020"]},
-    {"id": "PIT-007", "title": "VR weight artifact", "status": "anticipated", "cat": "VR", "xref": ["PIT-011"]},
-    {"id": "PIT-008", "title": "narrow-beam HVL vs broad-beam", "status": "anticipated", "cat": "Shielding", "xref": ["PIT-021","PIT-028"]},
-    {"id": "PIT-009", "title": "저에너지 photoelectric 효과 과대평가", "status": "anticipated", "cat": "Physics"},
-    {"id": "PIT-010", "title": "Production cut 설정 오류", "status": "anticipated", "cat": "Physics", "xref": ["PIT-001"]},
-    {"id": "PIT-011", "title": "Multi-threading + VR 비호환", "status": "anticipated", "cat": "VR", "xref": ["PIT-007","LT-12"]},
-    {"id": "PIT-012", "title": "선원 스펙트럼 불완전 — 약한 감마선", "status": "anticipated", "cat": "Source"},
-    {"id": "PIT-013", "title": "World volume overlap / protrusion", "status": "resolved", "cat": "Geometry", "note": "P2.3wc fix"},
-    {"id": "PIT-014", "title": "GPS User Histogram 이산 에너지 스미어링", "status": "confirmed", "cat": "Source"},
-    {"id": "PIT-015", "title": "QSA Cs-137 Pb HVL 데이터 오류", "status": "confirmed", "cat": "Reference"},
-    {"id": "PIT-016", "title": "GPS 다중소스 intensity 비율 오류", "status": "confirmed", "cat": "Source", "xref": ["PIT-005"]},
-    {"id": "PIT-017", "title": "감쇠계수 경험식 vs NIST", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004"]},
-    {"id": "PIT-018", "title": "Cavity Theory 적용 영역 오판", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-019"]},
-    {"id": "PIT-019", "title": "고Z 디텍터 μ_en 에너지 의존성", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-018"]},
-    {"id": "PIT-020", "title": "핵종별 최적 기하 필요", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-002","PIT-006"]},
-    {"id": "PIT-021", "title": "다층 차폐 빌드업 비독립성", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-008","PIT-028"]},
-    {"id": "PIT-022", "title": "다층 경계면 2차 전자 평형 교란", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-001"]},
-    {"id": "PIT-023", "title": "중성자 importance biasing 불일치", "status": "confirmed", "cat": "Neutron", "xref": ["PIT-007","LT-04"]},
-    {"id": "PIT-024", "title": "중성자 선량당량 단일 Wr 한계", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"]},
-    {"id": "PIT-025", "title": "GPS multiplicity 미반영 (Cf-252)", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"]},
-    {"id": "PIT-026", "title": "STL 메시 품질 — 입자 누설", "status": "confirmed", "cat": "Geometry", "xref": ["LT-06"]},
-    {"id": "PIT-027", "title": "해석적 빌드업팩터 에너지 독립 가정", "status": "resolved", "cat": "Buildup", "xref": ["ISS-002","LT-09"], "note": "P2.12wc LT-09 해결"},
-    {"id": "PIT-028", "title": "다층 차폐 빌드업팩터 독립 곱 가정", "status": "resolved", "cat": "Buildup", "xref": ["ISS-061","LT-09","PIT-021"], "note": "P2.12wc LT-09 해결"}
+    {
+      "id": "PIT-001", "title": "하전입자평형(CPE) 미성립 — 얇은 디텍터", "status": "confirmed", "cat": "Detector", "xref": ["PIT-002","PIT-006","PIT-020"],
+      "desc": "디텍터가 2차 전자 비정(range)보다 얇으면 흡수선량 << 커마(kerma)",
+      "symptoms": "고에너지 핵종에서 선량이 현저히 과소평가됨",
+      "impact": "Co-60 + 2mm water → -46% 과소평가. 최소 디텍터 두께: Co-60 ≥10mm, Cs-137 ≥5mm, Ir-192 ≥3mm, Se-75 ≥1mm, I-131 ≥3mm, Tc-99m ≥0.5mm (water)",
+      "todo": "소스 에너지 대비 디텍터 두께 자동 경고 구현"
+    },
+    {
+      "id": "PIT-002", "title": "디텍터 자기차폐 — 두꺼운 디텍터", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-020"],
+      "desc": "두꺼운 디텍터가 감마선을 내부에서 감쇠시켜 평균 선량 < 전면 커마",
+      "symptoms": "디텍터가 두꺼울수록 선량이 낮게 측정됨",
+      "impact": "5cm water 기준 — Co-60: 14%, Cs-137: 19%, Ir-192: 23%, Se-75: 30% 손실. 보정식: (1-exp(-μd))/(μd)",
+      "todo": "자기차폐 보정 팩터 자동 계산 구현"
+    },
+    {
+      "id": "PIT-003", "title": "Water Dose ≠ Air Kerma 단위 변환", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004","PIT-005"],
+      "desc": "MC 출력은 water dose이나 감마상수는 R/hr(air kerma 기준) → (μ_en/ρ)_air/(μ_en/ρ)_water 비율 변환 필요",
+      "symptoms": "MC 결과와 해석적 기준값 간 ~10% 체계적 차이",
+      "impact": "~10% 차이. 다선 에너지 핵종은 에너지 가중 변환 필요",
+      "todo": "Water dose와 air kerma 동시 표시 구현"
+    },
+    {
+      "id": "PIT-004", "title": "μ_en vs μ 혼동", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-003","PIT-017"],
+      "desc": "질량 에너지 흡수 계수(μ_en/ρ)와 총 감쇠 계수(μ/ρ)를 혼동하여 선량 변환 오류",
+      "symptoms": "저에너지 영역에서 선량이 수 배 이상 과대평가",
+      "impact": "Se-75 120keV: μ/ρ≈0.167 vs μ_en/ρ≈0.026 → 6.4배 차이",
+      "todo": "NIST XCOM 룩업 테이블 내부 사용"
+    },
+    {
+      "id": "PIT-005", "title": "gammas_per_decay 누락", "status": "confirmed", "cat": "Source", "xref": ["PIT-016"],
+      "desc": "GPS User histogram은 1 event = 1 gamma이나 실제 핵종은 붕괴당 N개 감마 방출 → gpd 보정 필요",
+      "symptoms": "다선 핵종에서 선량이 체계적으로 과소평가",
+      "impact": "Ir-192 gpd=2.072 → 보정 없으면 2배 과소평가",
+      "todo": "소스 매크로에서 gpd 자동 파싱"
+    },
+    {
+      "id": "PIT-006", "title": "디텍터-소스 거리 대비 크기 편향", "status": "confirmed", "cat": "Detector", "xref": ["PIT-020"],
+      "desc": "가까운 거리에서 큰 디텍터를 사용하면 점선원 1/r² 가정 위반 → 입체각 편향",
+      "symptoms": "디텍터 위치별 선량 균일하지 않음",
+      "impact": "권장 기준: 디텍터 반폭/거리 < 0.1. 현재 10cm/30cm = 0.33 → 위반",
+      "todo": "기하학적 보정 팩터 자동 계산"
+    },
+    {
+      "id": "PIT-007", "title": "VR weight artifact", "status": "anticipated", "cat": "VR", "xref": ["PIT-011"],
+      "desc": "Importance biasing에서 큰 가중치 변동이 발생하면 평균은 OK이나 분산이 비정상적으로 높아짐",
+      "symptoms": "FOM(Figure of Merit)이 VR 미적용보다 나빠짐",
+      "impact": "심한 가중치 변동 시 결과 신뢰도 저하. 예방: 레이어당 importance factor ≤ 4",
+      "todo": "가중치 분포 모니터링 구현"
+    },
+    {
+      "id": "PIT-008", "title": "narrow-beam HVL vs broad-beam", "status": "anticipated", "cat": "Shielding", "xref": ["PIT-021","PIT-028"],
+      "desc": "QSA HVL 데이터는 narrow-beam(좁은 빔) 조건만 반영. Broad-beam에서는 콤프턴 산란 빌드업 존재",
+      "symptoms": "MC 결과가 HVL 기반 계산보다 높은 투과율 표시",
+      "impact": "Co-60 5HVL에서 빌드업 팩터 B ≈ 3-5",
+      "todo": "차폐 결과에 빌드업팩터 추정값 표시"
+    },
+    {
+      "id": "PIT-009", "title": "저에너지 photoelectric 효과 과대평가", "status": "anticipated", "cat": "Physics",
+      "desc": "Se-75, Yb-169 등 저에너지 핵종에서 GEANT4 재료 조성 정확도가 결과에 치명적 영향",
+      "symptoms": "재료 조성 미세 변화에 결과가 크게 변동",
+      "impact": "광전효과 단면적 ∝ Z^4-5 → 조성 오류가 증폭됨",
+      "todo": "커스텀 재료 조성 유효성 검증 기능"
+    },
+    {
+      "id": "PIT-010", "title": "Production cut 설정 오류", "status": "anticipated", "cat": "Physics", "xref": ["PIT-001"],
+      "desc": "Production cut(range cut)이 디텍터 크기보다 크면 2차 입자 생성 안 됨 → 선량 과소평가",
+      "symptoms": "디텍터 선량이 비정상적으로 낮음",
+      "impact": "현재 1mm 설정. 작은 디텍터에서 2차 입자 누락 가능",
+      "todo": "cut vs 디텍터 크기 자동 검증"
+    },
+    {
+      "id": "PIT-011", "title": "Multi-threading + VR 비호환", "status": "anticipated", "cat": "VR", "xref": ["PIT-007","LT-12"],
+      "desc": "G4ImportanceBiasing + 평행세계가 MT 모드에서 보장되지 않음 → Serial 모드 강제",
+      "symptoms": "MT 모드에서 VR 적용 시 결과 불일치 또는 크래시",
+      "impact": "멀티스레딩 활용 불가 → 시뮬레이션 속도 제한",
+      "todo": "자동 경고 및 Serial 모드 전환"
+    },
+    {
+      "id": "PIT-012", "title": "선원 스펙트럼 불완전 — 약한 감마선", "status": "anticipated", "cat": "Source",
+      "desc": "주요 감마선(BR > 5%)만 포함하고 약한 선이 생략됨",
+      "symptoms": "총 선량이 체계적으로 약간 과소평가",
+      "impact": "총 선량 기여 ~2-5% 누락",
+      "todo": "NNDC/ENSDF 데이터와 비교 검증"
+    },
+    {
+      "id": "PIT-013", "title": "World volume overlap / protrusion", "status": "resolved", "cat": "Geometry", "note": "P2.3wc fix",
+      "desc": "디텍터가 World volume 밖으로 돌출 → 지오메트리 오버랩 → 결과 무의미",
+      "symptoms": "시뮬레이션 경고 메시지 또는 비정상 결과",
+      "impact": "오버랩 시 결과 완전히 무효",
+      "todo": "자동 바운드 체크 구현"
+    },
+    {
+      "id": "PIT-014", "title": "GPS User Histogram 이산 에너지 스미어링", "status": "confirmed", "cat": "Source",
+      "desc": "넓은 bin edge 설정 시 GPS가 bin 내에서 균일 샘플링 → 이산 감마가 연속 스펙트럼으로 변환",
+      "symptoms": "에너지 스펙트럼이 예상과 다름, 특정 에너지 피크 사라짐",
+      "impact": "I-131에서 넓은 bin 사용 시 ~50% 선량 과소평가. 해결: ≤1 keV 좁은 bin + zero-weight spacer 사용",
+      "todo": "이산 감마에는 항상 좁은 bin 사용 강제"
+    },
+    {
+      "id": "PIT-015", "title": "QSA Cs-137 Pb HVL 데이터 오류", "status": "confirmed", "cat": "Reference",
+      "desc": "QSA Table 7에서 Cs-137 Pb HVL = 22.9mm로 기재 — Steel과 동일값으로 물리적으로 불가능 (Pb Z=82 → HVL이 더 낮아야 함). NIST XCOM 기준: ~5.56mm",
+      "symptoms": "Pb 차폐 계산 시 HVL이 비정상적으로 높음",
+      "impact": "Pb 차폐 두께 4배 과대산정. 원인: Steel 값이 Pb 열에 잘못 복사된 것으로 추정",
+      "todo": "산업 매뉴얼 기준값도 NIST 교차 검증 필수"
+    },
+    {
+      "id": "PIT-016", "title": "GPS 다중소스 intensity 비율 오류", "status": "confirmed", "cat": "Source", "xref": ["PIT-005"],
+      "desc": "다중 GPS 소스에서 강도 비율 오류 → 에너지 스펙트럼 왜곡. PIT-005(gpd 보정)와는 별개 문제",
+      "symptoms": "에너지 스펙트럼이 NNDC 분기비와 불일치",
+      "impact": "에너지 스펙트럼 왜곡 → 선량 결과 오류",
+      "todo": "NNDC branching ratio와 자동 비교"
+    },
+    {
+      "id": "PIT-017", "title": "감쇠계수 경험식 vs NIST", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004"],
+      "desc": "GUI에서 HVL/차폐 계산에 경험식 사용 → NIST XCOM 대비 유의미한 편차. CLI(GEANT4)는 내부적으로 올바른 단면적 사용",
+      "symptoms": "GUI 해석적 결과와 CLI MC 결과 간 체계적 차이",
+      "impact": "광전효과 에지 근처에서 수십% 오차",
+      "todo": "경험식을 NIST 룩업 테이블로 교체"
+    },
+    {
+      "id": "PIT-018", "title": "Cavity Theory 적용 영역 오판", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-019"],
+      "desc": "디텍터 크기 vs 전자 비정에 따라 적용해야 할 공동 이론이 달라짐. 잘못된 이론 적용 → 수십% 오차",
+      "symptoms": "선량 변환 결과가 기대값과 크게 괴리",
+      "impact": ">>range → Large cavity, <<range → Bragg-Gray, ≈range → Burlin (가장 복잡). 오판 시 수십% 오차",
+      "todo": "공동 이론 적용 영역 자동 판별"
+    },
+    {
+      "id": "PIT-019", "title": "고Z 디텍터 μ_en 에너지 의존성", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-018"],
+      "desc": "고Z 디텍터 재료는 μ_en 보정 비율이 에너지에 따라 급격히 변동",
+      "symptoms": "에너지에 따라 보정 비율이 극단적으로 변화",
+      "impact": "Pb→Air: 140keV=4.47, 1250keV=0.95 (370% 변동). Water→Air는 ~4% 변동만",
+      "todo": "고Z 디텍터 재료 선택 시 경고"
+    },
+    {
+      "id": "PIT-020", "title": "핵종별 최적 기하 필요", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-002","PIT-006"],
+      "desc": "CPE(PIT-001)와 자기차폐(PIT-002) trade-off가 핵종 에너지별로 다름 → 단일 디텍터로 모든 핵종 평가 불가",
+      "symptoms": "특정 핵종에서 체계적 과소/과대평가",
+      "impact": "Co-60 1cm water → -10.4% (CPE 실패). Se-75 최적화 후 → +1.5%. 핵종별 최적 디텍터 테이블 제공됨",
+      "todo": "핵종별 최적 디텍터 기하 자동 추천"
+    },
+    {
+      "id": "PIT-021", "title": "다층 차폐 빌드업 비독립성", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-008","PIT-028"],
+      "desc": "각 층의 빌드업팩터를 독립적으로 곱하지만, 실제로는 스펙트럼 경화/연화로 층간 독립이 아님",
+      "symptoms": "다층 차폐에서 해석적 vs MC 결과 괴리 증가",
+      "impact": "층 순서가 결과에 영향 (Pb→Concrete vs Concrete→Pb). 3HVL 초과 다층에서 해석적-MC 괴리 증가",
+      "todo": "다층 해석적 결과에 근사 경고 표시"
+    },
+    {
+      "id": "PIT-022", "title": "다층 경계면 2차 전자 평형 교란", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-001"],
+      "desc": "고Z→저Z 경계에서 2차 전자 평형이 깨짐 → dose enhancement factor(DEF) 발생",
+      "symptoms": "경계면 근처에서 선량 이상 증가",
+      "impact": "DEF 1.1-1.5배 (경계면). 해석적 모델로는 반영 불가",
+      "todo": "고Z↔저Z 인접 레이어 시 경고"
+    },
+    {
+      "id": "PIT-023", "title": "중성자 importance biasing 불일치", "status": "confirmed", "cat": "Neutron", "xref": ["PIT-007","LT-04"],
+      "desc": "현재 importance factor(×2/layer)는 감마의 지수적 감쇠에 최적화됨. 중성자 감속/흡수 패턴은 다름",
+      "symptoms": "중성자 시뮬레이션에서 가중치 변동 증가, FOM 저하",
+      "impact": "가중치 변동 증가 → FOM 저하",
+      "todo": "입자별 importance factor 제어 구현"
+    },
+    {
+      "id": "PIT-024", "title": "중성자 선량당량 단일 Wr 한계", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"],
+      "desc": "흡수선량(Gy)만 기록하며 중성자 방사선 가중치(Wr)는 에너지 의존 (열중성자 2.5, 1MeV ~20). 단일 Wr=20 적용 시 오류",
+      "symptoms": "차폐 후 중성자 선량이 비현실적으로 높음",
+      "impact": "단일 Wr=20 → 차폐 후 선량 2-4배 과대평가",
+      "todo": "에너지빈 fluence scoring → ICRP-74 H*(10) 구현"
+    },
+    {
+      "id": "PIT-025", "title": "GPS multiplicity 미반영 (Cf-252)", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"],
+      "desc": "실제 Cf-252: ~3.757 n/fission + ~7.9 γ/fission이나 1n+1g/event만 시뮬레이션",
+      "symptoms": "중성자/감마 선량 비율 왜곡",
+      "impact": "선형 보정 가능하나 n/γ 선량 분리 스코어링 필요",
+      "todo": "입자 타입별 분리 스코어링 구현"
+    },
+    {
+      "id": "PIT-026", "title": "STL 메시 품질 — 입자 누설", "status": "confirmed", "cat": "Geometry", "xref": ["LT-06"],
+      "desc": "비밀폐(non-watertight) STL 메시 → 입자가 틈새로 통과 → 선량 과대평가. 역전된 법선 → 내부/외부 오판",
+      "symptoms": "STL 지오메트리에서 비정상적으로 높은 투과율",
+      "impact": "입자 누설로 선량 과대평가, 역전 법선으로 차폐 효과 소실",
+      "todo": "STL 로드 시 메시 품질 유효성 검증"
+    },
+    {
+      "id": "PIT-027", "title": "해석적 빌드업팩터 에너지 독립 가정", "status": "resolved", "cat": "Buildup", "xref": ["ISS-002","LT-09"], "note": "P2.12wc LT-09 해결",
+      "desc": "GetBuildupFactor()가 에너지를 무시하고 항상 Co-60 값 반환",
+      "symptoms": "Co-60 외 핵종에서 빌드업팩터 오류",
+      "impact": "Cs-137+Pb 투과율 2-3배 과대평가",
+      "todo": "해결됨: 86행 CSV, 이중선형 보간, 에너지 파라미터 활성화"
+    },
+    {
+      "id": "PIT-028", "title": "다층 차폐 빌드업팩터 독립 곱 가정", "status": "resolved", "cat": "Buildup", "xref": ["ISS-061","LT-09","PIT-021"], "note": "P2.12wc LT-09 해결",
+      "desc": "totalBuildup *= B_i로 각 층 빌드업을 독립 곱으로 계산하나, 빌드업은 층간 독립이 아님",
+      "symptoms": "두꺼운 다층 차폐에서 해석적 투과율이 MC보다 현저히 높음",
+      "impact": "두꺼운 다층 차폐에서 2-5배 과대평가 가능",
+      "todo": "해결됨: Kalos-Kitazume MFP 가중 등가 단층법 구현"
+    }
   ],
   "lt": [
-    {"id": "LT-01", "title": "2차방사선", "priority": 2, "status": "not_started", "deps": ["LT-04"]},
-    {"id": "LT-02", "title": "광핵반응", "priority": 2, "status": "not_started"},
-    {"id": "LT-03", "title": "방사화", "priority": 2, "status": "not_started", "deps": ["LT-04"]},
-    {"id": "LT-04", "title": "Cf-252 핵종 (중성자원)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-024","PIT-025"]},
-    {"id": "LT-05", "title": "산란선 입자 추적", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc"},
-    {"id": "LT-06", "title": "복합 기하 (STL)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-026"]},
-    {"id": "LT-07", "title": "전자/베타 수송", "priority": 2, "status": "not_started"},
-    {"id": "LT-08", "title": "양성자/중이온 수송", "priority": 1, "status": "not_started"},
-    {"id": "LT-09", "title": "선량 평가 고도화", "priority": 2, "status": "partial", "phase": "Ph1~2 ✅ (빌드업)", "session": "P2.12wc", "xref": ["PIT-027","PIT-028"]},
-    {"id": "LT-10", "title": "검출기 응답 시뮬레이션", "priority": 1, "status": "not_started"},
-    {"id": "LT-11", "title": "시간 의존 시뮬레이션", "priority": 1, "status": "not_started"},
-    {"id": "LT-12", "title": "분산/병렬 컴퓨팅 (MT)", "priority": 1, "status": "not_started", "xref": ["PIT-011"]},
-    {"id": "LT-13", "title": "시각화 & 보고서", "priority": 1, "status": "not_started"},
-    {"id": "LT-14", "title": "차폐 설계 최적화 (역문제)", "priority": 1, "status": "partial", "phase": "Ph1 ✅", "session": "P2.12wc"},
-    {"id": "LT-15", "title": "광학 광자 수송", "priority": 1, "status": "not_started"},
-    {"id": "LT-16", "title": "의료 물리", "priority": 1, "status": "not_started"},
-    {"id": "LT-17", "title": "원자력/방폐물", "priority": 1, "status": "not_started"},
-    {"id": "LT-18", "title": "환경/비상 대응", "priority": 1, "status": "not_started"},
-    {"id": "LT-19", "title": "우주선/고에너지 입자", "priority": 1, "status": "not_started"},
-    {"id": "LT-20", "title": "특수 복사", "priority": 1, "status": "not_started"},
-    {"id": "LT-21", "title": "차폐체 자유도 확장 (57종)", "priority": 3, "status": "done", "phase": "Ph1~5 ✅", "session": "P2.9wc"},
-    {"id": "LT-22", "title": "내부 피폭", "priority": 1, "status": "not_started"},
-    {"id": "LT-23", "title": "자기장/전기장", "priority": 1, "status": "not_started"},
-    {"id": "LT-24", "title": "표면/계면 물리", "priority": 1, "status": "not_started"},
-    {"id": "LT-25", "title": "물질 상호작용 완전 구현", "priority": 2, "status": "not_started"},
-    {"id": "LT-26", "title": "방사선 손상 / DPA", "priority": 1, "status": "not_started"}
+    {
+      "id": "LT-01", "title": "2차방사선", "priority": 2, "status": "not_started", "deps": ["LT-04"],
+      "desc": "(n,γ) 포획 감마, (n,p)(n,α) 하전입자, EM 샤워 2차 입자 추적",
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-02", "title": "광핵반응", "priority": 2, "status": "not_started",
+      "desc": "GDR(거대공명) 10-30 MeV 감마 → (γ,n)(γ,p) 반응. 의료 LINAC 중성자 생성, NDT 응용",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-03", "title": "방사화", "priority": 2, "status": "not_started", "deps": ["LT-04"],
+      "desc": "중성자 방사화 → 방사성 핵종 생성률, 붕괴 체인 추적",
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-04", "title": "Cf-252 핵종 (중성자원)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-024","PIT-025"],
+      "desc": "Cf-252 중성자원 시뮬레이션: Watt 스펙트럼, 혼합 n+γ 장, 이중 바이어싱",
+      "deps": [],
+      "done": "Phase 1 — Watt spectrum GPS, 혼합 n+γ field, QGSP_BERT_HP 물리, dual biasing, G4NDL 4.7",
+      "remaining": "Phase 2 — ICRP-74 H*(10) 에너지 의존 환산, 입자 분리 스코어링, 실제 다중도(multiplicity)"
+    },
+    {
+      "id": "LT-05", "title": "산란선 입자 추적", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc",
+      "desc": "입자 궤적 CSV 출력, 산란각 분석, 3D 시각화",
+      "deps": [],
+      "done": "Phase 1 — Trajectory CSV 출력 (SteppingAction → TrackingRecorder), 매크로 제어(/tracks/*), thread-safe",
+      "remaining": "Phase 2 — 3D WebGL 시각화, 산란각 분석, maze/duct STL 예제"
+    },
+    {
+      "id": "LT-06", "title": "복합 기하 (STL)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-026"],
+      "desc": "STL 3D CAD 모델 임포트 및 시뮬레이션 지오메트리 변환",
+      "deps": [],
+      "done": "Phase 1 — Binary/ASCII STL import, 매크로 제어, 역할 분류(shield/detector/structure), 바운딩박스, scale factor",
+      "remaining": "Phase 2 — Boolean operations, P14 3DLink 연동, 메시 품질 검증"
+    },
+    {
+      "id": "LT-07", "title": "전자/베타 수송", "priority": 2, "status": "not_started",
+      "desc": "Sr-90/Y-90, P-32 베타 차폐, 제동복사 X선 생성. Physics: G4EmStandardPhysics_option4",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-08", "title": "양성자/중이온 수송", "priority": 1, "status": "not_started",
+      "desc": "양성자 치료 Bragg peak, 중이온 치료, GCR/SPE 우주 방사선. Physics: QGSP_BIC_HP, G4IonPhysics",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-09", "title": "선량 평가 고도화", "priority": 2, "status": "partial", "phase": "Ph1~2 ✅ (빌드업)", "session": "P2.12wc", "xref": ["PIT-027","PIT-028"],
+      "desc": "에너지 의존 빌드업팩터, 다층 빌드업, 스펙트럼 분석, 유효선량, 장기선량, H*(10)",
+      "deps": [],
+      "done": "Phase 1-2 — ANS 6.4.3 에너지 의존 빌드업 (86행 CSV, 13재료×6-8에너지), 이중선형 보간, Kalos-Kitazume 다층법",
+      "remaining": "에너지 스펙트럼 분석, PDD curves, 등선량 맵, KERMA vs Dose, 유효선량(ICRP-103), 장기선량, H*(10)"
+    },
+    {
+      "id": "LT-10", "title": "검출기 응답 시뮬레이션", "priority": 1, "status": "not_started",
+      "desc": "이온챔버, GM counter, TLD/OSL, 반도체, 중성자 검출기(BF3, He-3, Bonner sphere) 응답 시뮬레이션",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-11", "title": "시간 의존 시뮬레이션", "priority": 1, "status": "not_started",
+      "desc": "반감기 보정, 붕괴 체인(Mo-99→Tc-99m), 만성 피폭, 조사 후 방사화 붕괴",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-12", "title": "분산/병렬 컴퓨팅 (MT)", "priority": 1, "status": "not_started", "xref": ["PIT-011"],
+      "desc": "GEANT4 MT 모드, MPI 분산, GPU 가속(Opticks), 클라우드 컴퓨팅",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-13", "title": "시각화 & 보고서", "priority": 1, "status": "not_started",
+      "desc": "3D OpenGL/WebGL 기하 뷰어, 입자 궤적 표시, 등선량 맵, 인터랙티브 Plotly/D3.js 보고서, 규제 보고서 템플릿",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-14", "title": "차폐 설계 최적화 (역문제)", "priority": 1, "status": "partial", "phase": "Ph1 ✅", "session": "P2.12wc",
+      "desc": "역문제 풀기(이분법 + 해석적), ShieldDesignDialog GUI, 규제 프리셋, 다목적 최적화",
+      "deps": [],
+      "done": "Phase 1 — 역문제 솔버(이분법 + 해석적), ShieldDesignDialog GUI, 규제 프리셋",
+      "remaining": "다목적 최적화(비용/무게/선량 Pareto), 재료 조합 탐색, 유전/베이지안 최적화"
+    },
+    {
+      "id": "LT-15", "title": "광학 광자 수송", "priority": 1, "status": "not_started",
+      "desc": "섬광체 시뮬레이션(NaI, CsI, LaBr3), 체렌코프 방사선, 광섬유 선량계. Physics: G4OpticalPhysics",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-16", "title": "의료 물리", "priority": 1, "status": "not_started",
+      "desc": "RT QA (LINAC head, MLC), 진단 CT 선량(CTDI), 핵의학(I-131, Lu-177), 근접치료(Ir-192, Cs-137), ICRP 팬텀",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-17", "title": "원자력/방폐물", "priority": 1, "status": "not_started",
+      "desc": "사용후핵연료 캐스크 차폐, 폐기물 드럼 외부 선량률, 해체 절단 선량, 임계안전",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-18", "title": "환경/비상 대응", "priority": 1, "status": "not_started",
+      "desc": "대기 확산 + 지면 침적 선량, 오염 구역 선량률, 사고 시나리오 선량 재구성, 이동식 차폐",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-19", "title": "우주선/고에너지 입자", "priority": 1, "status": "not_started",
+      "desc": "지표면 뮤온 선량률, 지하시설 차폐, 파이온/카온 HEP 차폐, GCR/SPE 모델(CREME96, ISO-15390), 항공승무원 선량. Physics: FTFP_BERT, QGSP_BERT",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-20", "title": "특수 복사", "priority": 1, "status": "not_started",
+      "desc": "전이 방사선, 싱크로트론 방사선, 델타선, 하드론/EM 캐스케이드, 파쇄 생성물, 지발 중성자",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-21", "title": "차폐체 자유도 확장 (57종)", "priority": 3, "status": "done", "phase": "Ph1~5 ✅", "session": "P2.9wc",
+      "desc": "15→57종 재료 확장, 커스텀 화합물(조성식 파서 + 질량분율 + 혼합법칙 μ), NIST 300+ 직접입력, N-layer 적층, 동위원소 농축 + 가스 T/P 밀도",
+      "deps": [],
+      "done": "Phase 1-5 전체 완료 — 57종 재료, 커스텀 화합물, NIST 300+, N-layer, 동위원소 농축, 가스 T/P",
+      "remaining": "구배/곡면 차폐 (LT-06 필요), 나노구조/복합 차폐재"
+    },
+    {
+      "id": "LT-22", "title": "내부 피폭", "priority": 1, "status": "not_started",
+      "desc": "흡입/섭취 경로, ICRP 130-137 생체동력학 모델, S-factor/SAF, 복셀 팬텀(ICRP-110), 알파 방출체(Rn-222, Ra-226, Am-241)",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-23", "title": "자기장/전기장", "priority": 1, "status": "not_started",
+      "desc": "자기장 내 하전입자 수송(사이클로트론, MRI), 전기장 가속, 복합장",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-24", "title": "표면/계면 물리", "priority": 1, "status": "not_started",
+      "desc": "차폐체 입구 후방산란, 경계면 surface current/flux, 결정 내 채널링",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-25", "title": "물질 상호작용 완전 구현", "priority": 2, "status": "not_started",
+      "desc": "모든 GEANT4 물리 프로세스(EM 14종, Hadronic 9종, Decay 5종, Optical 5종, Low-energy 4종)를 ShieldDose에서 평가 가능하게 구현",
+      "deps": ["LT-04", "LT-07", "LT-08"],
+      "done": "",
+      "remaining": "전체 미착수"
+    },
+    {
+      "id": "LT-26", "title": "방사선 손상 / DPA", "priority": 1, "status": "not_started",
+      "desc": "DPA 평가, PKA 에너지 스펙트럼, 반도체/광학 NIEL 손상, 전자장비 SEE, RPV 취화",
+      "deps": [],
+      "done": "",
+      "remaining": "전체 미착수"
+    }
   ],
   "req": [
     {"id": "REQ-001", "title": "GEANT4 시뮬레이션 코드 구현", "cat": "Core", "coverage": "~70%"},
