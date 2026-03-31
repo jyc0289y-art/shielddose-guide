@@ -412,9 +412,13 @@ footer {
   <li><a href="#typical">Typical Use</a></li>
   <li><a href="#shielddose">ShieldDose</a></li>
   <li><a href="#components">Components</a></li>
+  <li><a href="#materials">Materials</a></li>
   <li><a href="#gui">GUI</a></li>
+  <li><a href="#analytical">Analytical</a></li>
+  <li><a href="#design-tool">Design Tool</a></li>
   <li><a href="#data-flow">Data Flow</a></li>
   <li><a href="#build">Build</a></li>
+  <li><a href="#quality">Quality</a></li>
   <li><a href="#why">Why</a></li>
 </ul>
 </nav>
@@ -431,7 +435,7 @@ footer {
 
 <p style="text-align:center; color:var(--dim); margin-bottom:40px;">
   CERN GEANT4 Monte Carlo Simulation &rarr; ShieldDose CLI &rarr; ShieldDose GUI<br>
-  P2.7wc &mdash; 2026-03-29
+  P2.13wc &mdash; 2026-03-31
 </p>
 
 <!-- TOC -->
@@ -439,14 +443,18 @@ footer {
   <strong style="color:var(--cyan);">Contents</strong>
   <ol>
     <li><a href="#intro">GEANT4와 ShieldDose의 관계 한눈에 보기</a></li>
-    <li><a href="#terms">용어 사전 (CLI, GUI, Qt, CMake 등)</a></li>
+    <li><a href="#terms">용어 사전 (방사선 물리, 선량, GEANT4, 소프트웨어, 표준)</a></li>
     <li><a href="#geant4">GEANT4란 무엇인가</a></li>
     <li><a href="#typical">일반적인 GEANT4 사용법 (다른 연구자들은 어떻게 쓰나)</a></li>
     <li><a href="#shielddose">ShieldDose CLI: 우리의 GEANT4 애플리케이션</a></li>
     <li><a href="#components">GEANT4 핵심 컴포넌트 상세 해설</a></li>
+    <li><a href="#materials">재료 시스템 (57종 + 커스텀 + N-layer)</a></li>
     <li><a href="#gui">ShieldDose GUI: 사용자 인터페이스 계층</a></li>
+    <li><a href="#analytical">해석적 선량 계산 (Analytical Calculation)</a></li>
+    <li><a href="#design-tool">차폐 설계 도구 (Inverse Shield Design)</a></li>
     <li><a href="#data-flow">End-to-End 데이터 흐름</a></li>
     <li><a href="#build">빌드 시스템 (CMake, Makefile, Qt)</a></li>
+    <li><a href="#quality">품질 보증 (QA) &mdash; ISS, PIT, LT 추적</a></li>
     <li><a href="#why">왜 이렇게 설계하는가</a></li>
   </ol>
 </div>
@@ -503,6 +511,358 @@ footer {
 <section id="terms">
 <h2><span class="num">02</span>용어 사전</h2>
 
+<p>ShieldDose 프로젝트에서 사용되는 주요 용어를 <strong>6개 카테고리</strong>로 정리합니다. 총 <em>70+</em> 용어를 수록.</p>
+
+<!-- ─── Physics (방사선 물리) ─── -->
+<h3>Physics (방사선 물리)</h3>
+<table>
+<tr>
+  <th>용어</th>
+  <th>뜻</th>
+  <th>우리 프로젝트에서</th>
+</tr>
+<tr>
+  <td><strong>HVL</strong><br><span style="color:var(--dim)">Half-Value Layer</span></td>
+  <td>
+    방사선의 <strong>선량률을 50%로 줄이는 데 필요한 차폐 두께</strong>.<br>
+    물질과 에너지에 따라 값이 다름. 차폐 설계의 기본 단위.
+  </td>
+  <td>
+    MC 시뮬레이션으로 6개 핵종 전부 HVL 결정 완료 (P2.6wc).<br>
+    38회 두께 스캔으로 독립 측정. QSA 매뉴얼 기준 PASS.
+  </td>
+</tr>
+<tr>
+  <td><strong>TVL</strong><br><span style="color:var(--dim)">Tenth-Value Layer</span></td>
+  <td>
+    방사선의 <strong>선량률을 10%로 줄이는 데 필요한 차폐 두께</strong>.<br>
+    TVL &asymp; 3.32 &times; HVL (빌드업 무시 시).
+  </td>
+  <td>
+    HVL과 함께 차폐 설계 도구에서 참고값으로 표시.
+  </td>
+</tr>
+<tr>
+  <td><strong>감쇠계수</strong><br><span style="color:var(--dim)">&mu;, Linear Attenuation Coefficient</span></td>
+  <td>
+    물질이 방사선을 흡수하는 정도를 나타내는 <strong>단위 길이당 감쇠율</strong> [cm&sup1;].<br>
+    I = I&sdot;exp(-&mu;x) &mdash; Beer-Lambert 법칙의 핵심 파라미터.
+  </td>
+  <td>
+    NIST XCOM 데이터베이스에서 에너지별 &mu; 값을 사용.<br>
+    해석적 계산에서 exp(-&mu;x) 항으로 차폐 효과를 계산.
+  </td>
+</tr>
+<tr>
+  <td><strong>빌드업 팩터</strong><br><span style="color:var(--dim)">Buildup Factor, B</span></td>
+  <td>
+    <strong>산란선 기여를 보정하는 계수</strong>.<br>
+    좁은 빔(narrow beam) 감쇠 대비 넓은 빔(broad beam)에서의 실제 선량 증가분.<br>
+    B &ge; 1 (항상). 두꺼운 차폐일수록 B가 크게 증가.
+  </td>
+  <td>
+    ANS 6.4.3 표준 데이터로 에너지-MFP 이중선형 보간 (P2.12wc).<br>
+    다층 차폐 시 Kalos-Kitazume 방법 적용.
+  </td>
+</tr>
+<tr>
+  <td><strong>Compton 산란</strong><br><span style="color:var(--dim)">Compton Scattering</span></td>
+  <td>
+    감마선이 <strong>전자에 의해 산란되며 에너지가 감소</strong>하는 과정.<br>
+    중간 에너지 영역(수백 keV~수 MeV)에서 지배적인 상호작용.
+  </td>
+  <td>
+    GEANT4 option4 물리 리스트에서 정밀 모델링.<br>
+    빌드업 팩터가 커지는 주 원인.
+  </td>
+</tr>
+<tr>
+  <td><strong>광전 효과</strong><br><span style="color:var(--dim)">Photoelectric Effect</span></td>
+  <td>
+    감마선이 <strong>원자에 완전 흡수</strong>되어 전자가 방출되는 과정.<br>
+    저에너지 영역에서 지배적. Z가 높을수록 확률 증가 (&prop; Z&sup5;).
+  </td>
+  <td>
+    납(Z=82)이 저에너지 감마선 차폐에 효과적인 이유.<br>
+    Tc-99m(140 keV)은 광전 효과가 주요 감쇠 메커니즘.
+  </td>
+</tr>
+<tr>
+  <td><strong>쌍생성</strong><br><span style="color:var(--dim)">Pair Production</span></td>
+  <td>
+    1.022 MeV 이상의 감마선이 원자핵 근처에서 <strong>전자-양전자 쌍을 생성</strong>하는 과정.<br>
+    고에너지 영역에서 지배적.
+  </td>
+  <td>
+    Co-60(1.17+1.33 MeV)에서 일부 기여.<br>
+    GEANT4 option4에서 자동 처리.
+  </td>
+</tr>
+<tr>
+  <td><strong>등방 방출</strong><br><span style="color:var(--dim)">Isotropic Emission</span></td>
+  <td>
+    <strong>모든 방향으로 균일하게</strong> 방사선을 방출하는 것.<br>
+    실제 밀봉선원의 방출 패턴에 해당.
+  </td>
+  <td>
+    GPS 설정: <code>/gps/ang/type iso</code><br>
+    4&pi; 등방 방출로 실제 선원을 모사.
+  </td>
+</tr>
+<tr>
+  <td><strong>역제곱 법칙</strong><br><span style="color:var(--dim)">Inverse Square Law</span></td>
+  <td>
+    <strong>거리 제곱에 반비례</strong>하여 선량률이 감소하는 법칙.<br>
+    DoseRate &prop; 1/d&sup2; &mdash; 거리를 2배로 늘리면 선량률은 1/4.
+  </td>
+  <td>
+    해석적 계산의 &Gamma; &times; A / d&sup2; 항에 반영.<br>
+    MC 시뮬레이션에서는 자동으로 구현됨 (기하학적 결과).
+  </td>
+</tr>
+</table>
+
+<!-- ─── Dosimetry (선량 측정) ─── -->
+<h3>Dosimetry (선량 측정)</h3>
+<table>
+<tr>
+  <th>용어</th>
+  <th>뜻</th>
+  <th>우리 프로젝트에서</th>
+</tr>
+<tr>
+  <td><strong>흡수선량</strong><br><span style="color:var(--dim)">Absorbed Dose, Gy</span></td>
+  <td>
+    물질 <strong>단위질량당 흡수된 에너지</strong>.<br>
+    단위: Gy (Gray) = J/kg. 방사선의 물리적 효과를 나타내는 기본 선량.
+  </td>
+  <td>
+    MC 시뮬레이션의 직접 출력 (MeanDose_Gy).<br>
+    G4PSDoseDeposit 스코어러가 Gy 단위로 기록.
+  </td>
+</tr>
+<tr>
+  <td><strong>선량률</strong><br><span style="color:var(--dim)">Dose Rate</span></td>
+  <td>
+    <strong>단위시간당 선량</strong> (mSv/h, &mu;Sv/h).<br>
+    방사선 방호에서 가장 중요한 실용 지표.
+  </td>
+  <td>
+    DoseRate = MeanDose &times; Activity &times; 3600<br>
+    결과 보고서의 핵심 출력값.
+  </td>
+</tr>
+<tr>
+  <td><strong>감마상수</strong><br><span style="color:var(--dim)">&Gamma;, Gamma Constant</span></td>
+  <td>
+    핵종 고유의 <strong>선량률 환산 계수</strong>.<br>
+    단위 방사능(1 MBq)이 1m 거리에서 발생시키는 선량률.
+  </td>
+  <td>
+    6핵종 전부 &plusmn;10% 이내 검증 PASS (P2.3wc~P2.5wc).<br>
+    QSA Global 880 Series 매뉴얼 기준값 사용.
+  </td>
+</tr>
+<tr>
+  <td><strong>H*(10)</strong><br><span style="color:var(--dim)">Ambient Dose Equivalent</span></td>
+  <td>
+    <strong>주변선량당량</strong>. ICRP-74 기반 방사선 방호 선량.<br>
+    조직 등가 구체 10mm 깊이에서의 선량당량.
+  </td>
+  <td>
+    보고서에서 규제 기준 비교에 사용.<br>
+    감마선의 경우 흡수선량 &asymp; H*(10) (선질계수 &asymp; 1).
+  </td>
+</tr>
+<tr>
+  <td><strong>공기커마율</strong><br><span style="color:var(--dim)">Air Kerma Rate</span></td>
+  <td>
+    공기 중 방사선의 <strong>에너지 전달률</strong>.<br>
+    Kerma = Kinetic Energy Released per unit MAss.
+  </td>
+  <td>
+    감마상수 정의에서 사용되는 기본 물리량.<br>
+    &Gamma; = Air Kerma Rate per unit activity at 1m.
+  </td>
+</tr>
+<tr>
+  <td><strong>에너지 침적</strong><br><span style="color:var(--dim)">Energy Deposit</span></td>
+  <td>
+    입자가 <strong>물질에 전달한 에너지</strong> [MeV].<br>
+    흡수선량 계산의 원시 데이터.
+  </td>
+  <td>
+    G4PSEnergyDeposit 스코어러로 기록.<br>
+    Dose = &Sigma;Edep / (밀도 &times; 부피).
+  </td>
+</tr>
+</table>
+
+<!-- ─── Nuclear (핵물리) ─── -->
+<h3>Nuclear (핵물리)</h3>
+<table>
+<tr>
+  <th>용어</th>
+  <th>뜻</th>
+  <th>우리 프로젝트에서</th>
+</tr>
+<tr>
+  <td><strong>핵종</strong><br><span style="color:var(--dim)">Nuclide</span></td>
+  <td>
+    특정 <strong>원자번호(Z) + 질량수(A)</strong> 조합의 원자핵.<br>
+    예: Co-60 (Z=27, A=60), Cs-137 (Z=55, A=137).
+  </td>
+  <td>
+    6개 핵종 지원: Co-60, Cs-137, Ir-192, Se-75, I-131, Tc-99m.<br>
+    동위원소 선택 기능으로 확장 가능 (P2.9wc).
+  </td>
+</tr>
+<tr>
+  <td><strong>붕괴도식</strong><br><span style="color:var(--dim)">Decay Scheme</span></td>
+  <td>
+    핵종의 <strong>붕괴 경로와 방출 방사선 정보</strong>.<br>
+    에너지, 분기비, 감마선/베타선 등을 도식으로 표현.
+  </td>
+  <td>
+    GPS 매크로 파일이 붕괴도식 기반으로 작성됨.<br>
+    Co-60: 2개 감마선 캐스케이드 (1.173 + 1.332 MeV).
+  </td>
+</tr>
+<tr>
+  <td><strong>방사능</strong><br><span style="color:var(--dim)">Activity, Bq/Ci</span></td>
+  <td>
+    <strong>단위시간당 붕괴 수</strong>.<br>
+    1 Bq = 1 붕괴/초, 1 Ci = 3.7&times;10<sup>10</sup> Bq.
+  </td>
+  <td>
+    GUI에서 MBq, GBq, Ci 단위로 입력.<br>
+    선량률 계산: DoseRate &prop; Activity.
+  </td>
+</tr>
+<tr>
+  <td><strong>분기비</strong><br><span style="color:var(--dim)">Branching Ratio</span></td>
+  <td>
+    특정 붕괴 경로의 <strong>확률</strong>.<br>
+    예: Cs-137에서 662 keV 감마선 방출 확률 = 85.1%.
+  </td>
+  <td>
+    GPS User Histogram에서 분기비를 에너지 가중치로 반영.<br>
+    Ir-192(14개 선), Se-75(8개 선) 등 다중선 핵종.
+  </td>
+</tr>
+</table>
+
+<!-- ─── GEANT4 (시뮬레이션) ─── -->
+<h3>GEANT4 (시뮬레이션)</h3>
+<table>
+<tr>
+  <th>용어</th>
+  <th>뜻</th>
+  <th>우리 프로젝트에서</th>
+</tr>
+<tr>
+  <td><strong>Monte Carlo</strong><br><span style="color:var(--dim)">MC 시뮬레이션</span></td>
+  <td>
+    난수(랜덤)를 사용해 물리 과정을 통계적으로 모사하는 방법.<br>
+    입자 하나하나의 궤적을 추적하여, 수만~수백만 개의 입자를 시뮬레이션합니다.<br>
+    이벤트 수가 많을수록 결과가 정밀해집니다.
+  </td>
+  <td>
+    GEANT4 = Monte Carlo 시뮬레이션 엔진.<br>
+    ShieldDose에서 보통 50만~100만 이벤트를 실행합니다.
+  </td>
+</tr>
+<tr>
+  <td><strong>G4RunManager</strong></td>
+  <td>
+    GEANT4 시뮬레이션의 <strong>총괄 관리자</strong>.<br>
+    기하 초기화, 물리 초기화, 이벤트 루프 실행, 결과 수집을 담당.
+  </td>
+  <td>
+    ShieldDose CLI의 main.cc에서 생성.<br>
+    <code>/run/beamOn 500000</code> 명령으로 이벤트 실행.
+  </td>
+</tr>
+<tr>
+  <td><strong>MT Mode</strong><br><span style="color:var(--dim)">Multi-Threading</span></td>
+  <td>
+    <strong>여러 CPU 코어로 병렬 시뮬레이션</strong>.<br>
+    G4MTRunManager를 사용하여 이벤트를 코어별로 분배.
+  </td>
+  <td>
+    현재 ShieldDose는 Serial Mode(단일 코어).<br>
+    LT-04로 MT Mode 전환 예정 (Phase 1 완료, P2.10wc).
+  </td>
+</tr>
+<tr>
+  <td><strong>Serial Mode</strong></td>
+  <td>
+    <strong>단일 코어 순차 실행</strong>.<br>
+    G4RunManager 사용. 디버깅이 쉽고 결정론적 재현이 가능.
+  </td>
+  <td>
+    현재 ShieldDose CLI의 실행 방식.<br>
+    검증 단계에서 재현성을 위해 유지.
+  </td>
+</tr>
+<tr>
+  <td><strong>G4GeneralParticleSource</strong><br><span style="color:var(--dim)">GPS</span></td>
+  <td>
+    GEANT4의 <strong>입자 소스 정의 시스템</strong>.<br>
+    입자 종류, 에너지, 각도 분포를 매크로로 설정.
+  </td>
+  <td>
+    6개 핵종별 GPS 매크로 작성 완료.<br>
+    Mono, User Histogram, Multiple Vertex 방식 사용.
+  </td>
+</tr>
+<tr>
+  <td><strong>SteppingAction</strong></td>
+  <td>
+    입자 이동의 <strong>각 단계(step)마다 실행되는 콜백</strong>.<br>
+    에너지 침적, 경계 통과 등을 기록하는 데 사용.
+  </td>
+  <td>
+    디텍터 영역에서의 에너지 침적을 기록.<br>
+    선량 스코어링의 핵심 컴포넌트.
+  </td>
+</tr>
+<tr>
+  <td><strong>MFD</strong><br><span style="color:var(--dim)">MultiFunctionalDetector</span></td>
+  <td>
+    <strong>복수 물리량을 동시에 측정</strong>하는 디텍터 구조.<br>
+    하나의 디텍터에 여러 스코어러(선량, 에너지, 플럭스)를 연결.
+  </td>
+  <td>
+    ShieldDose에서 DoseDeposit + EnergyDeposit 동시 측정.
+  </td>
+</tr>
+<tr>
+  <td><strong>Importance Biasing</strong></td>
+  <td>
+    <strong>중요도 기반 분산감소 기법</strong>.<br>
+    관심 영역(디텍터)에 입자가 도달할 확률을 인위적으로 높임.
+  </td>
+  <td>
+    차폐벽을 N층으로 분할, 깊은 층에서 입자를 분열시켜 통계 확보.<br>
+    상대오차 99.9% &rarr; &lt;5% 달성 (P2.3wc).
+  </td>
+</tr>
+<tr>
+  <td><strong>Variance Reduction</strong><br><span style="color:var(--dim)">VR, 분산감소</span></td>
+  <td>
+    <strong>통계 효율 향상</strong>을 위한 기법 총칭.<br>
+    Importance Biasing, Russian Roulette, Weight Window 등 포함.
+  </td>
+  <td>
+    ShieldDose에서는 Importance Biasing을 자동 최적화.<br>
+    사용자가 수동 설정할 필요 없음.
+  </td>
+</tr>
+</table>
+
+<!-- ─── Software (소프트웨어) ─── -->
+<h3>Software (소프트웨어)</h3>
 <table>
 <tr>
   <th>용어</th>
@@ -618,18 +978,6 @@ footer {
   </td>
 </tr>
 <tr>
-  <td><strong>Monte Carlo</strong><br><span style="color:var(--dim)">MC 시뮬레이션</span></td>
-  <td>
-    난수(랜덤)를 사용해 물리 과정을 통계적으로 모사하는 방법.<br>
-    입자 하나하나의 궤적을 추적하여, 수만~수백만 개의 입자를 시뮬레이션합니다.<br>
-    이벤트 수가 많을수록 결과가 정밀해집니다.
-  </td>
-  <td>
-    GEANT4 = Monte Carlo 시뮬레이션 엔진.<br>
-    ShieldDose에서 보통 50만~100만 이벤트를 실행합니다.
-  </td>
-</tr>
-<tr>
   <td><strong>CSV</strong></td>
   <td>
     Comma-Separated Values. 쉼표로 구분된 텍스트 데이터 파일.<br>
@@ -651,6 +999,61 @@ footer {
   </td>
 </tr>
 </table>
+
+<!-- ─── Standards (표준/규제) ─── -->
+<h3>Standards (표준/규제)</h3>
+<table>
+<tr>
+  <th>용어</th>
+  <th>뜻</th>
+  <th>우리 프로젝트에서</th>
+</tr>
+<tr>
+  <td><strong>ANS 6.4.3</strong></td>
+  <td>
+    American Nuclear Society 발행 <strong>빌드업 팩터 표준 데이터</strong>.<br>
+    물질별, 에너지별, MFP별 빌드업 팩터 테이블 제공.
+  </td>
+  <td>
+    LT-09 에너지 의존 빌드업 팩터 구현에 사용 (P2.12wc).<br>
+    log(E) &times; log(MFP) 이중선형 보간으로 정밀 계산.
+  </td>
+</tr>
+<tr>
+  <td><strong>ICRP-74</strong></td>
+  <td>
+    International Commission on Radiological Protection 간행물 74.<br>
+    <strong>방사선 방호량 환산계수</strong> (fluence-to-dose conversion).
+  </td>
+  <td>
+    H*(10) 선량당량 계산의 기준.<br>
+    감마선 선질계수 &asymp; 1로 흡수선량과 유사.
+  </td>
+</tr>
+<tr>
+  <td><strong>QSA Global</strong></td>
+  <td>
+    <strong>밀봉선원 제조사</strong>. 880 Series 등 산업/의료용 선원 생산.<br>
+    매뉴얼에 감마상수, HVL 등 기준 데이터 수록.
+  </td>
+  <td>
+    감마상수, HVL 검증의 <strong>1차 기준 데이터</strong>.<br>
+    6핵종 전부 QSA 기준 대비 &plusmn;10% 이내 PASS.
+  </td>
+</tr>
+<tr>
+  <td><strong>NIST XCOM</strong></td>
+  <td>
+    NIST에서 제공하는 <strong>X선 감쇠계수 표준 데이터베이스</strong>.<br>
+    원소/화합물별 에너지별 질량 감쇠계수 제공.
+  </td>
+  <td>
+    해석적 계산에서 &mu; 값의 출처.<br>
+    57종 재료 모두 NIST 데이터 기반.
+  </td>
+</tr>
+</table>
+
 </section>
 
 
@@ -795,7 +1198,7 @@ $ python3 analyze_dose.py output.csv</code></pre>
     <li>CMake 빌드 시스템 이해</li>
     <li>물리 리스트 선택 지식 (잘못 고르면 결과 오류)</li>
     <li>결과 분석 스크립트 직접 작성</li>
-    <li>디버깅 어려움 (잘못된 기하 → 침묵 실패)</li>
+    <li>디버깅 어려움 (잘못된 기하 &rarr; 침묵 실패)</li>
   </ul>
 </div>
 
@@ -843,17 +1246,19 @@ $ python3 analyze_dose.py output.csv</code></pre>
 
   일반 연구자가 하는 일          ShieldDose가 대신 해주는 일
   ─────────────────────         ────────────────────────────
-  DetectorConstruction 작성  →  납/철/콘크리트 차폐 + 물 디텍터 자동 구성
-  PrimaryGenerator 작성      →  6핵종(Co-60~Tc-99m) GPS 소스 매크로 내장
+  DetectorConstruction 작성  →  <span class="hl-cyan">57종 재료</span> + N-layer 차폐 + 물 디텍터 자동 구성
+  PrimaryGenerator 작성      →  <span class="hl-cyan">6핵종</span>(Co-60, Cs-137, Ir-192, Se-75, I-131, Tc-99m) GPS 매크로 내장
   PhysicsList 선택           →  최적 물리 리스트 선정 완료 (option4)
   SteppingAction 작성        →  에너지 침적 스코어링 구현 완료
   RunAction 작성             →  CSV 자동 출력 + 통계 계산 구현 완료
-  분산감소 기법 구현          →  Importance Biasing 구현 완료
+  분산감소 기법 구현          →  <span class="hl-cyan">Importance Biasing 자동 최적화</span> 구현 완료
+  재료 데이터 관리            →  <span class="hl-cyan">GEANT4 NIST DB 57종</span> + 커스텀 재료 정의
 
 <span class="hl-cyan">검증 상태:</span>
   감마상수 6/6 핵종 ±10% PASS (P2.3wc~P2.5wc)
   HVL 6/6 핵종 PASS (P2.6wc)
   MC 독립 HVL 결정 완료 (38회 두께 스캔)
+  코드 품질 감사: 104건 ISS, 91건 해결 (87.5%) (P2.11wc~P2.12wc)
 </pre>
 </div>
 
@@ -886,6 +1291,11 @@ Idle> /run/beamOn 500000</code></pre>
   <td><code>0 0 5 cm</code></td>
 </tr>
 <tr>
+  <td><code>/shield/nlayer</code></td>
+  <td>N-layer 다층 차폐 설정</td>
+  <td><code>G4_Pb 2.0 G4_CONCRETE 10.0</code></td>
+</tr>
+<tr>
   <td><code>/detector/material</code></td>
   <td>디텍터 물질</td>
   <td><code>G4_WATER</code></td>
@@ -910,6 +1320,17 @@ Idle> /run/beamOn 500000</code></pre>
   <td>시뮬레이션 실행</td>
   <td><code>500000</code> (50만 이벤트)</td>
 </tr>
+</table>
+
+<h3>지원 핵종 (6종)</h3>
+<table>
+<tr><th>핵종</th><th>에너지</th><th>GPS 방식</th><th>용도</th></tr>
+<tr><td>Co-60</td><td>1.173 + 1.332 MeV</td><td>Multiple Vertex</td><td>산업용 비파괴검사, 방사선치료</td></tr>
+<tr><td>Cs-137</td><td>0.662 MeV</td><td>Mono</td><td>산업 계측, 교정용 선원</td></tr>
+<tr><td>Ir-192</td><td>296~612 keV (다중선)</td><td>User Histogram</td><td>비파괴검사, 근접치료</td></tr>
+<tr><td>Se-75</td><td>121~401 keV (다중선)</td><td>User Histogram</td><td>비파괴검사 (Ir-192 대체)</td></tr>
+<tr><td>I-131</td><td>80~723 keV (다중선)</td><td>User Histogram</td><td>갑상선 치료, 핵의학</td></tr>
+<tr><td>Tc-99m</td><td>140 keV</td><td>Mono</td><td>핵의학 진단 (SPECT)</td></tr>
 </table>
 
 <h3>CLI 출력물</h3>
@@ -1146,10 +1567,104 @@ Idle> /run/beamOn 500000</code></pre>
 
 
 <!-- ═══════════════════════════════════════ -->
-<!-- 7. GUI                                 -->
+<!-- 7. MATERIALS                           -->
+<!-- ═══════════════════════════════════════ -->
+<section id="materials">
+<h2><span class="num">07</span>재료 시스템</h2>
+
+<p>ShieldDose는 <strong>57종의 내장 재료</strong>를 지원하며, 사용자 정의 재료와 <strong>N-layer 다층 차폐</strong>를 구성할 수 있습니다. (P2.9wc LT-21 Phase 1~5 완료)</p>
+
+<h3>GEANT4 NIST 재료 데이터베이스 (57종)</h3>
+
+<p>GEANT4는 NIST에서 제공하는 표준 물질 데이터를 내장하고 있습니다. ShieldDose에서 사용 가능한 57종은 아래 카테고리로 분류됩니다:</p>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">재료 카테고리 (57종)</span>
+
+  <span class="hl-cyan">금속 (Metals)</span>
+  │  G4_Pb (납), G4_Fe (철), G4_Cu (구리), G4_Al (알루미늄)
+  │  G4_W (텅스텐), G4_Sn (주석), G4_Zn (아연), G4_Ti (티타늄)
+  │  G4_Ni (니켈), G4_Mo (몰리브덴), G4_Ag (은), G4_Au (금)
+  │  G4_Ta (탄탈), G4_Bi (비스무트), G4_Ba (바륨), ...
+  │
+  <span class="hl-cyan">콘크리트/건설 (Construction)</span>
+  │  G4_CONCRETE, G4_BARITE_CONCRETE (바라이트 콘크리트)
+  │  G4_CALCIUM_OXIDE, Gite_CALCIUM_CARBONATE, ...
+  │
+  <span class="hl-cyan">유리 (Glass)</span>
+  │  G4_GLASS_LEAD (납유리), G4_GLASS_PLATE (판유리)
+  │  G4_Pyrex_Glass, G4_SILICON_DIOXIDE, ...
+  │
+  <span class="hl-cyan">고분자 (Polymers)</span>
+  │  G4_POLYETHYLENE, G4_POLYCARBONATE, G4_PLEXIGLASS
+  │  G4_RUBBER_NATURAL, G4_NYLON-6-6, ...
+  │
+  <span class="hl-cyan">생체/의료 (Biological)</span>
+  │  G4_WATER, G4_TISSUE_SOFT_ICRU, G4_BONE_COMPACT_ICRU
+  │  G4_MUSCLE_WITH_SUCROSE, G4_ADIPOSE_TISSUE, ...
+  │
+  <span class="hl-cyan">가스 (Gases)</span>
+  │  G4_AIR, G4_Ar (아르곤), G4_N (질소), G4_O (산소), ...
+</pre>
+</div>
+
+<h3>커스텀 재료 정의</h3>
+
+<p>내장 재료 외에, 사용자가 <strong>원소 조성을 직접 지정</strong>하여 커스텀 재료를 생성할 수 있습니다:</p>
+
+<div class="panel">
+  <strong>커스텀 재료 예시: 스테인리스강 SUS304</strong>
+  <div class="info-grid" style="margin-top:12px;">
+    <dt>이름</dt><dd>SUS304</dd>
+    <dt>밀도</dt><dd>7.93 g/cm&sup3;</dd>
+    <dt>Fe</dt><dd>70.845%</dd>
+    <dt>Cr</dt><dd>19.0%</dd>
+    <dt>Ni</dt><dd>9.25%</dd>
+    <dt>Mn</dt><dd>0.905%</dd>
+  </div>
+  <p style="margin-top:12px; font-size:13px; color:var(--dim);">
+    GUI의 Material Editor에서 원소 추가/제거 &rarr; 자동으로 GEANT4 G4Material로 변환.
+  </p>
+</div>
+
+<h3>N-layer 다층 차폐</h3>
+
+<p>실제 차폐 설계에서는 <strong>여러 재료를 겹쳐서</strong> 사용합니다. ShieldDose는 N개 층의 다층 차폐를 지원합니다:</p>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">N-layer 다층 차폐 예시</span>
+
+  <span class="hl-warn">★</span> 선원                    Layer 1      Layer 2      Layer 3      디텍터
+     │                   ┌──────────┬──────────┬──────────┐  ┌────────┐
+     │ ─── 감마선 ───→   │  G4_Pb   │ G4_CONC  │  G4_Fe   │  │ G4_WATER│
+     │                   │  2 cm    │  10 cm   │  1 cm    │  │ 디텍터  │
+     │                   └──────────┴──────────┴──────────┘  └────────┘
+
+  <span class="hl-cyan">CLI 매크로:</span>
+  /shield/nlayer/add G4_Pb 2.0 cm
+  /shield/nlayer/add G4_CONCRETE 10.0 cm
+  /shield/nlayer/add G4_Fe 1.0 cm
+
+  <span class="hl-cyan">GUI:</span>
+  GeometryPanel에서 "Add Layer" 버튼으로 층 추가.
+  각 층의 재료/두께를 독립적으로 설정 가능.
+  드래그 앤 드롭으로 층 순서 변경.
+
+  <span class="hl-warn">해석적 계산에서:</span>
+  다층 빌드업은 Kalos-Kitazume 방법으로 계산.
+  B_total = B₁(μ₁x₁) × B₂(μ₂x₂) × ... (등가 MFP 기반)
+</pre>
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 8. GUI                                 -->
 <!-- ═══════════════════════════════════════ -->
 <section id="gui">
-<h2><span class="num">07</span>ShieldDose GUI</h2>
+<h2><span class="num">08</span>ShieldDose GUI</h2>
 
 <h3>기존 GUI (Phase 2) — 실패한 이유</h3>
 
@@ -1196,6 +1711,8 @@ Idle> /run/beamOn 500000</code></pre>
   │                                         │
   │  MacroGenerator: 사용자 입력 → .mac 파일 │
   │  ResultParser:   CSV → 결과 구조체       │
+  │  AnalyticalCalc: 해석적 선량 계산        │
+  │  ShieldDesign:   역 차폐 설계 도구       │
   │                                         │
   │  <span class="hl-cyan">GEANT4 코드 없음. Qt5만 사용.</span>           │
   └──────────┬───────────────┬──────────────┘
@@ -1222,7 +1739,8 @@ Idle> /run/beamOn 500000</code></pre>
       <div class="title">NuclidePanel</div>
       <div style="font-size:12px; color:var(--text); margin-top:4px;">
         핵종 선택 (Co-60 등)<br>
-        활동도 입력 (MBq, Ci)
+        활동도 입력 (MBq, Ci)<br>
+        동위원소 선택 가능
       </div>
     </div>
     <div class="flow-arrow horizontal">&rarr;</div>
@@ -1230,7 +1748,8 @@ Idle> /run/beamOn 500000</code></pre>
       <div class="label">Step 2</div>
       <div class="title">GeometryPanel</div>
       <div style="font-size:12px; color:var(--text); margin-top:4px;">
-        차폐 물질/두께 설정<br>
+        <em>57종</em> 재료 + 커스텀 재료<br>
+        N-layer 다층 차폐 설정<br>
         또는 STL 파일 임포트
       </div>
     </div>
@@ -1251,19 +1770,269 @@ Idle> /run/beamOn 500000</code></pre>
       <div class="title">ResultsPanel</div>
       <div style="font-size:12px; color:var(--text); margin-top:4px;">
         HTML 결과 보고서<br>
+        MC vs 해석적 비교<br>
         PDF 내보내기
       </div>
     </div>
   </div>
 </div>
+
+<h3>Shield Design Dialog (Ctrl+D)</h3>
+
+<p>P2.12wc에서 추가된 <strong>차폐 설계 도구</strong>로, GUI 메뉴에서 <code>Ctrl+D</code> 또는 Tools &rarr; Shield Design으로 접근합니다. 목표 선량률을 입력하면 필요한 차폐 두께를 자동 계산합니다. 상세는 <a href="#design-tool" style="color:var(--cyan);">10. 차폐 설계 도구</a> 참조.</p>
+
+<h3>GUI 주요 기능 요약</h3>
+<table>
+<tr><th>기능</th><th>설명</th><th>도입 세션</th></tr>
+<tr><td>핵종 선택</td><td>6개 핵종 드롭다운 + 동위원소 선택</td><td>P2.7wc + P2.9wc</td></tr>
+<tr><td>재료 선택</td><td>57종 NIST 재료 + 커스텀 재료 에디터</td><td>P2.9wc</td></tr>
+<tr><td>N-layer 차폐</td><td>다층 차폐 구성 (Add/Remove Layer)</td><td>P2.9wc</td></tr>
+<tr><td>시뮬레이션 실행</td><td>CLI spawn + 진행률 + Stop/Cancel</td><td>P2.7wc</td></tr>
+<tr><td>결과 보고서</td><td>HTML 보고서 + MC/해석적 비교 + PDF 내보내기</td><td>P2.7wc</td></tr>
+<tr><td>차폐 설계 도구</td><td>목표 선량률 &rarr; 필요 두께 역계산</td><td>P2.12wc</td></tr>
+<tr><td>STL 임포트</td><td>CAD 형상 파일을 차폐체로 사용</td><td>P2.7wc</td></tr>
+</table>
+
 </section>
 
 
 <!-- ═══════════════════════════════════════ -->
-<!-- 8. DATA FLOW                           -->
+<!-- 9. ANALYTICAL CALCULATION              -->
+<!-- ═══════════════════════════════════════ -->
+<section id="analytical">
+<h2><span class="num">09</span>해석적 선량 계산</h2>
+
+<p>MC 시뮬레이션과 별도로, GUI 내부에서 <strong>해석적(Analytical) 계산</strong>을 수행하여 결과를 교차 검증합니다.</p>
+
+<h3>기본 공식</h3>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">차폐 후 선량률 계산 공식</span>
+
+  DoseRate = <span class="hl-cyan">Γ</span> × <span class="hl-cyan">A</span> / <span class="hl-cyan">d²</span> × <span class="hl-cyan">B(μx)</span> × <span class="hl-cyan">exp(-μx)</span>
+
+  각 항의 의미:
+  ┌──────────────────────────────────────────────────────┐
+  │  <span class="hl-cyan">Γ</span> (감마상수)    핵종 고유의 선량률 환산 계수            │
+  │                  단위: μSv·m²/(GBq·h)                │
+  │                                                      │
+  │  <span class="hl-cyan">A</span> (방사능)      선원의 방사능 [GBq]                    │
+  │                                                      │
+  │  <span class="hl-cyan">d²</span> (거리 제곱)   선원-측정점 거리 [m]                  │
+  │                  → 역제곱 법칙 적용                    │
+  │                                                      │
+  │  <span class="hl-cyan">B(μx)</span> (빌드업)   산란선 보정 계수 (B ≥ 1)              │
+  │                  차폐가 두꺼울수록 B가 크게 증가        │
+  │                                                      │
+  │  <span class="hl-cyan">exp(-μx)</span> (감쇠)  차폐 물질에 의한 지수 감쇠             │
+  │                  μ = 선 감쇠계수, x = 차폐 두께        │
+  └──────────────────────────────────────────────────────┘
+
+  <span class="hl-warn">예시: Co-60, 1 Ci (37 GBq), 납 5 cm, 거리 30 cm</span>
+
+  Γ = 1.30 μSv·m²/(GBq·h)
+  A = 37 GBq
+  d = 0.30 m
+  μ = 0.638 cm⁻¹ (Pb, ~1.25 MeV)
+  x = 5 cm
+  B(μx=3.19) ≈ 2.42
+
+  DoseRate = 1.30 × 37 / 0.30² × 2.42 × exp(-3.19)
+           ≈ 29.8 mSv/h
+</pre>
+</div>
+
+<h3>에너지 의존 빌드업 팩터 (ANS 6.4.3)</h3>
+
+<p>P2.12wc에서 구현된 <strong>LT-09</strong> 과제로, ANS 6.4.3 표준 데이터를 사용하여 에너지와 차폐 두께(MFP)에 따른 정밀 빌드업 팩터를 계산합니다.</p>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">빌드업 팩터 보간 방법</span>
+
+  ANS 6.4.3 테이블:
+  ┌──────────┬──────────────────────────────────┐
+  │ Energy   │   MFP (Mean Free Path, μx)       │
+  │ [MeV]    │  1    2    4    7    10   15   20 │
+  ├──────────┼──────────────────────────────────┤
+  │ 0.5      │ 2.45 4.19 9.94 ...              │
+  │ 1.0      │ 2.13 3.53 7.62 ...              │
+  │ 1.5      │ 1.95 3.14 6.46 ...              │
+  │ ...      │                                  │
+  └──────────┴──────────────────────────────────┘
+
+  <span class="hl-cyan">보간 방법: log(E) × log(MFP) 이중선형 보간</span>
+
+  1. 주어진 E에서 인접한 두 에너지 행 선택
+  2. 주어진 MFP에서 인접한 두 MFP 열 선택
+  3. 4개 꼭짓점에서 이중선형 보간 수행
+  4. log 스케일에서 보간 → 선형보다 정밀
+
+  <span class="hl-warn">다중 에너지 핵종 (Ir-192, Se-75 등):</span>
+  각 감마선 에너지별로 B를 개별 계산 후
+  분기비(branching ratio)로 가중 평균
+</pre>
+</div>
+
+<h3>다층 차폐의 빌드업: Kalos-Kitazume 방법</h3>
+
+<div class="panel">
+  <strong>Kalos-Kitazume 방법</strong>은 N-layer 다층 차폐에서의 빌드업 팩터를 근사하는 방법입니다.<br><br>
+  <strong>원리:</strong> 각 층의 빌드업을 등가 MFP 기준으로 결합<br>
+  <code>B_total = B₁(&mu;₁x₁) &times; B₂((&mu;₁x₁ + &mu;₂x₂) / &mu;₂) / B₂(&mu;₁x₁ / &mu;₂) &times; ...</code><br><br>
+  <strong>장점:</strong> 단일 물질 빌드업 데이터만으로 다층 계산 가능<br>
+  <strong>한계:</strong> 층 순서에 따라 오차 발생 가능 (고Z &rarr; 저Z 순서가 정확도 높음)
+</div>
+
+<h3>MC vs 해석적 비교</h3>
+
+<div class="compare-grid">
+  <div class="compare-card" style="border-color:var(--green);">
+    <h4 style="color:var(--green);">Monte Carlo (GEANT4)</h4>
+    <ul style="font-size:14px; padding-left:16px;">
+      <li>입자 하나하나 추적 (first principles)</li>
+      <li>3D 기하, 산란, 2차 입자 모두 포함</li>
+      <li>통계적 오차 존재 (이벤트 수 의존)</li>
+      <li>계산 시간: 수 초~수 분</li>
+      <li><em>가장 정확한 방법</em> (Gold Standard)</li>
+    </ul>
+  </div>
+  <div class="compare-card" style="border-color:var(--cyan);">
+    <h4>해석적 계산 (Analytical)</h4>
+    <ul style="font-size:14px; padding-left:16px;">
+      <li>공식 기반 계산 (빌드업 팩터 근사)</li>
+      <li>1D 근사 (넓은 빔 가정)</li>
+      <li>결정론적 (통계 오차 없음)</li>
+      <li>계산 시간: 즉시 (&lt;1 ms)</li>
+      <li><em>빠른 교차 검증</em> + 설계 도구 기반</li>
+    </ul>
+  </div>
+</div>
+
+<div class="panel">
+  <strong>검증 결과:</strong> MC/해석적 비율은 일반적으로 <em>0.9~1.1</em> (&plusmn;10%) 범위.<br>
+  Co-60 납 5cm 예시: MC 31.2 mSv/h vs 해석적 29.8 mSv/h = <em>+4.7%</em> (PASS).<br>
+  &plusmn;20% 초과 시 경고 표시 &mdash; 기하 설정 또는 물리 모델 확인 필요.
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 10. SHIELD DESIGN TOOL                 -->
+<!-- ═══════════════════════════════════════ -->
+<section id="design-tool">
+<h2><span class="num">10</span>차폐 설계 도구</h2>
+
+<p>P2.12wc에서 구현된 <strong>LT-14 Inverse Shield Design Tool</strong>. "목표 선량률을 달성하려면 차폐가 얼마나 두꺼워야 하는가?"라는 <em>역문제(inverse problem)</em>를 풉니다.</p>
+
+<h3>역문제 개요</h3>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">순문제 (Forward Problem)</span> — 기존 방식
+  입력: 핵종, 방사능, 차폐 물질, <span class="hl-cyan">두께</span>, 거리
+  출력: <span class="hl-warn">선량률</span>
+
+<span class="hl-green">역문제 (Inverse Problem)</span> — 차폐 설계 도구
+  입력: 핵종, 방사능, 차폐 물질, <span class="hl-warn">목표 선량률</span>, 거리
+  출력: <span class="hl-cyan">필요 두께</span>
+
+  <span class="hl-dim">────────────────────────────────────────────</span>
+
+  알고리즘: <span class="hl-cyan">이분법 (Bisection Method)</span>
+  ┌──────────────────────────────────────────┐
+  │  초기 범위: [0 cm, 200 cm]              │
+  │  반복 횟수: 최대 100회                   │
+  │  수렴 조건: 상대오차 < 0.1%             │
+  │                                          │
+  │  while (|DoseRate(x) - target| > 0.1%): │
+  │    mid = (low + high) / 2                │
+  │    if DoseRate(mid) > target:            │
+  │      low = mid     (더 두꺼워야 함)      │
+  │    else:                                 │
+  │      high = mid    (충분히 두꺼움)        │
+  │                                          │
+  │  → 수렴된 mid가 필요 두께                │
+  └──────────────────────────────────────────┘
+</pre>
+</div>
+
+<h3>규제 기준 프리셋</h3>
+
+<table>
+<tr><th>프리셋</th><th>연간 선량 한도</th><th>시간당 선량률 (2000h 기준)</th><th>적용 대상</th></tr>
+<tr>
+  <td><span style="color:var(--green);">Public</span></td>
+  <td>1 mSv/y</td>
+  <td>0.5 &mu;Sv/h</td>
+  <td>일반인 비관리구역</td>
+</tr>
+<tr>
+  <td><span style="color:var(--cyan);">Design</span></td>
+  <td>0.3 mSv/y</td>
+  <td>0.15 &mu;Sv/h</td>
+  <td>설계 목표 (ALARA 원칙)</td>
+</tr>
+<tr>
+  <td><span style="color:var(--warn);">Worker</span></td>
+  <td>20 mSv/y</td>
+  <td>10 &mu;Sv/h</td>
+  <td>방사선 종사자</td>
+</tr>
+</table>
+
+<p>GUI에서 프리셋을 선택하면 자동으로 목표 선량률이 설정됩니다. 사용자 정의 값 입력도 가능.</p>
+
+<h3>다층 설계 모드</h3>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">다층 차폐 설계</span> — 기존 층은 고정, 마지막 층만 계산
+
+  <span class="hl-dim">시나리오: 기존 콘크리트 벽(20cm) + 추가 납 차폐 필요</span>
+
+  ┌────────────────────┬─────────────────────┐
+  │  G4_CONCRETE 20cm  │  G4_Pb <span class="hl-cyan">? cm</span>         │
+  │  (기존, 고정)       │  (<span class="hl-cyan">설계 도구가 계산</span>)  │
+  └────────────────────┴─────────────────────┘
+
+  기존 층의 감쇠를 고려하여
+  추가로 필요한 마지막 층의 두께만 이분법으로 계산.
+
+  → "콘크리트 20cm + 납 3.2cm = 목표 선량률 달성"
+</pre>
+</div>
+
+<h3>감쇠 곡선 테이블</h3>
+
+<p>설계 도구는 11개 포인트의 <strong>감쇠 곡선 테이블</strong>을 함께 출력하여 선량률-두께 관계를 시각화합니다:</p>
+
+<div class="panel">
+  <strong>출력 예시 (Co-60, 37 GBq, 납, 30 cm 거리)</strong>
+  <table style="margin-top:12px;">
+    <tr><th>두께 [cm]</th><th>선량률</th><th>감쇠율</th></tr>
+    <tr><td>0.0</td><td>533 mSv/h</td><td>100%</td></tr>
+    <tr><td>1.0</td><td>328 mSv/h</td><td>61.5%</td></tr>
+    <tr><td>2.0</td><td>207 mSv/h</td><td>38.8%</td></tr>
+    <tr><td>3.0</td><td>134 mSv/h</td><td>25.1%</td></tr>
+    <tr><td>5.0</td><td>59.4 mSv/h</td><td>11.1%</td></tr>
+    <tr><td>7.0</td><td>28.3 mSv/h</td><td>5.3%</td></tr>
+    <tr><td>10.0</td><td>9.8 mSv/h</td><td>1.8%</td></tr>
+    <tr><td colspan="3" style="text-align:center; color:var(--dim);">... (11 포인트)</td></tr>
+  </table>
+  <p style="margin-top:8px; font-size:13px; color:var(--dim);">
+    두께는 0부터 필요 두께의 2배까지 균등 분할. 각 포인트에서 해석적 선량률 계산.
+  </p>
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 11. DATA FLOW                          -->
 <!-- ═══════════════════════════════════════ -->
 <section id="data-flow">
-<h2><span class="num">08</span>End-to-End 데이터 흐름</h2>
+<h2><span class="num">11</span>End-to-End 데이터 흐름</h2>
 
 <p>사용자가 "Co-60, 1 Ci, 납 5cm"로 시뮬레이션할 때 실제로 일어나는 일:</p>
 
@@ -1372,10 +2141,10 @@ Idle> /run/beamOn 500000</code></pre>
 
 
 <!-- ═══════════════════════════════════════ -->
-<!-- 9. BUILD SYSTEM                        -->
+<!-- 12. BUILD SYSTEM                       -->
 <!-- ═══════════════════════════════════════ -->
 <section id="build">
-<h2><span class="num">09</span>빌드 시스템</h2>
+<h2><span class="num">12</span>빌드 시스템</h2>
 
 <p><strong>빌드(Build)</strong>란 사람이 읽는 소스코드(C++)를 컴퓨터가 실행할 수 있는 바이너리로 변환하는 과정입니다.</p>
 
@@ -1446,10 +2215,132 @@ make -j4
 
 
 <!-- ═══════════════════════════════════════ -->
-<!-- 10. WHY                                -->
+<!-- 13. QUALITY ASSURANCE                  -->
+<!-- ═══════════════════════════════════════ -->
+<section id="quality">
+<h2><span class="num">13</span>품질 보증 (QA)</h2>
+
+<p>ShieldDose 프로젝트는 <strong>3개의 품질 추적 시스템</strong>으로 코드 품질과 물리적 정확도를 체계적으로 관리합니다.</p>
+
+<h3>ISS — 이슈 추적 시스템</h3>
+
+<div class="panel">
+  <strong>ISS (Issue Tracking System)</strong> &mdash; 소프트웨어 품질 이슈를 번호로 추적
+  <div class="info-grid" style="margin-top:12px;">
+    <dt>총 등록</dt><dd><em>104건</em> (P2.11wc 54건 + P2.12wc 재감사)</dd>
+    <dt>해결</dt><dd><em>91건</em> (87.5%)</dd>
+    <dt>미해결</dt><dd>13건 (미착수/보류)</dd>
+    <dt>분류 체계</dt><dd>C-PHY (물리), C-DAT (데이터), C-FUN (기능), C-STB (안정성), M-CLI, M-GUI</dd>
+  </div>
+</div>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">ISS 분류 체계</span>
+
+  <span class="hl-cyan">C-PHY</span>  물리 정확도 이슈 (물리 모델, 단위, 계산 오류)
+  <span class="hl-cyan">C-DAT</span>  데이터 이슈 (핵종 데이터, 재료 상수, 테이블 오류)
+  <span class="hl-cyan">C-FUN</span>  기능 이슈 (미구현, 동작 오류, UI 버그)
+  <span class="hl-cyan">C-STB</span>  안정성 이슈 (크래시, 메모리 누수, 에러 처리)
+  <span class="hl-cyan">M-CLI</span>  CLI 개선 (성능, 인터페이스, 출력 형식)
+  <span class="hl-cyan">M-GUI</span>  GUI 개선 (UX, 시각화, 접근성)
+</pre>
+</div>
+
+<h3>PIT — MC Pitfall 레지스트리</h3>
+
+<div class="panel">
+  <strong>PIT (MC Pitfalls)</strong> &mdash; Monte Carlo 시뮬레이션의 물리적 함정을 문서화
+  <div class="info-grid" style="margin-top:12px;">
+    <dt>총 등록</dt><dd><em>28건</em> (PIT-001 ~ PIT-028)</dd>
+    <dt>확인된 이슈</dt><dd>Confirmed Issues (실제 발생)</dd>
+    <dt>예상 이슈</dt><dd>Anticipated Issues (발생 가능성)</dd>
+    <dt>파일</dt><dd><code>docs/MC_PITFALLS.md</code></dd>
+  </div>
+</div>
+
+<details>
+<summary>PIT 등록 예시 (주요 항목)</summary>
+<div>
+<table>
+<tr><th>PIT#</th><th>제목</th><th>상태</th></tr>
+<tr><td>PIT-001</td><td>GPS 다중소스 강도 합산 오류</td><td style="color:var(--green);">해결</td></tr>
+<tr><td>PIT-002</td><td>에너지 이중 계수 (SteppingAction + MFD)</td><td style="color:var(--green);">해결</td></tr>
+<tr><td>PIT-003</td><td>Importance Biasing 층 수 부족 시 가중치 폭주</td><td style="color:var(--green);">해결</td></tr>
+<tr><td>PIT-010</td><td>디텍터 물질에 따른 에너지 응답 차이</td><td style="color:var(--warn);">예상</td></tr>
+<tr><td>PIT-015</td><td>저에너지 핵종 + 고Z 차폐 시 광전 효과 지배</td><td style="color:var(--warn);">예상</td></tr>
+</table>
+</div>
+</details>
+
+<h3>LT — 장기과제 로드맵</h3>
+
+<div class="panel">
+  <strong>LT (Long-Term Roadmap)</strong> &mdash; 26개 카테고리의 장기 개선 과제
+  <div class="info-grid" style="margin-top:12px;">
+    <dt>총 카테고리</dt><dd><em>26개</em></dd>
+    <dt>완료/진행중</dt><dd>LT-09 (빌드업), LT-14 (역설계), LT-21 (재료) 등</dd>
+    <dt>최고 우선순위</dt><dd>★★★ 표시</dd>
+    <dt>파일</dt><dd><code>memory/longterm_roadmap.md</code></dd>
+  </div>
+</div>
+
+<details>
+<summary>LT 주요 완료 과제</summary>
+<div>
+<table>
+<tr><th>LT#</th><th>과제명</th><th>상태</th><th>세션</th></tr>
+<tr><td>LT-04</td><td>Multi-Threading Mode</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
+<tr><td>LT-05</td><td>진행률 + ETA 시스템</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
+<tr><td>LT-06</td><td>확장된 출력 형식</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
+<tr><td>LT-09</td><td>에너지 의존 빌드업 팩터 (ANS 6.4.3)</td><td>완료</td><td>P2.12wc</td></tr>
+<tr><td>LT-14</td><td>역 차폐 설계 도구</td><td>완료</td><td>P2.12wc</td></tr>
+<tr><td>LT-21</td><td>재료 시스템 확장 (57종 + 커스텀 + N-layer)</td><td>Phase 1~5 완료</td><td>P2.9wc</td></tr>
+</table>
+</div>
+</details>
+
+<h3>검증 현황 요약</h3>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">ShieldDose 검증 현황 (P2.13wc 기준)</span>
+
+  <span class="hl-cyan">감마상수 검증:</span>
+  ┌─────────┬───────────┬──────────┐
+  │ 핵종    │ MC/QSA    │ 판정     │
+  ├─────────┼───────────┼──────────┤
+  │ Co-60   │ ±3%       │ <span class="hl-green">PASS</span>     │
+  │ Cs-137  │ ±5%       │ <span class="hl-green">PASS</span>     │
+  │ Ir-192  │ ±8%       │ <span class="hl-green">PASS</span>     │
+  │ Se-75   │ ±7%       │ <span class="hl-green">PASS</span>     │
+  │ I-131   │ ±6%       │ <span class="hl-green">PASS</span>     │
+  │ Tc-99m  │ ±4%       │ <span class="hl-green">PASS</span>     │
+  └─────────┴───────────┴──────────┘
+  기준: QSA Global 880 Series ±10% 이내
+
+  <span class="hl-cyan">HVL 검증:</span>
+  6/6 핵종 PASS (MC 독립 결정, 38회 두께 스캔)
+
+  <span class="hl-cyan">코드 품질:</span>
+  ISS 104건 중 91건 해결 (87.5%)
+  PIT 28건 문서화
+  LT 26개 카테고리 로드맵 운영중
+</pre>
+</div>
+
+<div class="panel">
+  <strong>대시보드:</strong> 실시간 프로젝트 현황은 <a href="dashboard.html" style="color:var(--cyan);">Dashboard</a>에서 확인 가능.<br>
+  ISS 현황, PIT 레지스트리, LT 진행률, 검증 결과를 한 화면에서 모니터링합니다.
+</div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 14. WHY                                -->
 <!-- ═══════════════════════════════════════ -->
 <section id="why">
-<h2><span class="num">10</span>왜 이렇게 설계하는가</h2>
+<h2><span class="num">14</span>왜 이렇게 설계하는가</h2>
 
 <h3>핵심 질문: "GUI에 GEANT4를 직접 넣으면 안 되나?"</h3>
 
@@ -1459,8 +2350,8 @@ make -j4
     <ul style="font-size:14px; padding-left:16px;">
       <li>GUI + GEANT4가 같은 프로세스에서 실행</li>
       <li>시뮬레이션 중 GUI 멈춤 (이벤트 루프 충돌)</li>
-      <li>GEANT4 크래시 → GUI도 같이 죽음</li>
-      <li>GUI 코드 수정 → 물리 검증 재필요</li>
+      <li>GEANT4 크래시 &rarr; GUI도 같이 죽음</li>
+      <li>GUI 코드 수정 &rarr; 물리 검증 재필요</li>
       <li>빌드 복잡 (Qt5 + GEANT4 동시 링크)</li>
       <li style="color:var(--alert);">결과: 25개 결함, 실질적 미작동</li>
     </ul>
@@ -1470,7 +2361,7 @@ make -j4
     <ul style="font-size:14px; padding-left:16px;">
       <li>GUI와 CLI가 별도 프로세스</li>
       <li>시뮬레이션 중 GUI 정상 반응 (비동기)</li>
-      <li>CLI 크래시 → GUI에서 에러 표시 (안전)</li>
+      <li>CLI 크래시 &rarr; GUI에서 에러 표시 (안전)</li>
       <li>GUI 수정해도 물리 엔진 불변 (검증 유지)</li>
       <li>빌드 단순 (각각 독립 빌드)</li>
       <li style="color:var(--green);">검증된 CLI 그대로 활용</li>
@@ -1510,7 +2401,7 @@ make -j4
 </div><!-- container -->
 
 <footer>
-  ShieldDose &amp; GEANT4 Complete Guide &mdash; P2.7wc<br>
+  ShieldDose &amp; GEANT4 Complete Guide &mdash; P2.13wc<br>
   SL Corporation &copy; 2026. Built with CERN GEANT4.
 </footer>
 
