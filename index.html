@@ -384,6 +384,27 @@ tr:nth-child(even) td { background: rgba(17,20,24,0.5); }
 }
 .pulse { animation: pulse-arrow 2s ease-in-out infinite; }
 
+/* ═══ Fullscreen Button ═══ */
+.fullscreen-btn {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 200;
+  width: 40px; height: 40px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--cyan);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.fullscreen-btn:hover { background: var(--cyan); color: var(--bg); }
+
 /* ═══ Footer ═══ */
 footer {
   text-align: center;
@@ -2400,6 +2421,8 @@ make -j4
 
 </div><!-- container -->
 
+<button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면">⛶</button>
+
 <footer>
   ShieldDose &amp; GEANT4 Complete Guide &mdash; P2.13wc<br>
   SL Corporation &copy; 2026. Built with CERN GEANT4.
@@ -2426,6 +2449,15 @@ window.addEventListener('scroll', () => {
     a.classList.toggle('active', a.getAttribute('href') === '#' + current);
   });
 });
+
+// Fullscreen toggle
+function toggleFullscreen() {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen();
+  } else {
+    document.exitFullscreen();
+  }
+}
 </script>
 </body>
 </html>
