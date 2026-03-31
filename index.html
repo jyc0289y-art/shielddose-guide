@@ -1936,6 +1936,71 @@ Idle> /run/beamOn 500000</code></pre>
   Co-60 납 5cm 예시: MC 31.2 mSv/h vs 해석적 29.8 mSv/h = <em>+4.7%</em> (PASS).<br>
   &plusmn;20% 초과 시 경고 표시 &mdash; 기하 설정 또는 물리 모델 확인 필요.
 </div>
+
+<h3>H*(10) 주변선량당량 변환 (ICRP-74)</h3>
+
+<p><strong>P2.14wc</strong>에서 구현된 <strong>LT-04 Phase 2</strong> 과제. 해석적 계산 결과(공기커마율)를 국제 표준 운용량인 <strong>H*(10) 주변선량당량</strong>으로 변환합니다.</p>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">H*(10) 변환 원리</span>
+
+  기존 해석적 계산 산출값 = <span class="hl-cyan">공기커마율 Ka</span> [&mu;Sv/h]
+  H*(10) = Ka &times; <span class="hl-warn">h_K(10, E)</span>
+
+  <span class="hl-warn">h_K(10, E)</span>: ICRP-74 Table A.21 에너지 의존 변환계수 [Sv/Gy]
+  ┌────────────┬────────────┬──────────────────────────────────┐
+  │ 에너지      │ h_K [Sv/Gy]│ 해석                             │
+  ├────────────┼────────────┼──────────────────────────────────┤
+  │ 0.050 MeV  │   1.67     │ <span class="hl-warn">저에너지: 67% 증가</span>              │
+  │ 0.100 MeV  │   1.65     │ Tc-99m (0.14 MeV) 부근          │
+  │ 0.662 MeV  │   1.20     │ Cs-137                           │
+  │ 1.000 MeV  │   1.17     │                                  │
+  │ 1.250 MeV  │   1.15     │ Co-60 평균                       │
+  │ 3.000 MeV  │   1.13     │ 고에너지 수렴                    │
+  │ 10.00 MeV  │   1.10     │ <span class="hl-cyan">고에너지: ~10% 증가</span>            │
+  └────────────┴────────────┴──────────────────────────────────┘
+
+  <span class="hl-cyan">물리적 의미:</span>
+  ICRU 구(30cm 직경 조직등가 구)의 10mm 깊이에서
+  감마선이 추가적으로 산란·흡수되어 공기 중보다
+  더 높은 선량을 침적. 저에너지일수록 효과가 큼.
+</pre>
+</div>
+
+<div class="panel">
+  <strong>다선 핵종 가중 방법:</strong><br>
+  <code>h_K_eff = &Sigma;(I<sub>i</sub> &times; E<sub>i</sub> &times; h_K(E<sub>i</sub>)) / &Sigma;(I<sub>i</sub> &times; E<sub>i</sub>)</code><br><br>
+  각 감마선의 <em>선량 기여도</em>(강도 &times; 에너지)로 가중 평균합니다.<br>
+  단일 에너지 핵종(Cs-137 등)은 해당 에너지의 h_K를 직접 적용합니다.
+</div>
+
+<div class="diagram">
+<pre>
+<span class="hl-green">핵종별 h_K 적용 예시</span>
+
+  Co-60  (1.173 + 1.332 MeV):
+    h_K_eff &asymp; 1.16 &rarr; Ka 대비 <span class="hl-cyan">+16%</span>
+
+  Cs-137 (0.662 MeV):
+    h_K = 1.20 &rarr; Ka 대비 <span class="hl-cyan">+20%</span>
+
+  Tc-99m (0.141 MeV):
+    h_K &asymp; 1.51 &rarr; Ka 대비 <span class="hl-warn">+51%</span> (저에너지 주의!)
+
+  Ir-192 (0.296~0.612 MeV, 7선):
+    h_K_eff &asymp; 1.25 &rarr; Ka 대비 <span class="hl-cyan">+25%</span>
+
+  <span class="hl-warn">결론: 규제 선량 평가 시 H*(10)을 사용해야 합니다.</span>
+  Ka만으로는 실제 방호량을 과소평가할 수 있습니다.
+</pre>
+</div>
+
+<div class="panel">
+  <strong>데이터 출처:</strong> ICRP Publication 74 (1996), Table A.21 &mdash; 27개 에너지점.<br>
+  ICRP-116 (2010)에서 재확인. CSV: <code>data/icrp74_photon.csv</code>, <code>data/icrp74_neutron.csv</code>.<br>
+  <strong>보간:</strong> log(E) &times; log(h_K) 이중 로그 보간으로 테이블 외 에너지에서도 정밀 추정.
+</div>
 </section>
 
 
