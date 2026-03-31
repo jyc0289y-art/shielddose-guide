@@ -456,7 +456,7 @@ footer {
 
 <p style="text-align:center; color:var(--dim); margin-bottom:40px;">
   CERN GEANT4 Monte Carlo Simulation &rarr; ShieldDose CLI &rarr; ShieldDose GUI<br>
-  P2.13wc &mdash; 2026-03-31
+  P2.15wc &mdash; 2026-03-31
 </p>
 
 <!-- TOC -->
@@ -691,8 +691,9 @@ footer {
     조직 등가 구체 10mm 깊이에서의 선량당량.
   </td>
   <td>
-    보고서에서 규제 기준 비교에 사용.<br>
-    감마선의 경우 흡수선량 &asymp; H*(10) (선질계수 &asymp; 1).
+    P2.14wc: ICRP-74 기반 H*(10) 변환 완전 구현.<br>
+    DoseConversion API로 광자/중성자 변환계수 로드·보간·조회.<br>
+    CSV: <code>data/icrp74_photon.csv</code> (27점), <code>data/icrp74_neutron.csv</code> (20점).
   </td>
 </tr>
 <tr>
@@ -855,7 +856,8 @@ footer {
     하나의 디텍터에 여러 스코어러(선량, 에너지, 플럭스)를 연결.
   </td>
   <td>
-    ShieldDose에서 DoseDeposit + EnergyDeposit 동시 측정.
+    ShieldDose에서 DoseDeposit + EnergyDeposit + 입자별 분리 Dose 동시 측정.<br>
+    P2.14wc: GammaDose, NeutronDose, ElectronDose, ProtonDose, NeutronFlux, NeutronFluenceBinned 추가.
   </td>
 </tr>
 <tr>
@@ -1535,12 +1537,32 @@ Idle> /run/beamOn 500000</code></pre>
   <span class="hl-cyan">G4PSEnergyDeposit</span> — 에너지 침적 [MeV]
   │  입자가 물질과 상호작용하며 전달한 에너지의 합
   │
-  <span class="hl-cyan">G4PSDoseDeposit</span>   — 흡수 선량 [Gy]
+  <span class="hl-cyan">G4PSDoseDeposit</span>   — 흡수 선량 [Gy] (총합)
   │  Dose = ΣEdep / (밀도 × 부피)
   │  단위: Gy (Gray) = J/kg
   │
   <span class="hl-dim">G4PSFlatSurfaceFlux</span> — 표면 플럭스 (참고용)
      디텍터 표면을 통과하는 감마선 수
+
+  <span class="hl-warn">── 입자별 분리 Scoring (P2.14wc, LT-04 Phase 2) ──</span>
+
+  G4PSDoseDeposit + <span class="hl-cyan">G4SDParticleFilter</span>로 입자별 선량 분리:
+  ┌────────────────┬───────────────────────────────────┐
+  │ <span class="hl-cyan">GammaDose</span>      │ 광자(γ) 기여 선량                  │
+  │ <span class="hl-cyan">NeutronDose</span>    │ 중성자(n) 기여 선량                │
+  │ <span class="hl-cyan">ElectronDose</span>   │ 전자(e⁻) 기여 선량                 │
+  │ <span class="hl-cyan">ProtonDose</span>     │ 양성자(p) 기여 선량                │
+  │ <span class="hl-green">NeutronFlux</span>    │ 중성자 표면 플럭스                 │
+  │ <span class="hl-green">NeutronFluence</span> │ ICRP-74 20빈 에너지별 중성자 fluence│
+  └────────────────┴───────────────────────────────────┘
+
+  TotalDose = GammaDose + NeutronDose + ElectronDose + ProtonDose
+  → 혼합장(mixed-field) 환경에서 입자별 기여도 분석 가능
+
+  <span class="hl-warn">Cf-252 Multiplicity 보정:</span>
+  GPS는 단일 입자 방출 → 실제 Cf-252 SF는 다중 입자 방출
+  보정 인자: ν̄=3.757 (중성자/핵분열), γ/fission=7.9
+  → 사후 보정으로 물리적 정확도 확보
 
   <span class="hl-warn">선량 → 선량률 변환:</span>
   DoseRate [Gy/h] = MeanDose [Gy/event] × Activity [Bq] × 3600 [s/h]
@@ -2313,8 +2335,8 @@ make -j4
 <div class="panel">
   <strong>ISS (Issue Tracking System)</strong> &mdash; 소프트웨어 품질 이슈를 번호로 추적
   <div class="info-grid" style="margin-top:12px;">
-    <dt>총 등록</dt><dd><em>104건</em> (P2.11wc 54건 + P2.12wc 재감사)</dd>
-    <dt>해결</dt><dd><em>91건</em> (87.5%)</dd>
+    <dt>총 등록</dt><dd><em>106건</em> (P2.11wc 54건 + P2.12wc 재감사 + P2.14wc 2건)</dd>
+    <dt>해결</dt><dd><em>93건</em> (87.7%)</dd>
     <dt>미해결</dt><dd>13건 (미착수/보류)</dd>
     <dt>분류 체계</dt><dd>C-PHY (물리), C-DAT (데이터), C-FUN (기능), C-STB (안정성), M-CLI, M-GUI</dd>
   </div>
@@ -2355,6 +2377,7 @@ make -j4
 <tr><td>PIT-003</td><td>Importance Biasing 층 수 부족 시 가중치 폭주</td><td style="color:var(--green);">해결</td></tr>
 <tr><td>PIT-010</td><td>디텍터 물질에 따른 에너지 응답 차이</td><td style="color:var(--warn);">예상</td></tr>
 <tr><td>PIT-015</td><td>저에너지 핵종 + 고Z 차폐 시 광전 효과 지배</td><td style="color:var(--warn);">예상</td></tr>
+<tr><td>PIT-025</td><td>입자별 분리 scoring 미구현 (혼합장 분석 불가)</td><td style="color:var(--green);">해결</td></tr>
 </table>
 </div>
 </details>
@@ -2365,7 +2388,7 @@ make -j4
   <strong>LT (Long-Term Roadmap)</strong> &mdash; 26개 카테고리의 장기 개선 과제
   <div class="info-grid" style="margin-top:12px;">
     <dt>총 카테고리</dt><dd><em>26개</em></dd>
-    <dt>완료/진행중</dt><dd>LT-09 (빌드업), LT-14 (역설계), LT-21 (재료) 등</dd>
+    <dt>완료/진행중</dt><dd>LT-04 (H*(10)+분리scoring), LT-09 (빌드업), LT-13 (보고서), LT-14 (역설계), LT-21 (재료) 등 7개 완료</dd>
     <dt>최고 우선순위</dt><dd>★★★ 표시</dd>
     <dt>파일</dt><dd><code>memory/longterm_roadmap.md</code></dd>
   </div>
@@ -2376,12 +2399,13 @@ make -j4
 <div>
 <table>
 <tr><th>LT#</th><th>과제명</th><th>상태</th><th>세션</th></tr>
-<tr><td>LT-04</td><td>Multi-Threading Mode</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
+<tr><td>LT-04</td><td>H*(10) + 입자별 분리 Scoring + Cf-252</td><td style="color:var(--green);">Phase 1~2 완료</td><td>P2.10wc, P2.14wc</td></tr>
 <tr><td>LT-05</td><td>진행률 + ETA 시스템</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
 <tr><td>LT-06</td><td>확장된 출력 형식</td><td>Phase 1 완료</td><td>P2.10wc</td></tr>
-<tr><td>LT-09</td><td>에너지 의존 빌드업 팩터 (ANS 6.4.3)</td><td>완료</td><td>P2.12wc</td></tr>
-<tr><td>LT-14</td><td>역 차폐 설계 도구</td><td>완료</td><td>P2.12wc</td></tr>
-<tr><td>LT-21</td><td>재료 시스템 확장 (57종 + 커스텀 + N-layer)</td><td>Phase 1~5 완료</td><td>P2.9wc</td></tr>
+<tr><td>LT-09</td><td>에너지 의존 빌드업 팩터 (ANS 6.4.3)</td><td style="color:var(--green);">완료</td><td>P2.12wc</td></tr>
+<tr><td>LT-13</td><td>HTML 보고서 인라인 SVG 차트 + 규제 게이지</td><td>Phase 1 완료</td><td>P2.14wc</td></tr>
+<tr><td>LT-14</td><td>역 차폐 설계 도구</td><td style="color:var(--green);">완료</td><td>P2.12wc</td></tr>
+<tr><td>LT-21</td><td>재료 시스템 확장 (57종 + 커스텀 + N-layer)</td><td style="color:var(--green);">Phase 1~5 완료</td><td>P2.9wc</td></tr>
 </table>
 </div>
 </details>
@@ -2390,7 +2414,7 @@ make -j4
 
 <div class="diagram">
 <pre>
-<span class="hl-green">ShieldDose 검증 현황 (P2.13wc 기준)</span>
+<span class="hl-green">ShieldDose 검증 현황 (P2.15wc 기준)</span>
 
   <span class="hl-cyan">감마상수 검증:</span>
   ┌─────────┬───────────┬──────────┐
@@ -2408,10 +2432,16 @@ make -j4
   <span class="hl-cyan">HVL 검증:</span>
   6/6 핵종 PASS (MC 독립 결정, 38회 두께 스캔)
 
+  <span class="hl-cyan">H*(10) 변환:</span>
+  ICRP-74 광자 27점 + 중성자 20점 변환계수 구현 (P2.14wc)
+
+  <span class="hl-cyan">입자별 분리 Scoring:</span>
+  γ/n/e⁻/p 4종 분리 + Cf-252 multiplicity 보정 (P2.14wc)
+
   <span class="hl-cyan">코드 품질:</span>
-  ISS 104건 중 91건 해결 (87.5%)
-  PIT 28건 문서화
-  LT 26개 카테고리 로드맵 운영중
+  ISS 106건 중 93건 해결 (87.7%)
+  PIT 28건 문서화 (PIT-025 해결)
+  LT 26개 카테고리 중 7개 완료
 </pre>
 </div>
 
@@ -2489,7 +2519,7 @@ make -j4
 <button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면">⛶</button>
 
 <footer>
-  ShieldDose &amp; GEANT4 Complete Guide &mdash; P2.13wc<br>
+  ShieldDose &amp; GEANT4 Complete Guide &mdash; P2.15wc<br>
   SL Corporation &copy; 2026. Built with CERN GEANT4.
 </footer>
 

@@ -3,1351 +3,1406 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ShieldDose — Issue Tracking Dashboard</title>
+<title>ShieldDose Issue Tracking Dashboard v2 — ID Interconnection System</title>
 <style>
-/* ═══════════════════════════════════════ */
-/* HOBIS v4.15 Dark Theme                 */
-/* ═══════════════════════════════════════ */
-:root {
-  --bg: #0a0a0c;
-  --panel: #111418;
-  --border: #2a3b47;
-  --cyan: #00f7ff;
-  --green: #00ff33;
-  --text: #c0d0d0;
-  --dim: #5f7481;
-  --alert: #ff3300;
-  --warn: #ffcc00;
-  --input: #0f1215;
-  --heading-font: 'Orbitron', 'Helvetica Neue', sans-serif;
-  --body-font: 'Share Tech Mono', 'Menlo', 'Courier New', monospace;
-  --purple: #bc8cff;
-  --orange: #db6d28;
-  --pink: #e06c75;
-  --teal: #39d2c0;
-}
+  .top-bar { background:#060608; border-bottom:1px solid #30363d; padding:0 20px; display:flex; align-items:center; gap:0; margin:-20px -20px 20px -20px; }
+  .top-bar a { display:block; padding:10px 20px; text-decoration:none; font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; border-bottom:2px solid transparent; transition:all 0.2s; }
+  .top-bar a.inactive { color:#8b949e; }
+  .top-bar a.inactive:hover { color:#58a6ff; border-bottom-color:#58a6ff; }
+  .top-bar a.active { color:#58a6ff; border-bottom-color:#58a6ff; }
+</style>
+<style>
+  :root {
+    --bg: #0d1117; --card: #161b22; --border: #30363d;
+    --text: #c9d1d9; --text2: #8b949e; --accent: #58a6ff;
+    --green: #3fb950; --red: #f85149; --yellow: #d29922;
+    --orange: #db6d28; --purple: #bc8cff; --cyan: #39d2c0;
+    --gray: #484f58;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'SF Pro', sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.5; }
+  h1 { font-size: 1.6em; margin-bottom: 4px; }
+  h2 { font-size: 1.2em; color: var(--accent); margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1em; color: var(--purple); margin: 16px 0 8px; }
+  .subtitle { color: var(--text2); font-size: 0.9em; margin-bottom: 20px; }
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap');
+  /* --- Search Bar --- */
+  .search-container { position: relative; margin-bottom: 16px; }
+  .search-container input {
+    width: 100%; padding: 10px 14px 10px 36px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 0.9em; outline: none;
+  }
+  .search-container input:focus { border-color: var(--accent); }
+  .search-container::before { content: '\1F50D'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 0.9em; }
+  .search-results {
+    position: absolute; top: 100%; left: 0; right: 0; z-index: 100; background: var(--card);
+    border: 1px solid var(--border); border-radius: 0 0 8px 8px; max-height: 300px; overflow-y: auto; display: none;
+  }
+  .search-results .sr-item {
+    padding: 8px 14px; cursor: pointer; font-size: 0.85em; border-bottom: 1px solid var(--border);
+  }
+  .search-results .sr-item:hover { background: rgba(88,166,255,0.1); }
+  .search-results .sr-type { font-size: 0.7em; font-weight: 700; margin-right: 6px; padding: 1px 5px; border-radius: 3px; }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+  /* --- Summary Cards --- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+  .card .num { font-size: 2em; font-weight: 700; }
+  .card .label { font-size: 0.8em; color: var(--text2); margin-top: 4px; }
+  .card.green .num { color: var(--green); }
+  .card.red .num { color: var(--red); }
+  .card.yellow .num { color: var(--yellow); }
+  .card.blue .num { color: var(--accent); }
+  .card.purple .num { color: var(--purple); }
+  .card.cyan .num { color: var(--cyan); }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
-  overflow-x: hidden;
-}
+  /* --- Progress bars --- */
+  .progress-section { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+  .progress-row { display: flex; align-items: center; margin: 8px 0; }
+  .progress-label { width: 80px; font-size: 0.85em; font-weight: 600; }
+  .progress-bar { flex: 1; height: 20px; background: var(--border); border-radius: 4px; overflow: hidden; display: flex; }
+  .progress-bar .seg { height: 100%; transition: width 0.3s; display: flex; align-items: center; justify-content: center; font-size: 0.7em; font-weight: 600; color: #fff; }
+  .seg-green { background: var(--green); }
+  .seg-red { background: var(--red); }
+  .seg-gray { background: var(--gray); }
+  .seg-yellow { background: var(--yellow); }
+  .progress-pct { width: 60px; text-align: right; font-size: 0.85em; font-weight: 600; }
 
-/* ═══ Top Bar (cross-page nav) ═══ */
-.top-bar {
-  background: #060608;
-  border-bottom: 1px solid var(--border);
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  gap: 0;
-}
-.top-bar a {
-  display: block;
-  padding: 10px 20px;
-  color: var(--dim);
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-.top-bar a:hover { color: var(--cyan); }
-.top-bar a.active {
-  color: var(--cyan);
-  border-bottom-color: var(--cyan);
-}
+  /* --- Tables --- */
+  table { width: 100%; border-collapse: collapse; font-size: 0.82em; margin-bottom: 16px; }
+  th { background: #1c2128; color: var(--accent); text-align: left; padding: 8px 6px; border-bottom: 2px solid var(--border); position: sticky; top: 0; }
+  td { padding: 6px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:hover { background: rgba(88,166,255,0.05); }
+  .status { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  .s-green { background: var(--green); }
+  .s-red { background: var(--red); }
+  .s-yellow { background: var(--yellow); }
+  .s-gray { background: var(--gray); }
+  .s-purple { background: var(--purple); }
 
-/* ═══ Dashboard Nav ═══ */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(10,10,12,0.95);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border);
-  padding: 0;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-nav ul {
-  display: flex; list-style: none; padding: 0;
-  min-width: max-content;
-}
-nav a {
-  display: block; padding: 12px 16px;
-  color: var(--dim); text-decoration: none;
-  font-size: 13px; font-weight: 600;
-  white-space: nowrap;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-nav a:hover, nav a.active {
-  color: var(--cyan);
-  border-bottom-color: var(--cyan);
-}
+  /* --- Badge links --- */
+  .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 0.75em; font-weight: 600; margin: 1px 2px; text-decoration: none; cursor: pointer; transition: filter 0.2s; }
+  .badge:hover { filter: brightness(1.3); text-decoration: underline; }
+  .b-iss { background: rgba(88,166,255,0.2); color: var(--accent); }
+  .b-pit { background: rgba(219,109,40,0.2); color: var(--orange); }
+  .b-lt { background: rgba(188,140,255,0.2); color: var(--purple); }
+  .b-sess { background: rgba(57,210,192,0.15); color: var(--cyan); }
+  .b-req { background: rgba(224,108,117,0.2); color: #e06c75; }
 
-/* ═══ Layout ═══ */
-.container { max-width: 1100px; margin: 0 auto; padding: 20px 16px; }
+  /* --- Flash highlight --- */
+  @keyframes flash-highlight {
+    0% { background: rgba(210, 153, 34, 0.4); }
+    100% { background: transparent; }
+  }
+  .flash { animation: flash-highlight 1.5s ease-out; }
 
-h1 {
-  font-family: var(--heading-font);
-  font-size: clamp(24px, 4vw, 36px);
-  color: var(--cyan);
-  text-align: center;
-  padding: 30px 0 6px;
-  letter-spacing: 2px;
-}
-h1 .sub {
-  display: block;
-  font-size: 13px;
-  color: var(--dim);
-  letter-spacing: 4px;
-  margin-top: 6px;
-}
-h2 {
-  font-family: var(--heading-font);
-  font-size: clamp(18px, 3vw, 24px);
-  color: var(--cyan);
-  margin: 30px 0 16px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-h3 { color: var(--green); font-size: 16px; margin: 20px 0 10px; }
+  /* --- Cross-reference network --- */
+  .network { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 16px; overflow-x: auto; }
+  .cluster { display: inline-block; vertical-align: top; margin: 8px 16px 8px 0; padding: 12px; border: 1px solid var(--border); border-radius: 6px; min-width: 200px; }
+  .cluster-title { font-weight: 700; font-size: 0.9em; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .cluster-item { font-size: 0.8em; padding: 2px 0; }
+  .arrow { color: var(--text2); font-size: 0.8em; }
 
-/* ═══ Summary Cards ═══ */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
-  margin: 20px 0;
-}
-.card {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  text-align: center;
-  position: relative;
-}
-.card .num {
-  font-family: var(--heading-font);
-  font-size: 28px;
-  font-weight: 700;
-  display: block;
-  margin-bottom: 4px;
-}
-.card .label {
-  font-size: 11px;
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+  /* --- Timeline --- */
+  .timeline { position: relative; padding-left: 30px; margin: 16px 0; }
+  .timeline::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+  .tl-item { position: relative; margin-bottom: 16px; }
+  .tl-item::before { content: ''; position: absolute; left: -24px; top: 6px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--accent); background: var(--bg); }
+  .tl-item.done::before { background: var(--green); border-color: var(--green); }
+  .tl-session { font-weight: 700; color: var(--cyan); }
+  .tl-date { color: var(--text2); font-size: 0.8em; margin-left: 8px; }
+  .tl-detail { font-size: 0.85em; color: var(--text2); margin-top: 4px; }
 
-/* ═══ Progress Bar ═══ */
-.progress-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 8px 0;
-}
-.progress-row .label { width: 60px; font-size: 13px; color: var(--dim); flex-shrink: 0; }
-.progress-row .bar {
-  flex: 1;
-  height: 18px;
-  background: var(--input);
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-.progress-row .fill {
-  height: 100%;
-  border-radius: 4px;
-  transition: width 0.5s;
-}
-.progress-row .pct {
-  width: 50px;
-  text-align: right;
-  font-size: 13px;
-  font-family: var(--body-font);
-}
+  /* --- Tabs --- */
+  .tabs { display: flex; gap: 0; margin-bottom: 0; border-bottom: 2px solid var(--border); flex-wrap: wrap; }
+  .tab { padding: 8px 16px; cursor: pointer; color: var(--text2); font-size: 0.9em; font-weight: 600; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
 
-/* ═══ Panels ═══ */
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin: 16px 0;
-  position: relative;
-}
-.panel::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 12px; height: 12px;
-  border-top: 2px solid var(--cyan);
-  border-left: 2px solid var(--cyan);
-}
-.panel::after {
-  content: '';
-  position: absolute; bottom: 0; right: 0;
-  width: 12px; height: 12px;
-  border-bottom: 2px solid var(--cyan);
-  border-right: 2px solid var(--cyan);
-}
+  /* --- Filter --- */
+  .filter-bar { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .filter-btn { padding: 4px 12px; border-radius: 16px; border: 1px solid var(--border); background: var(--card); color: var(--text2); cursor: pointer; font-size: 0.8em; }
+  .filter-btn:hover, .filter-btn.active { background: rgba(88,166,255,0.15); color: var(--accent); border-color: var(--accent); }
 
-/* ═══ Taxonomy Tree ═══ */
-.tree {
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin: 16px 0;
-  overflow-x: auto;
-}
-.tree pre {
-  font-family: var(--body-font);
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--text);
-  white-space: pre;
-}
+  /* --- Detail Panel (Slide-in) --- */
+  .panel-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+    z-index: 500; display: none; opacity: 0; transition: opacity 0.3s;
+  }
+  .panel-overlay.open { display: block; opacity: 1; }
+  .detail-panel {
+    position: fixed; top: 0; right: -440px; width: 420px; max-width: 90vw; height: 100vh;
+    background: var(--card); border-left: 1px solid var(--border); z-index: 600;
+    overflow-y: auto; padding: 20px; transition: right 0.3s ease;
+  }
+  .detail-panel.open { right: 0; }
+  .panel-close { position: absolute; top: 12px; right: 16px; cursor: pointer; font-size: 1.3em; color: var(--text2); background: none; border: none; }
+  .panel-close:hover { color: var(--text); }
+  .panel-title { font-size: 1.1em; font-weight: 700; margin-bottom: 4px; padding-right: 30px; }
+  .panel-status { font-size: 0.85em; margin-bottom: 12px; }
+  .panel-section { margin: 12px 0; }
+  .panel-section-title { font-size: 0.8em; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .panel-desc { font-size: 0.85em; color: var(--text2); line-height: 1.6; }
+  .panel-refs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .panel-breadcrumb { font-size: 0.75em; color: var(--text2); margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .panel-breadcrumb span { cursor: pointer; color: var(--accent); }
+  .panel-breadcrumb span:hover { text-decoration: underline; }
 
-/* ═══ Tabs ═══ */
-.tab-bar {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  margin: 24px 0 0;
-  overflow-x: auto;
-}
-.tab-btn {
-  padding: 10px 18px;
-  background: none;
-  border: none;
-  color: var(--dim);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-.tab-btn:hover, .tab-btn.active {
-  color: var(--cyan);
-  border-bottom-color: var(--cyan);
-}
-.tab-content { display: none; padding: 16px 0; }
-.tab-content.active { display: block; }
+  /* --- Collapsible --- */
+  .collapsible-header {
+    cursor: pointer; padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 0; display: flex; align-items: center; justify-content: space-between;
+  }
+  .collapsible-header:hover { background: rgba(88,166,255,0.05); }
+  .collapsible-header .arrow-icon { transition: transform 0.3s; font-size: 0.8em; }
+  .collapsible-header.open .arrow-icon { transform: rotate(90deg); }
+  .collapsible-body {
+    display: none; padding: 16px; background: var(--card); border: 1px solid var(--border);
+    border-top: none; border-radius: 0 0 8px 8px; margin-bottom: 16px;
+  }
+  .collapsible-body.open { display: block; }
+  .concept-item { margin-bottom: 14px; }
+  .concept-item h4 { color: var(--accent); font-size: 0.95em; margin-bottom: 4px; }
+  .concept-item p { color: var(--text2); font-size: 0.85em; }
 
-/* ═══ Tables ═══ */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13px;
-  margin: 12px 0;
-}
-th, td {
-  padding: 8px 10px;
-  text-align: left;
-  border-bottom: 1px solid var(--border);
-}
-th {
-  color: var(--cyan);
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-tr:hover { background: rgba(0,247,255,0.03); }
-
-/* ═══ Status badges ═══ */
-.badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-}
-.badge-resolved { background: rgba(0,255,51,0.15); color: var(--green); }
-.badge-unresolved { background: rgba(255,51,0,0.15); color: var(--alert); }
-.badge-confirmed { background: rgba(219,109,40,0.15); color: var(--orange); }
-.badge-anticipated { background: rgba(188,140,255,0.15); color: var(--purple); }
-.badge-wontfix { background: rgba(95,116,129,0.15); color: var(--dim); }
-.badge-partial { background: rgba(255,204,0,0.15); color: var(--warn); }
-.badge-done { background: rgba(0,255,51,0.15); color: var(--green); }
-.badge-not_started { background: rgba(95,116,129,0.15); color: var(--dim); }
-.badge-superseded { background: rgba(95,116,129,0.15); color: var(--dim); }
-
-.sev-C { color: var(--alert); font-weight: 700; }
-.sev-H { color: var(--warn); font-weight: 700; }
-.sev-M { color: var(--cyan); }
-.sev-m { color: var(--dim); }
-
-.xref { color: var(--purple); font-size: 12px; }
-
-.priority-3 { color: var(--alert); }
-.priority-2 { color: var(--warn); }
-.priority-1 { color: var(--dim); }
-
-/* ═══ Filter ═══ */
-.filter-bar {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin: 12px 0;
-}
-.filter-btn {
-  padding: 4px 12px;
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--dim);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.filter-btn:hover, .filter-btn.active {
-  color: var(--cyan);
-  border-color: var(--cyan);
-}
-
-/* ═══ Cross-Ref Clusters ═══ */
-.cluster {
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin: 8px 0;
-}
-.cluster-title {
-  color: var(--green);
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.cluster-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.cluster-tag {
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-size: 11px;
-  font-weight: 600;
-}
-.tag-iss { background: rgba(88,166,255,0.15); color: #58a6ff; }
-.tag-pit { background: rgba(219,109,40,0.15); color: var(--orange); }
-.tag-lt { background: rgba(188,140,255,0.15); color: var(--purple); }
-
-/* ═══ Timeline ═══ */
-.timeline-row {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid rgba(42,59,71,0.4);
-}
-.timeline-date {
-  color: var(--dim);
-  font-family: var(--body-font);
-  font-size: 12px;
-}
-.timeline-stats { font-size: 12px; }
-.timeline-stats span { margin-right: 12px; }
-
-/* ═══ Clickable rows ═══ */
-tr[data-clickable] { cursor: pointer; transition: background 0.15s; }
-tr[data-clickable]:hover { background: rgba(0,247,255,0.06) !important; }
-
-/* ═══ Modal Overlay ═══ */
-.modal-overlay {
-  display: none;
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(6px);
-  z-index: 9999;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 40px 16px;
-  overflow-y: auto;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  max-width: 720px;
-  width: 100%;
-  position: relative;
-  animation: modalIn 0.2s ease-out;
-}
-@keyframes modalIn { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
-
-.modal-sev-bar {
-  height: 4px;
-  border-radius: 12px 12px 0 0;
-}
-.modal-header {
-  padding: 20px 24px 12px;
-  border-bottom: 1px solid var(--border);
-}
-.modal-header .modal-id {
-  font-family: var(--body-font);
-  font-size: 13px;
-  color: var(--dim);
-  margin-bottom: 4px;
-}
-.modal-header .modal-title {
-  font-family: var(--heading-font);
-  font-size: clamp(16px, 2.5vw, 22px);
-  color: var(--cyan);
-  margin-bottom: 8px;
-  line-height: 1.3;
-}
-.modal-header .modal-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-.modal-close {
-  position: absolute; top: 12px; right: 16px;
-  background: none; border: none;
-  color: var(--dim); font-size: 24px;
-  cursor: pointer; line-height: 1;
-  transition: color 0.2s;
-}
-.modal-close:hover { color: var(--cyan); }
-
-.modal-body { padding: 20px 24px; }
-.modal-section {
-  margin-bottom: 18px;
-}
-.modal-section-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--dim);
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-.modal-section-content {
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text);
-}
-.modal-impact {
-  background: rgba(255,51,0,0.08);
-  border-left: 3px solid var(--alert);
-  padding: 10px 14px;
-  border-radius: 0 6px 6px 0;
-  font-size: 14px;
-  color: var(--text);
-}
-.modal-fix {
-  background: rgba(0,255,51,0.08);
-  border-left: 3px solid var(--green);
-  padding: 10px 14px;
-  border-radius: 0 6px 6px 0;
-  font-size: 14px;
-  color: var(--text);
-}
-.modal-todo {
-  background: rgba(255,204,0,0.08);
-  border-left: 3px solid var(--warn);
-  padding: 10px 14px;
-  border-radius: 0 6px 6px 0;
-  font-size: 14px;
-  color: var(--text);
-}
-.modal-location {
-  font-family: var(--body-font);
-  font-size: 12px;
-  color: var(--cyan);
-  background: var(--input);
-  padding: 6px 12px;
-  border-radius: 4px;
-  display: inline-block;
-}
-.modal-xref-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.modal-xref-tag {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.modal-xref-tag:hover { filter: brightness(1.3); transform: translateY(-1px); }
-.modal-xref-tag.tag-iss { background: rgba(88,166,255,0.2); color: #58a6ff; }
-.modal-xref-tag.tag-pit { background: rgba(219,109,40,0.2); color: var(--orange); }
-.modal-xref-tag.tag-lt { background: rgba(188,140,255,0.2); color: var(--purple); }
-.modal-xref-tag.tag-req { background: rgba(224,108,117,0.2); color: var(--pink); }
-
-.modal-timeline {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-top: 6px;
-}
-.modal-timeline-node {
-  text-align: center;
-  font-size: 11px;
-  min-width: 80px;
-}
-.modal-timeline-node .dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  margin: 0 auto 4px;
-}
-.modal-timeline-line {
-  flex: 1;
-  height: 2px;
-  background: var(--border);
-  min-width: 20px;
-}
-.modal-phases {
-  display: grid;
-  gap: 8px;
-}
-.modal-phase {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 8px 12px;
-  background: var(--input);
-  border-radius: 6px;
-  font-size: 13px;
-}
-.modal-phase-icon {
-  font-size: 16px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.modal-deps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.modal-dep-tag {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  background: rgba(188,140,255,0.12);
-  color: var(--purple);
-  font-weight: 600;
-}
-
-/* ═══ Term Chips (in modals) ═══ */
-.modal-terms {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.term-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  border: 1px solid transparent;
-}
-.term-chip:hover { filter: brightness(1.3); transform: translateY(-1px); }
-.term-chip-physics { background: rgba(0,247,255,0.12); color: var(--cyan); border-color: rgba(0,247,255,0.2); }
-.term-chip-dosimetry { background: rgba(0,255,51,0.12); color: var(--green); border-color: rgba(0,255,51,0.2); }
-.term-chip-nuclear { background: rgba(255,204,0,0.12); color: var(--warn); border-color: rgba(255,204,0,0.2); }
-.term-chip-geant4 { background: rgba(88,166,255,0.12); color: #58a6ff; border-color: rgba(88,166,255,0.2); }
-.term-chip-software { background: rgba(188,140,255,0.12); color: var(--purple); border-color: rgba(188,140,255,0.2); }
-.term-chip-standards { background: rgba(224,108,117,0.12); color: var(--pink); border-color: rgba(224,108,117,0.2); }
-
-/* ═══ Term Card (Terminology tab) ═══ */
-.term-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
-  margin-top: 16px;
-}
-.term-card {
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: all 0.15s;
-  position: relative;
-  overflow: hidden;
-}
-.term-card:hover { border-color: var(--cyan); background: rgba(0,247,255,0.03); }
-.term-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0;
-  width: 3px; height: 100%;
-}
-.term-card[data-cat="physics"]::before { background: var(--cyan); }
-.term-card[data-cat="dosimetry"]::before { background: var(--green); }
-.term-card[data-cat="nuclear"]::before { background: var(--warn); }
-.term-card[data-cat="geant4"]::before { background: #58a6ff; }
-.term-card[data-cat="software"]::before { background: var(--purple); }
-.term-card[data-cat="standards"]::before { background: var(--pink); }
-.term-card .tc-name { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px; }
-.term-card .tc-ko { font-size: 12px; color: var(--dim); margin-bottom: 6px; }
-.term-card .tc-desc { font-size: 12px; color: var(--dim); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.term-card .tc-ids { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
-.term-card .tc-ids span { font-size: 10px; padding: 1px 6px; border-radius: 3px; }
-
-.term-search {
-  width: 100%;
-  padding: 10px 16px;
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  font-size: 14px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.term-search:focus { border-color: var(--cyan); }
-.term-search::placeholder { color: var(--dim); }
-
-.term-count { color: var(--dim); font-size: 12px; margin: 8px 0 0; }
-
-/* ═══ Term Modal Visual ═══ */
-.modal-visual {
-  background: var(--input);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-  overflow-x: auto;
-  font-family: var(--body-font);
-  font-size: 13px;
-  line-height: 1.6;
-}
-.modal-visual pre { margin: 0; white-space: pre; }
-.modal-formula {
-  font-family: var(--body-font);
-  font-size: 14px;
-  color: var(--cyan);
-  background: var(--input);
-  padding: 8px 14px;
-  border-radius: 6px;
-  border-left: 3px solid var(--cyan);
-}
-.modal-see-also {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-/* ═══ Fullscreen ═══ */
-.fullscreen-btn {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 200;
-  width: 40px; height: 40px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--cyan);
-  font-size: 18px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-}
-.fullscreen-btn:hover { background: var(--cyan); color: var(--bg); }
-
-/* ═══ Footer ═══ */
-.footer {
-  text-align: center;
-  padding: 40px 0 20px;
-  color: var(--dim);
-  font-size: 12px;
-}
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .cluster { min-width: 150px; }
+    .detail-panel { width: 100vw; max-width: 100vw; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ═══ Top Bar ═══ -->
 <div class="top-bar">
-  <a href="index.html">Manual</a>
+  <a href="index.html" class="inactive">Manual</a>
   <a href="dashboard.html" class="active">Dashboard</a>
 </div>
 
-<!-- ═══ Dashboard Navigation ═══ -->
-<nav>
-<ul>
-  <li><a onclick="showTab('overview')" class="nav-link active" data-tab="overview">Overview</a></li>
-  <li><a onclick="showTab('xref')" class="nav-link" data-tab="xref">Cross-Ref</a></li>
-  <li><a onclick="showTab('iss')" class="nav-link" data-tab="iss">ISS</a></li>
-  <li><a onclick="showTab('pit')" class="nav-link" data-tab="pit">PIT</a></li>
-  <li><a onclick="showTab('lt')" class="nav-link" data-tab="lt">LT Roadmap</a></li>
-  <li><a onclick="showTab('req')" class="nav-link" data-tab="req">REQ</a></li>
-  <li><a onclick="showTab('mod')" class="nav-link" data-tab="mod">MOD</a></li>
-  <li><a onclick="showTab('terms')" class="nav-link" data-tab="terms">Terminology</a></li>
-  <li><a onclick="showTab('timeline')" class="nav-link" data-tab="timeline">Timeline</a></li>
-</ul>
-</nav>
+<h1>ShieldDose Issue Tracking Dashboard v2</h1>
+<p class="subtitle">P2 GEANT4 Radiation Shielding Project — ID Interconnection System (Knowledge Graph) — 14 Sessions, 183+ Items — Updated 2026-03-31</p>
 
-<div class="container">
-
-<h1>
-  ISSUE TRACKING DASHBOARD
-  <span class="sub">SHIELDDOSE &mdash; ALL SYSTEMS</span>
-</h1>
-
-<div id="loading" style="text-align:center; padding:40px; color:var(--dim);">Loading data.json...</div>
-<div id="app" style="display:none;">
-
-<!-- ═══ OVERVIEW TAB ═══ -->
-<div class="tab-content active" id="tab-overview">
-
-<h2>ID Taxonomy</h2>
-<div class="tree"><pre id="taxonomy-tree"></pre></div>
-
-<h2>Summary</h2>
-<div class="cards" id="summary-cards"></div>
-
-<h2>Resolution Progress</h2>
-<div id="progress-bars"></div>
-
+<!-- ======= Search Bar ======= -->
+<div class="search-container">
+  <input type="text" id="global-search" placeholder="Search by ID or keyword (e.g. PIT-025, buildup, H*(10)...)" oninput="handleSearch(this.value)" onfocus="handleSearch(this.value)" />
+  <div class="search-results" id="search-results"></div>
 </div>
 
-<!-- ═══ CROSS-REF TAB ═══ -->
-<div class="tab-content" id="tab-xref">
-<h2>Cross-Reference Clusters</h2>
-<p style="color:var(--dim); font-size:13px; margin-bottom:16px;">
-  ISS, PIT, LT items that reference each other are grouped by topic.
+<!-- ======= Conceptual Foundations (Collapsible) ======= -->
+<div class="collapsible-header" id="concept-header" onclick="toggleCollapsible('concept')">
+  <span style="font-weight:700; color:var(--purple);">ID Interconnection System -- Design Principles (Knowledge Graph / Linked Data)</span>
+  <span class="arrow-icon">&#9654;</span>
+</div>
+<div class="collapsible-body" id="concept-body">
+  <div class="concept-item">
+    <h4>1. Knowledge Graph (Google, 2012)</h4>
+    <p>Entity-Relationship graph representation. Each ID (PIT-025, LT-04, ISS-020) is a <b>node</b>; cross-references are <b>edges</b> with typed relations (resolved-by, physics-root, addressed-by). Enables traversal: "PIT-025 is addressed by LT-04, which resolves ISS-020."</p>
+  </div>
+  <div class="concept-item">
+    <h4>2. Linked Data (Tim Berners-Lee, 2006) -- 4 Principles</h4>
+    <p>
+      (1) <b>URI identification</b>: PIT-025, LT-04 act as URIs<br>
+      (2) <b>HTTP URI access</b>: anchor links <code>#PIT-025</code> enable direct navigation<br>
+      (3) <b>Standard format</b>: HTML modal provides structured info on dereference<br>
+      (4) <b>Links to other URIs</b>: bidirectional references (forward + back)
+    </p>
+  </div>
+  <div class="concept-item">
+    <h4>3. Zettelkasten (Niklas Luhmann)</h4>
+    <p>Each note (ISS/PIT/LT item) has a <b>unique ID</b> and cross-references other notes. The emergent knowledge structure arises from the web of connections, not from any single note. Back-references reveal unexpected clusters.</p>
+  </div>
+  <div class="concept-item">
+    <h4>4. Traceability Matrix (CMMI / ISO 26262)</h4>
+    <p>Bidirectional traceability between Requirements (REQ) -> Design (LT) -> Implementation (ISS) -> Verification (PIT). Every item can be traced forward to its implementation and backward to its origin requirement.</p>
+  </div>
+  <p style="color:var(--text2); font-size:0.82em; margin-top:12px; border-top:1px solid var(--border); padding-top:8px;">
+    This v2 dashboard implements all four principles: every ID is an anchor node, every badge is a navigable link, the detail panel shows forward + back references (computed from the knowledge graph), and the cluster view provides traceability from REQ through LT/PIT to ISS.
+  </p>
+</div>
+
+<!-- ======= ID Taxonomy ======= -->
+<div class="progress-section" style="margin-bottom:16px;">
+  <h3 style="margin-top:0; color:var(--accent);">ID Taxonomy -- Tracking System Hierarchy</h3>
+  <pre style="font-size:0.8em; color:var(--text); line-height:1.6; overflow-x:auto; margin:8px 0;">
+ShieldDose P2 Tracking Universe (183+ items)
+|
++- <span style="color:var(--cyan)">P#</span> -- Session IDs (14 sessions: P2.1wc ~ P2.14wc)
+|   +- Session identifiers. Encode the origin of every tracked item.
+|
++- <span style="color:var(--accent)">ISS</span> -- Issue Tracking System (104 items)
+|   +- Format: {session}-ISS-{NNN}  e.g. P2.11wc-ISS-002
+|   +- Status: <span style="color:var(--green)">93 resolved</span> | <span style="color:var(--red)">1 unresolved</span> | <span style="color:var(--gray)">10 won't-fix</span>
+|   +- <span style="color:var(--accent)">Audit ID</span> -- P2.11wc audit classification (54 items, 1:1 ISS mapping)
+|       +- <span style="color:var(--red)">C-PHY-01~03</span> -- Critical: Physics errors (3)
+|       +- <span style="color:var(--red)">C-DAT-01~03</span> -- Critical: Data integrity (3)
+|       +- <span style="color:var(--red)">C-FUN-01~02</span> -- Critical: Functional defects (2)
+|       +- <span style="color:var(--red)">C-STB-01~02</span> -- Critical: Stability/Safety (2)
+|       +- <span style="color:var(--orange)">M-CLI-01~10</span> - Major: CLI issues (10)
+|       +- <span style="color:var(--orange)">M-GUI-01~08</span> - Major: GUI issues (8)
+|       +- <span style="color:var(--orange)">M-DAT-01~03</span> - Major: Data issues (3)
+|       +- <span style="color:var(--gray)">m-01~23</span> ------ Minor: Code quality (23)
+|
++- <span style="color:var(--orange)">PIT</span> -- MC Physics Pitfalls (28 items)
+|   +- Format: PIT-{NNN}  e.g. PIT-027
+|   +- Status: <span style="color:var(--green)">3 resolved</span> | <span style="color:var(--yellow)">16 confirmed</span> | <span style="color:var(--gray)">8 anticipated</span> | <span style="color:var(--cyan)">1 partially resolved</span>
+|   +- Bidirectional refs with ISS (physics issue <-> software defect)
+|
++- <span style="color:var(--purple)">LT</span> -- Long-Term Roadmap (26 categories)
+|   +- Format: LT-{NN}  e.g. LT-09
+|   +- Status: <span style="color:var(--green)">5 implemented</span> | <span style="color:var(--yellow)">1 in progress (LT-04 Ph2)</span> | <span style="color:var(--gray)">20 not started</span>
+|   +- Priority: 4 high | 6 mid | 16 low
+|   +- ISS/PIT resolution feeds into LT progress (ISS -> PIT -> LT flow)
+|
++- <span style="color:#e06c75">REQ</span> -- Requirements (18 items)
+|   +- Format: {session}-REQ-{NNN}  e.g. P2.1wc-REQ-001
+|   +- Status: 18 pending (all)
+|   +- User requirements. Independent from ISS/PIT/LT.
+|
++- <span style="color:#56d364">MOD</span> -- Reusable Modules (3 global, cross-project)
+    +- MOD-001 GoodNotes Overlay (v1.1.0, P1)
+    +- MOD-002 StrokeRecognizer (v1.0.0, P14)
+    +- MOD-003 Markdown->HTML (v1.0.0, P11) -- P2.6wc ref
+
+<span style="color:var(--text2)">Flow: REQ(user req) -> LT(roadmap) -> PIT(physics verification) <-> ISS(software fix)
+      MOD(reusable modules) <- cross-project independent</span>
+  </pre>
+</div>
+
+<!-- ======= Summary Cards (Updated for P2.14wc) ======= -->
+<div class="cards">
+  <div class="card blue">
+    <div class="num">183+</div>
+    <div class="label">Total Tracked Items<br>(6 systems + Audit IDs)</div>
+  </div>
+  <div class="card green">
+    <div class="num">89.4%</div>
+    <div class="label">ISS Resolution<br>(93/104)</div>
+  </div>
+  <div class="card yellow">
+    <div class="num">28</div>
+    <div class="label">MC Pitfalls (PIT)<br>3 resolved, 1 partial</div>
+  </div>
+  <div class="card purple">
+    <div class="num">26</div>
+    <div class="label">LT Roadmap<br>5 impl + 1 in-progress</div>
+  </div>
+  <div class="card red" style="--red:#e06c75;">
+    <div class="num" style="color:#e06c75;">18</div>
+    <div class="label">REQ Requirements<br>0% (all pending)</div>
+  </div>
+  <div class="card cyan">
+    <div class="num">14</div>
+    <div class="label">Sessions<br>P2.1~P2.14wc</div>
+  </div>
+  <div class="card" style="border-color:#56d364;">
+    <div class="num" style="color:#56d364;">3</div>
+    <div class="label">MOD Modules<br>(global, cross-project)</div>
+  </div>
+</div>
+
+<!-- ======= Progress Bars (Updated) ======= -->
+<div class="progress-section">
+  <h3 style="margin-top:0;">Resolution Progress by System</h3>
+  <div class="progress-row">
+    <div class="progress-label" style="color:var(--accent)">ISS (104)</div>
+    <div class="progress-bar">
+      <div class="seg seg-green" style="width:89.4%" title="93 Resolved">93</div>
+      <div class="seg seg-red" style="width:1.0%" title="1 Unresolved">1</div>
+      <div class="seg seg-gray" style="width:9.6%" title="10 Won't-fix">10</div>
+    </div>
+    <div class="progress-pct" style="color:var(--green)">89.4%</div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label" style="color:var(--orange)">PIT (28)</div>
+    <div class="progress-bar">
+      <div class="seg seg-green" style="width:10.7%" title="3 Resolved/Fixed">3</div>
+      <div class="seg seg-yellow" style="width:57.1%" title="16 Confirmed">16</div>
+      <div class="seg" style="width:3.6%; background:var(--cyan);" title="1 Partial">1</div>
+      <div class="seg seg-gray" style="width:28.6%" title="8 Anticipated">8</div>
+    </div>
+    <div class="progress-pct" style="color:var(--yellow)">10.7%</div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label" style="color:var(--purple)">LT (26)</div>
+    <div class="progress-bar">
+      <div class="seg seg-green" style="width:19.2%" title="5 Phase 1+ Done">5</div>
+      <div class="seg seg-yellow" style="width:3.8%" title="1 In Progress">1</div>
+      <div class="seg seg-gray" style="width:77.0%" title="20 Not Started">20</div>
+    </div>
+    <div class="progress-pct" style="color:var(--purple)">23.1%</div>
+  </div>
+  <div class="progress-row">
+    <div class="progress-label" style="color:#e06c75">REQ (18)</div>
+    <div class="progress-bar">
+      <div class="seg seg-red" style="width:100%" title="18 Not Started">18 pending</div>
+    </div>
+    <div class="progress-pct" style="color:#e06c75">0%</div>
+  </div>
+</div>
+
+<!-- ======= Tabs ======= -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('cross')">Cross-Reference Map</div>
+  <div class="tab" onclick="showTab('iss')">ISS (104)</div>
+  <div class="tab" onclick="showTab('pit')">PIT (28)</div>
+  <div class="tab" onclick="showTab('lt')">LT (26)</div>
+  <div class="tab" onclick="showTab('req')">REQ (18)</div>
+  <div class="tab" onclick="showTab('timeline')">Timeline</div>
+</div>
+
+<!-- ======= Tab 1: Cross-Reference Map ======= -->
+<div id="tab-cross" class="tab-content active">
+<h2>System Hierarchy & Cross-References</h2>
+<p style="color:var(--text2); font-size:0.85em; margin-bottom:12px;">
+  Click any badge to navigate. <a href="#" class="badge b-iss" style="cursor:default;">ISS</a> Software Issues &nbsp;->&nbsp;
+  <a href="#" class="badge b-pit" style="cursor:default;">PIT</a> MC Physics Pitfalls &nbsp;->&nbsp;
+  <a href="#" class="badge b-lt" style="cursor:default;">LT</a> Long-Term Roadmap
 </p>
-<div id="xref-clusters"></div>
 
-<h2>Audit ID &harr; ISS Mapping</h2>
-<div id="audit-map"></div>
+<!-- Cluster 1: Buildup Factor System -->
+<div class="network">
+  <h3>Cluster 1: Buildup Factor System <span style="color:var(--green)">-- RESOLVED (P2.12wc)</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--accent)">ISS (Software)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.11wc-ISS-002" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-002')">P2.11wc-ISS-002</a> <span style="color:var(--text2)">C-PHY-02 buildup energy ignored</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.11wc-ISS-030" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-030')">P2.11wc-ISS-030</a> <span style="color:var(--text2)">buildup CSV insufficient</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.12wc-ISS-061" class="badge b-iss" onclick="navigateToId('P2.12wc-ISS-061')">P2.12wc-ISS-061</a> <span style="color:var(--text2)">multi-layer independent product</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a> <span style="color:var(--text2)">energy-independent buildup assumption</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a> <span style="color:var(--text2)">multi-layer buildup independent product</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-008" class="badge b-pit" onclick="navigateToId('PIT-008')">PIT-008</a> <span style="color:var(--text2)">narrow-beam HVL vs broad-beam</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-021" class="badge b-pit" onclick="navigateToId('PIT-021')">PIT-021</a> <span style="color:var(--text2)">spectrum hardening non-independence</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--purple)">LT (Roadmap)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09 Ph1~2</a> <span style="color:var(--text2)">energy-dependent buildup</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-14" class="badge b-lt" onclick="navigateToId('LT-14')">LT-14 Ph1</a> <span style="color:var(--text2)">inverse shielding design</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ ISS TAB ═══ -->
-<div class="tab-content" id="tab-iss">
-<h2>Issue Tracking (ISS)</h2>
-<div class="filter-bar" id="iss-filters"></div>
-<table><thead>
-<tr><th>ID</th><th>Sev</th><th>Status</th><th>Title</th><th>Session</th><th>XRef</th></tr>
-</thead><tbody id="iss-tbody"></tbody></table>
+<!-- Cluster 2: Neutron / Cf-252 (Updated for P2.14wc) -->
+<div class="network">
+  <h3>Cluster 2: Neutron / Cf-252 System <span style="color:var(--green)">-- H*(10) RESOLVED (P2.14wc)</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--accent)">ISS (Software)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.2wc-ISS-020" class="badge b-iss" onclick="navigateToId('P2.2wc-ISS-020')">P2.2wc-ISS-020</a> <span style="color:var(--text2)">H*(10) ambient dose equivalent <b style="color:var(--green)">RESOLVED P2.14wc</b></span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.2wc-ISS-021" class="badge b-iss" onclick="navigateToId('P2.2wc-ISS-021')">P2.2wc-ISS-021</a> <span style="color:var(--text2)">ICRP-74 conversion coefficients <b style="color:var(--green)">RESOLVED P2.14wc</b></span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics)</div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-023" class="badge b-pit" onclick="navigateToId('PIT-023')">PIT-023</a> <span style="color:var(--text2)">neutron importance optimization mismatch</span></div>
+      <div class="cluster-item"><span class="status s-purple"></span><a href="#PIT-024" class="badge b-pit" onclick="navigateToId('PIT-024')">PIT-024</a> <span style="color:var(--text2)">single Wr limit <b style="color:var(--cyan)">PARTIAL (photon h_K done)</b></span></div>
+      <div class="cluster-item"><span class="status s-purple"></span><a href="#PIT-025" class="badge b-pit" onclick="navigateToId('PIT-025')">PIT-025</a> <span style="color:var(--text2)">GPS multiplicity <b style="color:var(--cyan)">PARTIAL (particle-sep scoring)</b></span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--purple)">LT (Roadmap)</div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04 Ph2</a> <span style="color:var(--text2)">H*(10)/ICRP-74 <b style="color:var(--green)">IN PROGRESS</b></span></div>
+      <div class="cluster-item"><span class="status s-gray"></span><a href="#LT-01" class="badge b-lt" onclick="navigateToId('LT-01')">LT-01</a> <span style="color:var(--text2)">secondary radiation (needs LT-04)</span></div>
+      <div class="cluster-item"><span class="status s-gray"></span><a href="#LT-03" class="badge b-lt" onclick="navigateToId('LT-03')">LT-03</a> <span style="color:var(--text2)">activation (needs LT-04)</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ PIT TAB ═══ -->
-<div class="tab-content" id="tab-pit">
-<h2>MC Pitfalls (PIT)</h2>
-<div class="filter-bar" id="pit-filters"></div>
-<table><thead>
-<tr><th>ID</th><th>Status</th><th>Category</th><th>Title</th><th>XRef</th></tr>
-</thead><tbody id="pit-tbody"></tbody></table>
+<!-- Cluster 3: Detector Physics -->
+<div class="network">
+  <h3>Cluster 3: Detector Physics & CPE <span style="color:var(--yellow)">-- CONFIRMED (awareness-level)</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics) -- Detector Tradeoff Chain</div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a> <span style="color:var(--text2)">CPE failure (thin detector)</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-002" class="badge b-pit" onclick="navigateToId('PIT-002')">PIT-002</a> <span style="color:var(--text2)">self-shielding (thick detector)</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-006" class="badge b-pit" onclick="navigateToId('PIT-006')">PIT-006</a> <span style="color:var(--text2)">solid angle bias</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-018" class="badge b-pit" onclick="navigateToId('PIT-018')">PIT-018</a> <span style="color:var(--text2)">Cavity Theory domain</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-019" class="badge b-pit" onclick="navigateToId('PIT-019')">PIT-019</a> <span style="color:var(--text2)">high-Z detector mu_en dependence</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-020" class="badge b-pit" onclick="navigateToId('PIT-020')">PIT-020</a> <span style="color:var(--text2)">nuclide-specific optimal geometry</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--purple)">LT (Roadmap)</div>
+      <div class="cluster-item"><span class="status s-gray"></span><a href="#LT-10" class="badge b-lt" onclick="navigateToId('LT-10')">LT-10</a> <span style="color:var(--text2)">detector response simulation</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a> <span style="color:var(--text2)">KERMA vs Dose distinction</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ LT TAB ═══ -->
-<div class="tab-content" id="tab-lt">
-<h2>Long-Term Roadmap (LT)</h2>
-<div class="filter-bar" id="lt-filters"></div>
-<table><thead>
-<tr><th>ID</th><th>Priority</th><th>Status</th><th>Title</th><th>Phase</th><th>Session</th><th>XRef</th></tr>
-</thead><tbody id="lt-tbody"></tbody></table>
+<!-- Cluster 4: Source Definition -->
+<div class="network">
+  <h3>Cluster 4: Source Definition & Spectrum <span style="color:var(--green)">-- MOSTLY RESOLVED</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics)</div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-005" class="badge b-pit" onclick="navigateToId('PIT-005')">PIT-005</a> <span style="color:var(--text2)">gammas_per_decay missing</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-014" class="badge b-pit" onclick="navigateToId('PIT-014')">PIT-014</a> <span style="color:var(--text2)">GPS discrete energy smearing</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-016" class="badge b-pit" onclick="navigateToId('PIT-016')">PIT-016</a> <span style="color:var(--text2)">multi-source intensity ratio</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-012" class="badge b-pit" onclick="navigateToId('PIT-012')">PIT-012</a> <span style="color:var(--text2)">weak gamma lines missing</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--accent)">ISS (Software) -- Resolved</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.11wc-ISS-005" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-005')">P2.11wc-ISS-005</a> <span style="color:var(--text2)">avgEnergy weighted avg error</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.11wc-ISS-006" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-006')">P2.11wc-ISS-006</a> <span style="color:var(--text2)">I-131 gamma constant error</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ REQ TAB ═══ -->
-<div class="tab-content" id="tab-req">
-<h2>Requirements (REQ)</h2>
-<table><thead>
-<tr><th>ID</th><th>Category</th><th>Title</th><th>Coverage</th></tr>
-</thead><tbody id="req-tbody"></tbody></table>
+<!-- Cluster 5: Stability & Thread Safety -->
+<div class="network">
+  <h3>Cluster 5: Stability & Thread Safety <span style="color:var(--yellow)">-- 1 UNRESOLVED</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--accent)">ISS (Software)</div>
+      <div class="cluster-item"><span class="status s-red"></span><a href="#P2.11wc-ISS-037" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-037')">P2.11wc-ISS-037</a> <span style="color:var(--text2)">Serial mode forced (MT unsupported)</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.12wc-ISS-056" class="badge b-iss" onclick="navigateToId('P2.12wc-ISS-056')">P2.12wc-ISS-056</a> <span style="color:var(--text2)">Sampler use-after-free</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.12wc-ISS-058" class="badge b-iss" onclick="navigateToId('P2.12wc-ISS-058')">P2.12wc-ISS-058</a> <span style="color:var(--text2)">TrackingRecorder mutex</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#P2.11wc-ISS-013" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-013')">P2.11wc-ISS-013</a> <span style="color:var(--text2)">G4GeometrySampler leak</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics)</div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-007" class="badge b-pit" onclick="navigateToId('PIT-007')">PIT-007</a> <span style="color:var(--text2)">VR weight artifact</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-011" class="badge b-pit" onclick="navigateToId('PIT-011')">PIT-011</a> <span style="color:var(--text2)">MT + VR incompatibility</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--purple)">LT (Roadmap)</div>
+      <div class="cluster-item"><span class="status s-gray"></span><a href="#LT-12" class="badge b-lt" onclick="navigateToId('LT-12')">LT-12</a> <span style="color:var(--text2)">MT/MPI distributed computing</span></div>
+    </div>
+  </div>
 </div>
 
-<!-- ═══ MOD TAB ═══ -->
-<div class="tab-content" id="tab-mod">
-<h2>Reusable Modules (MOD)</h2>
-<p style="color:var(--dim); font-size:13px; margin-bottom:16px;">
-  Global cross-project modules &mdash; independently callable from any project.
+<!-- Cluster 6: Geometry -->
+<div class="network">
+  <h3>Cluster 6: Geometry System <span style="color:var(--green)">-- Phase 1 COMPLETE</span></h3>
+  <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:flex-start;">
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--orange)">PIT (Physics)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#PIT-013" class="badge b-pit" onclick="navigateToId('PIT-013')">PIT-013</a> <span style="color:var(--text2)">World volume overlap (fixed)</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-022" class="badge b-pit" onclick="navigateToId('PIT-022')">PIT-022</a> <span style="color:var(--text2)">multi-layer boundary electron equilibrium</span></div>
+      <div class="cluster-item"><span class="status s-yellow"></span><a href="#PIT-026" class="badge b-pit" onclick="navigateToId('PIT-026')">PIT-026</a> <span style="color:var(--text2)">STL mesh quality</span></div>
+    </div>
+    <div style="align-self:center; color:var(--text2); font-size:1.2em;">-></div>
+    <div class="cluster">
+      <div class="cluster-title" style="color:var(--purple)">LT (Roadmap)</div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-06" class="badge b-lt" onclick="navigateToId('LT-06')">LT-06 Ph1</a> <span style="color:var(--text2)">STL import done</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-21" class="badge b-lt" onclick="navigateToId('LT-21')">LT-21 Ph1~5</a> <span style="color:var(--text2)">57 materials done</span></div>
+      <div class="cluster-item"><span class="status s-green"></span><a href="#LT-05" class="badge b-lt" onclick="navigateToId('LT-05')">LT-05 Ph1</a> <span style="color:var(--text2)">trajectory tracking done</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /tab-cross -->
+
+<!-- ======= Tab 2: ISS Details ======= -->
+<div id="tab-iss" class="tab-content">
+<h2>ISS -- Issue Tracking System (104 items)</h2>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterISS('all')">All (104)</button>
+  <button class="filter-btn" onclick="filterISS('red')">Unresolved (1)</button>
+  <button class="filter-btn" onclick="filterISS('green')">Resolved (93)</button>
+  <button class="filter-btn" onclick="filterISS('gray')">Won't-fix (10)</button>
+  <button class="filter-btn" onclick="filterISS('p2.2')">P2.2wc (25)</button>
+  <button class="filter-btn" onclick="filterISS('p2.11')">P2.11wc (54)</button>
+  <button class="filter-btn" onclick="filterISS('p2.12')">P2.12wc (25)</button>
+</div>
+
+<table id="iss-table">
+<thead>
+<tr><th>Status</th><th>ISS#</th><th>Category</th><th>Title</th><th>Session</th><th>Cross-Ref</th></tr>
+</thead>
+<tbody>
+<!-- Unresolved (Red) — ISS-020 and ISS-021 now RESOLVED in P2.14wc -->
+<tr class="iss-row red p2.11" id="P2.11wc-ISS-037"><td><span class="status s-red"></span></td><td>P2.11wc-ISS-037</td><td>C-STB</td><td>Serial mode forced -- MT unsupported</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td><a href="#LT-12" class="badge b-lt" onclick="navigateToId('LT-12')">LT-12</a> <a href="#PIT-011" class="badge b-pit" onclick="navigateToId('PIT-011')">PIT-011</a></td></tr>
+
+<!-- ISS-020 and ISS-021: NOW RESOLVED (P2.14wc) -->
+<tr class="iss-row green p2.2" id="P2.2wc-ISS-020"><td><span class="status s-green"></span></td><td>P2.2wc-ISS-020</td><td>C-PHY</td><td>H*(10) ambient dose equivalent -- <b style="color:var(--green)">RESOLVED P2.14wc</b></td><td><a href="#" class="badge b-sess">P2.2wc</a></td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04 Ph2</a> <a href="#PIT-024" class="badge b-pit" onclick="navigateToId('PIT-024')">PIT-024</a></td></tr>
+<tr class="iss-row green p2.2" id="P2.2wc-ISS-021"><td><span class="status s-green"></span></td><td>P2.2wc-ISS-021</td><td>C-PHY</td><td>ICRP-74/116 conversion coefficients -- <b style="color:var(--green)">RESOLVED P2.14wc</b></td><td><a href="#" class="badge b-sess">P2.2wc</a></td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04 Ph2</a></td></tr>
+
+<!-- Critical/High ISS from P2.11wc -->
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-001"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-001</td><td>C-PHY</td><td>ImportanceGeometry coordinate mismatch</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-002"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-002</td><td>C-PHY</td><td>Buildup factor energy ignored</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td><a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a> <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-003"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-003</td><td>C-PHY</td><td>avgEnergy weighted average reciprocal error</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-004"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-004</td><td>C-PHY</td><td>Co-60 single-gamma underestimate warning missing</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td><a href="#PIT-005" class="badge b-pit" onclick="navigateToId('PIT-005')">PIT-005</a></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-005"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-005</td><td>C-DAT</td><td>I-131 gamma constant 0.0567->0.066</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-006"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-006</td><td>C-DAT</td><td>I-131 gamma constant CSV mismatch</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-007"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-007</td><td>C-FUN</td><td>Custom material parsing failure</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-008"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-008</td><td>C-DAT</td><td>Gas density overwrite</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-009"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-009</td><td>C-FUN</td><td>maxTracksPerEvent invalidated</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-010"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-010</td><td>C-STB</td><td>NIST direct input crash</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-013"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-013</td><td>M-CLI</td><td>G4GeometrySampler leak</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+<tr class="iss-row green p2.11" id="P2.11wc-ISS-030"><td><span class="status s-green"></span></td><td>P2.11wc-ISS-030</td><td>M-DAT</td><td>Buildup CSV insufficient energy points</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td><a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a> <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a></td></tr>
+
+<!-- P2.12wc Major -->
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-055"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-055</td><td>C-FUN</td><td>FindMaterial isotope search failure</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-056"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-056</td><td>C-STB</td><td>Sampler deletion use-after-free</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-057"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-057</td><td>M-CLI</td><td>shieldHalfXY magic number duplication</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-058"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-058</td><td>C-STB</td><td>TrackingRecorder::Destroy mutex unprotected</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-059"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-059</td><td>M-GUI</td><td>NIST material registration warning absent</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-060"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-060</td><td>C-PHY</td><td>Multi-layer n_hvl single-layer calculation</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-061"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-061</td><td>C-PHY</td><td>Multi-layer buildup independent product assumption</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td><a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a> <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-062"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-062</td><td>M-GUI</td><td>MaterialDataStore::Add() non-existent</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-063"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-063</td><td>M-CLI</td><td>Build-time data sync missing</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row green p2.12" id="P2.12wc-ISS-064"><td><span class="status s-green"></span></td><td>P2.12wc-ISS-064</td><td>M-GUI</td><td>IsCustom() substr vs compare</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+
+<!-- Won't-fix examples -->
+<tr class="iss-row gray p2.12" id="P2.12wc-ISS-065"><td><span class="status s-gray"></span></td><td>P2.12wc-ISS-065</td><td>m</td><td>Dead code IncrementTrackCount (removed)</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="iss-row gray p2.11" id="P2.11wc-ISS-032"><td><span class="status s-gray"></span></td><td>P2.11wc-ISS-032</td><td>m</td><td>DetectorConstruction typo (GEANT4 convention)</td><td><a href="#" class="badge b-sess">P2.11wc</a></td><td></td></tr>
+</tbody>
+</table>
+<p style="color:var(--text2); font-size:0.8em;">Showing representative entries. Full 104 entries: <code>memory/issues/_index.md</code></p>
+
+<h3>Audit ID <-> ISS# Complete Mapping (P2.11wc -- 54 items)</h3>
+<p style="color:var(--text2); font-size:0.82em; margin-bottom:8px;">P2.11wc audit classification IDs. 1:1 mapped to ISS#. Severity+domain based independent identification.</p>
+
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:12px;">
+
+<!-- Critical -->
+<div style="background:var(--card); border:1px solid var(--border); border-radius:6px; padding:12px;">
+<div style="font-weight:700; color:var(--red); margin-bottom:8px;">Critical (10 items)</div>
+<table style="width:100%;">
+<tr><th style="width:80px;">Audit ID</th><th style="width:120px;">ISS#</th><th>Title</th></tr>
+<tr><td style="color:var(--red)">C-PHY-01</td><td>ISS-003</td><td>avgEnergy unweighted</td></tr>
+<tr><td style="color:var(--red)">C-PHY-02</td><td>ISS-002</td><td>buildup energy ignored</td></tr>
+<tr><td style="color:var(--red)">C-PHY-03</td><td>ISS-001</td><td>ImportanceGeometry coords</td></tr>
+<tr><td style="color:var(--red)">C-DAT-01</td><td>ISS-004</td><td>I-131 gpd error</td></tr>
+<tr><td style="color:var(--red)">C-DAT-02</td><td>ISS-005</td><td>custom material parsing</td></tr>
+<tr><td style="color:var(--red)">C-DAT-03</td><td>ISS-006</td><td>gas density overwrite</td></tr>
+<tr><td style="color:var(--red)">C-FUN-01</td><td>ISS-007</td><td>maxTracks invalid</td></tr>
+<tr><td style="color:var(--red)">C-FUN-02</td><td>ISS-008</td><td>NIST input crash</td></tr>
+<tr><td style="color:var(--red)">C-STB-01</td><td>ISS-009</td><td>division by 0</td></tr>
+<tr><td style="color:var(--red)">C-STB-02</td><td>ISS-010</td><td>dangling ref</td></tr>
+</table>
+</div>
+
+<!-- Major CLI -->
+<div style="background:var(--card); border:1px solid var(--border); border-radius:6px; padding:12px;">
+<div style="font-weight:700; color:var(--orange); margin-bottom:8px;">Major -- CLI (10 items)</div>
+<table style="width:100%;">
+<tr><th style="width:80px;">Audit ID</th><th style="width:120px;">ISS#</th><th>Title</th></tr>
+<tr><td style="color:var(--orange)">M-CLI-01</td><td>ISS-011</td><td>GeometrySampler not deleted</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-02</td><td>ISS-012</td><td>EnrichIsotope failure</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-03</td><td>ISS-013</td><td>TrackingRecorder not deleted</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-04</td><td>ISS-014</td><td>singleton init race</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-05</td><td>ISS-015</td><td>mutex-less write</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-06</td><td>ISS-016</td><td>GetCurrentEvent nullptr</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-07</td><td>ISS-017</td><td>macro recursion unlimited</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-08</td><td>ISS-018</td><td>thickness <= 0 unvalidated</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-09</td><td>ISS-019</td><td>stod exception unhandled</td></tr>
+<tr><td style="color:var(--orange)">M-CLI-10</td><td>ISS-020</td><td>dose collection duplication</td></tr>
+</table>
+</div>
+
+<!-- Major GUI + DAT -->
+<div style="background:var(--card); border:1px solid var(--border); border-radius:6px; padding:12px;">
+<div style="font-weight:700; color:var(--orange); margin-bottom:8px;">Major -- GUI (8) + DATA (3)</div>
+<table style="width:100%;">
+<tr><th style="width:80px;">Audit ID</th><th style="width:120px;">ISS#</th><th>Title</th></tr>
+<tr><td style="color:var(--orange)">M-DAT-01</td><td>ISS-021</td><td>gamma constant CSV mismatch</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-01</td><td>ISS-022</td><td>buildup table duplicate</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-02</td><td>ISS-023</td><td>CLI last line not received</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-03</td><td>ISS-024</td><td>DYLD_LIBRARY_PATH accumulation</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-04</td><td>ISS-025</td><td>STL detector not forwarded</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-05</td><td>ISS-026</td><td>unsigned underflow</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-06</td><td>ISS-027</td><td>path extraction hardcoded</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-07</td><td>ISS-028</td><td>STL file existence unchecked</td></tr>
+<tr><td style="color:var(--orange)">M-GUI-08</td><td>ISS-029</td><td>CSV last row only</td></tr>
+<tr><td style="color:var(--orange)">M-DAT-02</td><td>ISS-030</td><td>buildup CSV insufficient</td></tr>
+<tr><td style="color:var(--orange)">M-DAT-03</td><td>ISS-031</td><td>HVL data missing</td></tr>
+</table>
+</div>
+
+<!-- Minor -->
+<div style="background:var(--card); border:1px solid var(--border); border-radius:6px; padding:12px;">
+<div style="font-weight:700; color:var(--gray); margin-bottom:8px;">Minor (23 items) -- m-01 ~ m-23</div>
+<table style="width:100%;">
+<tr><th style="width:80px;">Audit ID</th><th style="width:120px;">ISS#</th><th>Title</th></tr>
+<tr><td style="color:var(--gray)">m-01</td><td>ISS-032</td><td>DetectorConstruction typo (Won't-fix)</td></tr>
+<tr><td style="color:var(--gray)">m-02</td><td>ISS-033</td><td>PhysicsConfig header impl</td></tr>
+<tr><td style="color:var(--gray)">m-03</td><td>ISS-034</td><td>unused include</td></tr>
+<tr><td style="color:var(--gray)">m-04</td><td>ISS-035</td><td>STL attribute unused</td></tr>
+<tr><td style="color:var(--gray)">m-05</td><td>ISS-036</td><td>shieldHalfXY hardcoded</td></tr>
+<tr><td style="color:var(--gray)">m-06</td><td>ISS-037</td><td>Serial mode forced (unresolved)</td></tr>
+<tr><td style="color:var(--gray)">m-07</td><td>ISS-038</td><td>POSIX->C++17 filesystem</td></tr>
+<tr><td style="color:var(--gray)">m-08</td><td>ISS-039</td><td>unused dead code misidentification</td></tr>
+<tr><td style="color:var(--gray)">m-09</td><td>ISS-040</td><td>localtime thread-unsafe</td></tr>
+<tr><td style="color:var(--gray)">m-10</td><td>ISS-041</td><td>PitfallChecker magic numbers</td></tr>
+<tr><td style="color:var(--gray)">m-11</td><td>ISS-042</td><td>32-level arg() chain</td></tr>
+<tr><td style="color:var(--gray)">m-12</td><td>ISS-043</td><td>large header inline</td></tr>
+<tr><td style="color:var(--gray)">m-13</td><td>ISS-044</td><td>test macro physics warning</td></tr>
+<tr><td style="color:var(--gray)">m-14</td><td>ISS-045</td><td>macro comment mismatch</td></tr>
+<tr><td style="color:var(--gray)">m-15</td><td>ISS-046</td><td>shield -9999 hack</td></tr>
+<tr><td style="color:var(--gray)">m-16</td><td>ISS-047</td><td>CSV non-macro nuclide</td></tr>
+<tr><td style="color:var(--gray)">m-17</td><td>ISS-048</td><td>macro header incomplete</td></tr>
+<tr><td style="color:var(--gray)">m-18</td><td>ISS-049</td><td>file(GLOB) source collection</td></tr>
+<tr><td style="color:var(--gray)">m-19</td><td>ISS-050</td><td>Makefile absolute path</td></tr>
+<tr><td style="color:var(--gray)">m-20</td><td>ISS-051</td><td>include_directories</td></tr>
+<tr><td style="color:var(--gray)">m-21</td><td>ISS-052</td><td>macro comment order</td></tr>
+<tr><td style="color:var(--gray)">m-22</td><td>ISS-053</td><td>unshielded reference missing</td></tr>
+<tr><td style="color:var(--gray)">m-23</td><td>ISS-054</td><td>activity upper bound unrealistic</td></tr>
+</table>
+</div>
+
+</div><!-- grid -->
+
+</div><!-- /tab-iss -->
+
+<!-- ======= Tab 3: PIT Details ======= -->
+<div id="tab-pit" class="tab-content">
+<h2>PIT -- MC Physics Pitfalls Registry (28 items)</h2>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterPIT('all')">All (28)</button>
+  <button class="filter-btn" onclick="filterPIT('resolved')">Resolved (3)</button>
+  <button class="filter-btn" onclick="filterPIT('partial')">Partial (1)</button>
+  <button class="filter-btn" onclick="filterPIT('confirmed')">Confirmed (16)</button>
+  <button class="filter-btn" onclick="filterPIT('anticipated')">Anticipated (8)</button>
+</div>
+
+<table id="pit-table">
+<thead>
+<tr><th>Status</th><th>PIT#</th><th>Title</th><th>Category</th><th>Cross-Ref</th></tr>
+</thead>
+<tbody>
+<!-- Resolved -->
+<tr class="pit-row resolved" id="PIT-013"><td><span class="status s-green"></span></td><td>PIT-013</td><td>World volume overlap / protrusion</td><td>Geometry</td><td><a href="#" class="badge b-sess">P2.3wc fix</a></td></tr>
+<tr class="pit-row resolved" id="PIT-027"><td><span class="status s-green"></span></td><td>PIT-027</td><td>Analytical buildup factor energy-independent assumption</td><td>Buildup</td><td><a href="#P2.11wc-ISS-002" class="badge b-iss" onclick="navigateToId('P2.11wc-ISS-002')">ISS-002</a> <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a></td></tr>
+<tr class="pit-row resolved" id="PIT-028"><td><span class="status s-green"></span></td><td>PIT-028</td><td>Multi-layer shielding buildup independent product assumption</td><td>Buildup</td><td><a href="#P2.12wc-ISS-061" class="badge b-iss" onclick="navigateToId('P2.12wc-ISS-061')">ISS-061</a> <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a></td></tr>
+
+<!-- Partially resolved (P2.14wc) -->
+<tr class="pit-row partial" id="PIT-025"><td><span class="status s-purple"></span></td><td>PIT-025</td><td>GPS multiplicity not reflected (Cf-252) -- <b style="color:var(--cyan)">PARTIAL: particle-separated scoring impl</b></td><td>Neutron</td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a></td></tr>
+
+<!-- Confirmed -- Detector Physics -->
+<tr class="pit-row confirmed" id="PIT-001"><td><span class="status s-yellow"></span></td><td>PIT-001</td><td>Charged Particle Equilibrium (CPE) failure -- thin detector</td><td>Detector</td><td><a href="#PIT-002" class="badge b-pit" onclick="navigateToId('PIT-002')">PIT-002</a> <a href="#PIT-006" class="badge b-pit" onclick="navigateToId('PIT-006')">PIT-006</a> <a href="#PIT-020" class="badge b-pit" onclick="navigateToId('PIT-020')">PIT-020</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-002"><td><span class="status s-yellow"></span></td><td>PIT-002</td><td>Detector self-shielding -- thick detector</td><td>Detector</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a> <a href="#PIT-020" class="badge b-pit" onclick="navigateToId('PIT-020')">PIT-020</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-003"><td><span class="status s-yellow"></span></td><td>PIT-003</td><td>Water Dose != Air Kerma unit conversion</td><td>Dosimetry</td><td><a href="#PIT-004" class="badge b-pit" onclick="navigateToId('PIT-004')">PIT-004</a> <a href="#PIT-005" class="badge b-pit" onclick="navigateToId('PIT-005')">PIT-005</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-004"><td><span class="status s-yellow"></span></td><td>PIT-004</td><td>mu_en vs mu confusion</td><td>Dosimetry</td><td><a href="#PIT-003" class="badge b-pit" onclick="navigateToId('PIT-003')">PIT-003</a> <a href="#PIT-017" class="badge b-pit" onclick="navigateToId('PIT-017')">PIT-017</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-005"><td><span class="status s-yellow"></span></td><td>PIT-005</td><td>gammas_per_decay missing</td><td>Source</td><td><a href="#PIT-016" class="badge b-pit" onclick="navigateToId('PIT-016')">PIT-016</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-006"><td><span class="status s-yellow"></span></td><td>PIT-006</td><td>Detector-source distance vs size bias</td><td>Detector</td><td><a href="#PIT-020" class="badge b-pit" onclick="navigateToId('PIT-020')">PIT-020</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-014"><td><span class="status s-yellow"></span></td><td>PIT-014</td><td>GPS User Histogram discrete energy smearing</td><td>Source</td><td></td></tr>
+<tr class="pit-row confirmed" id="PIT-015"><td><span class="status s-yellow"></span></td><td>PIT-015</td><td>QSA Cs-137 Pb HVL data error</td><td>Reference</td><td></td></tr>
+<tr class="pit-row confirmed" id="PIT-016"><td><span class="status s-yellow"></span></td><td>PIT-016</td><td>GPS multi-source intensity ratio error</td><td>Source</td><td><a href="#PIT-005" class="badge b-pit" onclick="navigateToId('PIT-005')">PIT-005</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-017"><td><span class="status s-yellow"></span></td><td>PIT-017</td><td>Attenuation coefficient empirical vs NIST</td><td>Dosimetry</td><td><a href="#PIT-004" class="badge b-pit" onclick="navigateToId('PIT-004')">PIT-004</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-018"><td><span class="status s-yellow"></span></td><td>PIT-018</td><td>Cavity Theory domain misidentification</td><td>Detector</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a> <a href="#PIT-019" class="badge b-pit" onclick="navigateToId('PIT-019')">PIT-019</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-019"><td><span class="status s-yellow"></span></td><td>PIT-019</td><td>High-Z detector mu_en energy dependence</td><td>Detector</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a> <a href="#PIT-018" class="badge b-pit" onclick="navigateToId('PIT-018')">PIT-018</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-020"><td><span class="status s-yellow"></span></td><td>PIT-020</td><td>Nuclide-specific optimal geometry needed</td><td>Detector</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a> <a href="#PIT-002" class="badge b-pit" onclick="navigateToId('PIT-002')">PIT-002</a> <a href="#PIT-006" class="badge b-pit" onclick="navigateToId('PIT-006')">PIT-006</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-021"><td><span class="status s-yellow"></span></td><td>PIT-021</td><td>Multi-layer shielding buildup non-independence</td><td>Shielding</td><td><a href="#PIT-008" class="badge b-pit" onclick="navigateToId('PIT-008')">PIT-008</a> <a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-022"><td><span class="status s-yellow"></span></td><td>PIT-022</td><td>Multi-layer boundary secondary electron equilibrium disruption</td><td>Shielding</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-023"><td><span class="status s-yellow"></span></td><td>PIT-023</td><td>Neutron importance biasing mismatch</td><td>Neutron</td><td><a href="#PIT-007" class="badge b-pit" onclick="navigateToId('PIT-007')">PIT-007</a> <a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-024"><td><span class="status s-yellow"></span></td><td>PIT-024</td><td>Neutron dose equivalent single Wr limit -- <b style="color:var(--cyan)">photon h_K done (P2.14wc)</b></td><td>Neutron</td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a> <a href="#P2.2wc-ISS-020" class="badge b-iss" onclick="navigateToId('P2.2wc-ISS-020')">ISS-020</a></td></tr>
+<tr class="pit-row confirmed" id="PIT-026"><td><span class="status s-yellow"></span></td><td>PIT-026</td><td>STL mesh quality -- particle leakage</td><td>Geometry</td><td><a href="#LT-06" class="badge b-lt" onclick="navigateToId('LT-06')">LT-06</a></td></tr>
+
+<!-- Anticipated -->
+<tr class="pit-row anticipated" id="PIT-007"><td><span class="status s-gray"></span></td><td>PIT-007</td><td>Variance Reduction weight artifact</td><td>VR</td><td><a href="#PIT-011" class="badge b-pit" onclick="navigateToId('PIT-011')">PIT-011</a></td></tr>
+<tr class="pit-row anticipated" id="PIT-008"><td><span class="status s-gray"></span></td><td>PIT-008</td><td>narrow-beam HVL vs broad-beam</td><td>Shielding</td><td><a href="#PIT-021" class="badge b-pit" onclick="navigateToId('PIT-021')">PIT-021</a> <a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a></td></tr>
+<tr class="pit-row anticipated" id="PIT-009"><td><span class="status s-gray"></span></td><td>PIT-009</td><td>Low-energy photoelectric overestimation</td><td>Physics</td><td><a href="#PIT-019" class="badge b-pit" onclick="navigateToId('PIT-019')">PIT-019</a></td></tr>
+<tr class="pit-row anticipated" id="PIT-010"><td><span class="status s-gray"></span></td><td>PIT-010</td><td>Production cut setting error</td><td>Physics</td><td><a href="#PIT-001" class="badge b-pit" onclick="navigateToId('PIT-001')">PIT-001</a></td></tr>
+<tr class="pit-row anticipated" id="PIT-011"><td><span class="status s-gray"></span></td><td>PIT-011</td><td>Multi-threading + VR incompatibility</td><td>VR</td><td><a href="#PIT-007" class="badge b-pit" onclick="navigateToId('PIT-007')">PIT-007</a> <a href="#LT-12" class="badge b-lt" onclick="navigateToId('LT-12')">LT-12</a></td></tr>
+<tr class="pit-row anticipated" id="PIT-012"><td><span class="status s-gray"></span></td><td>PIT-012</td><td>Source spectrum incomplete -- weak gamma lines</td><td>Source</td><td></td></tr>
+</tbody>
+</table>
+</div><!-- /tab-pit -->
+
+<!-- ======= Tab 4: LT Roadmap ======= -->
+<div id="tab-lt" class="tab-content">
+<h2>LT -- Long-Term Roadmap (26 categories)</h2>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterLT('all')">All (26)</button>
+  <button class="filter-btn" onclick="filterLT('done')">Implemented (5)</button>
+  <button class="filter-btn" onclick="filterLT('progress')">In Progress (1)</button>
+  <button class="filter-btn" onclick="filterLT('not')">Not Started (20)</button>
+  <button class="filter-btn" onclick="filterLT('high')">High (4)</button>
+  <button class="filter-btn" onclick="filterLT('mid')">Mid (6)</button>
+  <button class="filter-btn" onclick="filterLT('low')">Low (16)</button>
+</div>
+
+<table id="lt-table">
+<thead>
+<tr><th>Status</th><th>LT#</th><th>Title</th><th>Priority</th><th>Phase</th><th>Session</th><th>Dependencies</th></tr>
+</thead>
+<tbody>
+<!-- High Priority -->
+<tr class="lt-row progress high" id="LT-04"><td><span class="status s-yellow"></span></td><td>LT-04</td><td>Cf-252 nuclide (neutron source)</td><td>***</td><td>Ph1 done / Ph2 in-progress (H*(10))</td><td><a href="#" class="badge b-sess">P2.10wc</a> <a href="#" class="badge b-sess">P2.14wc</a></td><td><a href="#PIT-024" class="badge b-pit" onclick="navigateToId('PIT-024')">PIT-024</a> <a href="#PIT-025" class="badge b-pit" onclick="navigateToId('PIT-025')">PIT-025</a></td></tr>
+<tr class="lt-row done high" id="LT-05"><td><span class="status s-green"></span></td><td>LT-05</td><td>Scattered particle tracking</td><td>***</td><td>Ph1 done / Ph2 pending</td><td><a href="#" class="badge b-sess">P2.10wc</a></td><td></td></tr>
+<tr class="lt-row done high" id="LT-06"><td><span class="status s-green"></span></td><td>LT-06</td><td>Complex geometry (STL)</td><td>***</td><td>Ph1 done / Ph2 pending</td><td><a href="#" class="badge b-sess">P2.10wc</a></td><td><a href="#PIT-026" class="badge b-pit" onclick="navigateToId('PIT-026')">PIT-026</a></td></tr>
+<tr class="lt-row done high" id="LT-21"><td><span class="status s-green"></span></td><td>LT-21</td><td>Shielding material expansion (57 types)</td><td>***</td><td>Ph1~5 done</td><td><a href="#" class="badge b-sess">P2.9wc</a></td><td></td></tr>
+
+<!-- Mid Priority -->
+<tr class="lt-row not mid" id="LT-01"><td><span class="status s-gray"></span></td><td>LT-01</td><td>Secondary radiation</td><td>**</td><td>--</td><td></td><td>LT-04 prerequisite</td></tr>
+<tr class="lt-row not mid" id="LT-02"><td><span class="status s-gray"></span></td><td>LT-02</td><td>Photonuclear reactions</td><td>**</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not mid" id="LT-03"><td><span class="status s-gray"></span></td><td>LT-03</td><td>Activation</td><td>**</td><td>--</td><td></td><td>LT-04 or LT-02</td></tr>
+<tr class="lt-row not mid" id="LT-07"><td><span class="status s-gray"></span></td><td>LT-07</td><td>Electron/Beta transport</td><td>**</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row done mid" id="LT-09"><td><span class="status s-green"></span></td><td>LT-09</td><td>Dose evaluation enhancement</td><td>**</td><td>Ph1~2 done (buildup)</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td><a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a> <a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a></td></tr>
+<tr class="lt-row not mid" id="LT-25"><td><span class="status s-gray"></span></td><td>LT-25</td><td>Material interaction full implementation</td><td>**</td><td>--</td><td></td><td></td></tr>
+
+<!-- Low Priority -->
+<tr class="lt-row not low" id="LT-08"><td><span class="status s-gray"></span></td><td>LT-08</td><td>Proton/Heavy ion transport</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-10"><td><span class="status s-gray"></span></td><td>LT-10</td><td>Detector response simulation</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-11"><td><span class="status s-gray"></span></td><td>LT-11</td><td>Time-dependent simulation</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-12"><td><span class="status s-gray"></span></td><td>LT-12</td><td>Distributed/Parallel computing (MT)</td><td>*</td><td>--</td><td></td><td><a href="#PIT-011" class="badge b-pit" onclick="navigateToId('PIT-011')">PIT-011</a></td></tr>
+<tr class="lt-row not low" id="LT-13"><td><span class="status s-gray"></span></td><td>LT-13</td><td>Visualization & Reports</td><td>*</td><td>Ph1 done (P2.14wc SVG)</td><td><a href="#" class="badge b-sess">P2.14wc</a></td><td></td></tr>
+<tr class="lt-row done low" id="LT-14"><td><span class="status s-green"></span></td><td>LT-14</td><td>Shield design optimization (inverse problem)</td><td>*</td><td>Ph1 done</td><td><a href="#" class="badge b-sess">P2.12wc</a></td><td></td></tr>
+<tr class="lt-row not low" id="LT-15"><td><span class="status s-gray"></span></td><td>LT-15</td><td>Optical photon transport</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-16"><td><span class="status s-gray"></span></td><td>LT-16</td><td>Medical physics</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-17"><td><span class="status s-gray"></span></td><td>LT-17</td><td>Nuclear/Waste</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-18"><td><span class="status s-gray"></span></td><td>LT-18</td><td>Environmental/Emergency</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-19"><td><span class="status s-gray"></span></td><td>LT-19</td><td>Cosmic/High-energy particles</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-20"><td><span class="status s-gray"></span></td><td>LT-20</td><td>Special radiation</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-22"><td><span class="status s-gray"></span></td><td>LT-22</td><td>Internal exposure</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-23"><td><span class="status s-gray"></span></td><td>LT-23</td><td>Magnetic/Electric fields</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-24"><td><span class="status s-gray"></span></td><td>LT-24</td><td>Surface/Interface physics</td><td>*</td><td>--</td><td></td><td></td></tr>
+<tr class="lt-row not low" id="LT-26"><td><span class="status s-gray"></span></td><td>LT-26</td><td>Radiation damage / DPA</td><td>*</td><td>--</td><td></td><td></td></tr>
+</tbody>
+</table>
+</div><!-- /tab-lt -->
+
+<!-- ======= Tab 5: REQ Requirements ======= -->
+<div id="tab-req" class="tab-content">
+<h2>REQ -- Requirements Tracking (18 items)</h2>
+<p style="color:var(--text2); font-size:0.85em; margin-bottom:12px;">
+  All requirements originated from <a href="#" class="badge b-sess">P2.1wc</a> (initial planning session). Status: all pending.
+  <br>Many have been <b>partially addressed</b> by subsequent ISS/LT work but not formally closed.
 </p>
-<table><thead>
-<tr><th>ID</th><th>Name</th><th>Version</th><th>Origin</th><th>Dependencies</th><th>Used By</th></tr>
-</thead><tbody id="mod-tbody"></tbody></table>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterREQ('all')">All (18)</button>
+  <button class="filter-btn" onclick="filterREQ('core')">Core Features (5)</button>
+  <button class="filter-btn" onclick="filterREQ('ui')">UI/UX (4)</button>
+  <button class="filter-btn" onclick="filterREQ('physics')">Physics/Data (4)</button>
+  <button class="filter-btn" onclick="filterREQ('docs')">Docs/Reports (3)</button>
+  <button class="filter-btn" onclick="filterREQ('infra')">Infrastructure (2)</button>
 </div>
 
-<!-- ═══ TERMINOLOGY TAB ═══ -->
-<div class="tab-content" id="tab-terms">
-<h2>Terminology / 용어 사전</h2>
-<p style="color:var(--dim); font-size:13px; margin-bottom:12px;">
-  프로젝트에서 사용하는 70개 기술 용어. 클릭하면 상세 설명과 관련 이슈를 확인할 수 있습니다.
-</p>
-<input type="text" class="term-search" id="term-search" placeholder="용어 검색 (한글/영어)..." oninput="filterTerms()">
-<div class="filter-bar" id="term-cat-filters" style="margin-top:10px;"></div>
-<div class="term-count" id="term-count"></div>
-<div class="term-grid" id="term-grid"></div>
+<table id="req-table">
+<thead>
+<tr><th>Status</th><th>REQ#</th><th>Category</th><th>Requirement</th><th>Partial Coverage</th></tr>
+</thead>
+<tbody>
+<!-- Core Features -->
+<tr class="req-row core" id="REQ-001"><td><span class="status s-red"></span></td><td>REQ-001</td><td>Core</td><td>GEANT4 simulation code implementation (spec-based)</td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a> <a href="#LT-05" class="badge b-lt" onclick="navigateToId('LT-05')">LT-05</a> <a href="#LT-06" class="badge b-lt" onclick="navigateToId('LT-06')">LT-06</a> <a href="#LT-21" class="badge b-lt" onclick="navigateToId('LT-21')">LT-21</a> <span style="color:var(--green); font-size:0.8em;">~70% by CLI+GUI</span></td></tr>
+<tr class="req-row core" id="REQ-002"><td><span class="status s-red"></span></td><td>REQ-002</td><td>Core</td><td>ShieldDose GUI version development</td><td><span style="color:var(--green); font-size:0.8em;">~80% GUI v3 implemented</span></td></tr>
+<tr class="req-row core" id="REQ-004"><td><span class="status s-red"></span></td><td>REQ-004</td><td>Core</td><td>OnShape STL-based 3D geometry integration</td><td><a href="#LT-06" class="badge b-lt" onclick="navigateToId('LT-06')">LT-06 Ph1</a> <span style="color:var(--yellow); font-size:0.8em;">STL import done, OnShape pending</span></td></tr>
+<tr class="req-row core" id="REQ-013"><td><span class="status s-red"></span></td><td>REQ-013</td><td>Core</td><td>Source/Shield/Detector layer delete & coordinate edit</td><td><span style="color:var(--green); font-size:0.8em;">GUI GeometryPanel implemented</span></td></tr>
+<tr class="req-row core" id="REQ-018"><td><span class="status s-red"></span></td><td>REQ-018</td><td>Core</td><td>Event count user direct setting (10M+)</td><td><span style="color:var(--green); font-size:0.8em;">RunPanel implemented</span></td></tr>
+
+<!-- Physics/Data -->
+<tr class="req-row physics" id="REQ-003"><td><span class="status s-red"></span></td><td>REQ-003</td><td>Physics</td><td>Major nuclide gamma constant simulation evaluation (Co-60, Cs-137, Cf-252 etc.)</td><td><a href="#" class="badge b-sess">P2.3~6wc</a> <span style="color:var(--green); font-size:0.8em;">6 nuclides verified</span></td></tr>
+<tr class="req-row physics" id="REQ-010"><td><span class="status s-red"></span></td><td>REQ-010</td><td>Physics</td><td>Gamma constant API (IAEA etc.) + manual input</td><td><span style="color:var(--yellow); font-size:0.8em;">CSV manual data exists, API not implemented</span></td></tr>
+<tr class="req-row physics" id="REQ-014"><td><span class="status s-red"></span></td><td>REQ-014</td><td>Physics</td><td>Alpha/Beta/Neutron/Gamma all-type nuclide evaluation</td><td><a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a> <a href="#LT-07" class="badge b-lt" onclick="navigateToId('LT-07')">LT-07</a> <a href="#LT-08" class="badge b-lt" onclick="navigateToId('LT-08')">LT-08</a> <span style="color:var(--yellow); font-size:0.8em;">gamma+n done, alpha/beta pending</span></td></tr>
+<tr class="req-row physics" id="REQ-017"><td><span class="status s-red"></span></td><td>REQ-017</td><td>Physics</td><td>Detector type + measurement unit selection (R/Sv/h)</td><td><span style="color:var(--yellow); font-size:0.8em;">Unit conversion partially implemented (ISS-071)</span></td></tr>
+
+<!-- UI/UX -->
+<tr class="req-row ui" id="REQ-005"><td><span class="status s-red"></span></td><td>REQ-005</td><td>UI</td><td>OnShape point-source example set (STL)</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+<tr class="req-row ui" id="REQ-011"><td><span class="status s-red"></span></td><td>REQ-011</td><td>UI</td><td>UI layout reorganization -- control panel collapse & fullscreen</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+<tr class="req-row ui" id="REQ-012"><td><span class="status s-red"></span></td><td>REQ-012</td><td>UI</td><td>Report tab UI -- PDF preview zoom & window re-layout</td><td><span style="color:var(--yellow); font-size:0.8em;">ResultsPanel HTML exists, PDF preview pending</span></td></tr>
+<tr class="req-row ui" id="REQ-016"><td><span class="status s-red"></span></td><td>REQ-016</td><td>UI</td><td>Phase build independent management (phase2/phase3 split)</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+
+<!-- Docs/Reports -->
+<tr class="req-row docs" id="REQ-006"><td><span class="status s-red"></span></td><td>REQ-006</td><td>Docs</td><td>GUI system user manual</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+<tr class="req-row docs" id="REQ-007"><td><span class="status s-red"></span></td><td>REQ-007</td><td>Docs</td><td>Spec v3 enhancement -- PR strategy & software naming</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+<tr class="req-row docs" id="REQ-008"><td><span class="status s-red"></span></td><td>REQ-008</td><td>Docs</td><td>Regulatory submission report PDF output</td><td><a href="#LT-13" class="badge b-lt" onclick="navigateToId('LT-13')">LT-13</a> <span style="color:var(--yellow); font-size:0.8em;">HTML report exists, PDF pending</span></td></tr>
+<tr class="req-row docs" id="REQ-009"><td><span class="status s-red"></span></td><td>REQ-009</td><td>Docs</td><td>Development directive document (spec v3 based)</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+
+<!-- Infrastructure -->
+<tr class="req-row infra" id="REQ-015"><td><span class="status s-red"></span></td><td>REQ-015</td><td>Infra</td><td>Offline kill-switch -- timer license management</td><td><span style="color:var(--red); font-size:0.8em;">Not started</span></td></tr>
+</tbody>
+</table>
+
+<h3>REQ -> LT/ISS Mapping Overview</h3>
+<div class="network">
+<pre style="font-size:0.8em; color:var(--text); line-height:1.8;">
+<span style="color:#e06c75; font-weight:bold;">REQ (User Requirements)</span>              <span style="color:var(--purple); font-weight:bold;">LT (Roadmap)</span>              <span style="color:var(--accent); font-weight:bold;">ISS (Software)</span>
+---------------------                --------------              -------------
+REQ-001 Simulation impl --------> LT-04,05,06,21 done ---> ISS x 93 resolved
+REQ-002 GUI dev ----------------> (GUI v3 impl)        ---> M-GUI x many
+REQ-003 Nuclide gamma verify ---> (P2.3~6wc verified)  ---> C-PHY,C-DAT
+REQ-004 STL 3D geometry --------> LT-06 Ph1 done       ---> ISS-026 etc.
+REQ-008 Regulatory PDF ---------> LT-13 in-progress     ---> (partial)
+REQ-010 Gamma constant API -----> (CSV manual)          ---> ISS-005,006
+REQ-014 All-type nuclide -------> LT-04,07,08 partial  ---> (some)
+REQ-017 Unit selection ---------> (partial impl)        ---> ISS-071
+
+<span style="color:var(--text2);">* Significant portions implemented but REQ status not updated
+  -> Next session: batch REQ status re-evaluation recommended</span>
+</pre>
 </div>
 
-<!-- ═══ TIMELINE TAB ═══ -->
-<div class="tab-content" id="tab-timeline">
-<h2>Session Timeline</h2>
-<div id="timeline-list"></div>
+</div><!-- /tab-req -->
+
+<!-- ======= Tab 6: Session Timeline (Updated) ======= -->
+<div id="tab-timeline" class="tab-content">
+<h2>Session Timeline & Issue Flow</h2>
+
+<div class="timeline">
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.2wc</span> <span class="tl-date">2026-03-27</span></div>
+    <div class="tl-detail">
+      Initial code audit. <a href="#" class="badge b-iss" style="cursor:default;">25 ISS</a> discovered (22 resolved, 2 LT-deferred, 1 superseded).<br>
+      Established ISS classification: C-PHY / C-DAT / C-FUN / C-STB / M-CLI / M-GUI / m
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.3wc ~ P2.6wc</span> <span class="tl-date">2026-03-27~28</span></div>
+    <div class="tl-detail">
+      6-nuclide validation. <a href="#" class="badge b-pit" style="cursor:default;">PIT-001~016</a> discovered (16 pitfalls).<br>
+      GPS spectrum fixes, detector optimization, QSA manual error found (PIT-015).
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.7wc</span> <span class="tl-date">2026-03-28</span></div>
+    <div class="tl-detail">
+      LT roadmap created: 18 -> 26 categories. GEANT4 transportable particle full mapping.
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.9wc</span> <span class="tl-date">2026-03-29</span></div>
+    <div class="tl-detail">
+      <a href="#LT-21" class="badge b-lt" onclick="navigateToId('LT-21')">LT-21</a> Phase 1~5 complete: materials 15->57, gas support, enriched isotopes.
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.10wc</span> <span class="tl-date">2026-03-29</span></div>
+    <div class="tl-detail">
+      <a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04</a> Cf-252 neutron Phase 1,
+      <a href="#LT-05" class="badge b-lt" onclick="navigateToId('LT-05')">LT-05</a> trajectory tracking,
+      <a href="#LT-06" class="badge b-lt" onclick="navigateToId('LT-06')">LT-06</a> STL geometry.<br>
+      <a href="#" class="badge b-pit" style="cursor:default;">PIT-017~026</a> registered (10 pitfalls).
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.11wc</span> <span class="tl-date">2026-03-30</span></div>
+    <div class="tl-detail">
+      Quality audit. <a href="#" class="badge b-iss" style="cursor:default;">54 ISS</a> discovered (51 resolved).<br>
+      <a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a> identified: buildup energy-independent assumption (Critical).
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.12wc</span> <span class="tl-date">2026-03-30</span></div>
+    <div class="tl-detail">
+      Re-audit: <a href="#" class="badge b-iss" style="cursor:default;">25 ISS</a> (18 resolved, 7 won't-fix).<br>
+      <a href="#LT-09" class="badge b-lt" onclick="navigateToId('LT-09')">LT-09</a> energy-dependent buildup: ANS 6.4.3 CSV + bilinear interpolation + Kalos-Kitazume.<br>
+      <a href="#LT-14" class="badge b-lt" onclick="navigateToId('LT-14')">LT-14</a> inverse shielding design: ShieldDesignDialog (bisection solver + attenuation curve).<br>
+      <a href="#PIT-027" class="badge b-pit" onclick="navigateToId('PIT-027')">PIT-027</a>, <a href="#PIT-028" class="badge b-pit" onclick="navigateToId('PIT-028')">PIT-028</a> <span style="color:var(--green)">RESOLVED</span>.
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.13wc</span> <span class="tl-date">2026-03-31</span></div>
+    <div class="tl-detail">
+      Dashboard modal system + Terminology (70 terms) + Manual major update (10->14 sections).<br>
+      Bidirectional linking: ISS/PIT/LT modal <-> terminology modal. Fullscreen API added.
+    </div>
+  </div>
+
+  <div class="tl-item done">
+    <div><span class="tl-session">P2.14wc</span> <span class="tl-date">2026-03-31</span> -- Current</div>
+    <div class="tl-detail">
+      <a href="#LT-04" class="badge b-lt" onclick="navigateToId('LT-04')">LT-04 Ph2</a> H*(10) ambient dose equivalent: ICRP-74 CSV + DoseConversion class + h_K method.<br>
+      <a href="#P2.2wc-ISS-020" class="badge b-iss" onclick="navigateToId('P2.2wc-ISS-020')">ISS-020</a>, <a href="#P2.2wc-ISS-021" class="badge b-iss" onclick="navigateToId('P2.2wc-ISS-021')">ISS-021</a> <span style="color:var(--green)">RESOLVED</span>. <a href="#PIT-024" class="badge b-pit" onclick="navigateToId('PIT-024')">PIT-024</a> partially resolved (photon h_K done).<br>
+      <a href="#PIT-025" class="badge b-pit" onclick="navigateToId('PIT-025')">PIT-025</a> partially resolved (particle-separated scoring).<br>
+      <a href="#LT-13" class="badge b-lt" onclick="navigateToId('LT-13')">LT-13 Ph1</a>: inline SVG attenuation curve + regulatory gauge bar in HTML reports.
+    </div>
+  </div>
 </div>
 
-</div><!-- #app -->
+<h3>Cumulative Progress</h3>
+<table>
+<thead>
+<tr><th>Session</th><th>ISS New</th><th>ISS Resolved</th><th>PIT New</th><th>PIT Resolved</th><th>LT Completed</th><th>Cumulative ISS Rate</th></tr>
+</thead>
+<tbody>
+<tr><td>P2.2wc</td><td>25</td><td>22</td><td>0</td><td>0</td><td>0</td><td>88.0%</td></tr>
+<tr><td>P2.3~6wc</td><td>0</td><td>0</td><td>16</td><td>1</td><td>0</td><td>88.0%</td></tr>
+<tr><td>P2.9wc</td><td>0</td><td>0</td><td>0</td><td>0</td><td>LT-21</td><td>88.0%</td></tr>
+<tr><td>P2.10wc</td><td>0</td><td>0</td><td>10</td><td>0</td><td>LT-04,05,06</td><td>88.0%</td></tr>
+<tr><td>P2.11wc</td><td>54</td><td>51</td><td>1</td><td>0</td><td>0</td><td>92.4%</td></tr>
+<tr><td>P2.12wc</td><td>25</td><td>18</td><td>1</td><td>2</td><td>LT-09,14</td><td>87.5%</td></tr>
+<tr><td>P2.13wc</td><td>0</td><td>0</td><td>0</td><td>0</td><td>--</td><td>87.5%</td></tr>
+<tr><td>P2.14wc</td><td>0</td><td>2</td><td>0</td><td>0 (1 partial)</td><td>LT-04 Ph2, LT-13 Ph1</td><td><b>89.4%</b></td></tr>
+<tr style="font-weight:bold; border-top:2px solid var(--accent);"><td>Total</td><td>104</td><td>93</td><td>28</td><td>3 + 1 partial</td><td>7 LT phases</td><td>89.4%</td></tr>
+</tbody>
+</table>
 
-<div class="footer" id="footer"></div>
+</div><!-- /tab-timeline -->
 
-</div><!-- .container -->
-
-<!-- ═══ Fullscreen Button ═══ -->
-<button class="fullscreen-btn" onclick="toggleFullscreen()" title="전체화면">⛶</button>
-
-<!-- ═══ MODAL ═══ -->
-<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal" id="modal-content"></div>
+<!-- ======= Detail Panel ======= -->
+<div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <button class="panel-close" onclick="closePanel()">&times;</button>
+  <div class="panel-breadcrumb" id="panel-breadcrumb"></div>
+  <div class="panel-title" id="panel-title"></div>
+  <div class="panel-status" id="panel-status"></div>
+  <div id="panel-body"></div>
 </div>
 
 <script>
-// ═══ Tab switching ═══
-function showTab(name) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-  const tab = document.getElementById('tab-' + name);
-  if (tab) tab.classList.add('active');
-  const link = document.querySelector(`.nav-link[data-tab="${name}"]`);
-  if (link) link.classList.add('active');
-}
+// ======= Knowledge Graph Engine =======
+const knowledgeGraph = {
+  nodes: {
+    // === ISS Nodes ===
+    'P2.2wc-ISS-020': { type:'iss', title:'H*(10) ambient dose equivalent', status:'resolved', category:'C-PHY', session:'P2.2wc', resolvedIn:'P2.14wc', desc:'H*(10) conversion system was missing. Resolved in P2.14wc with ICRP-74 based DoseConversion class and h_K method.' },
+    'P2.2wc-ISS-021': { type:'iss', title:'ICRP-74/116 conversion coefficients', status:'resolved', category:'C-PHY', session:'P2.2wc', resolvedIn:'P2.14wc', desc:'ICRP-74 fluence-to-dose conversion coefficients were absent. Resolved with icrp74_photon.csv + icrp74_neutron.csv.' },
+    'P2.11wc-ISS-001': { type:'iss', title:'ImportanceGeometry coordinate mismatch', status:'resolved', category:'C-PHY', session:'P2.11wc', desc:'ImportanceGeometry coordinates did not match the actual shield geometry placement.' },
+    'P2.11wc-ISS-002': { type:'iss', title:'Buildup factor energy ignored', status:'resolved', category:'C-PHY', session:'P2.11wc', desc:'Buildup factor calculation ignored photon energy, using a single value regardless of source energy.' },
+    'P2.11wc-ISS-003': { type:'iss', title:'avgEnergy weighted average reciprocal error', status:'resolved', category:'C-PHY', session:'P2.11wc', desc:'Average energy calculation used reciprocal weighting instead of proper intensity weighting.' },
+    'P2.11wc-ISS-004': { type:'iss', title:'Co-60 single-gamma underestimate warning missing', status:'resolved', category:'C-PHY', session:'P2.11wc', desc:'No warning when Co-60 was treated as single gamma, underestimating dose.' },
+    'P2.11wc-ISS-005': { type:'iss', title:'I-131 gamma constant 0.0567->0.066', status:'resolved', category:'C-DAT', session:'P2.11wc', desc:'I-131 gamma constant had incorrect value (0.0567 instead of 0.066).' },
+    'P2.11wc-ISS-006': { type:'iss', title:'I-131 gamma constant CSV mismatch', status:'resolved', category:'C-DAT', session:'P2.11wc', desc:'CSV data for I-131 did not match the code constant.' },
+    'P2.11wc-ISS-007': { type:'iss', title:'Custom material parsing failure', status:'resolved', category:'C-FUN', session:'P2.11wc', desc:'Custom material input parsing failed silently.' },
+    'P2.11wc-ISS-008': { type:'iss', title:'Gas density overwrite', status:'resolved', category:'C-DAT', session:'P2.11wc', desc:'Gas material density was overwritten with solid density.' },
+    'P2.11wc-ISS-009': { type:'iss', title:'maxTracksPerEvent invalidated', status:'resolved', category:'C-FUN', session:'P2.11wc', desc:'maxTracksPerEvent setting had no effect.' },
+    'P2.11wc-ISS-010': { type:'iss', title:'NIST direct input crash', status:'resolved', category:'C-STB', session:'P2.11wc', desc:'Direct NIST material input caused application crash.' },
+    'P2.11wc-ISS-013': { type:'iss', title:'G4GeometrySampler leak', status:'resolved', category:'M-CLI', session:'P2.11wc', desc:'G4GeometrySampler was not properly deleted, causing memory leak.' },
+    'P2.11wc-ISS-030': { type:'iss', title:'Buildup CSV insufficient energy points', status:'resolved', category:'M-DAT', session:'P2.11wc', desc:'Buildup factor CSV had insufficient energy grid points for interpolation.' },
+    'P2.11wc-ISS-032': { type:'iss', title:'DetectorConstruction typo', status:'wontfix', category:'m', session:'P2.11wc', desc:'Class name typo follows GEANT4 convention. Won\'t fix.' },
+    'P2.11wc-ISS-037': { type:'iss', title:'Serial mode forced -- MT unsupported', status:'unresolved', category:'C-STB', session:'P2.11wc', desc:'Multi-threading is disabled, forced serial mode. Requires LT-12 for proper MT support.' },
+    'P2.12wc-ISS-055': { type:'iss', title:'FindMaterial isotope search failure', status:'resolved', category:'C-FUN', session:'P2.12wc', desc:'FindMaterial could not find materials by isotope name.' },
+    'P2.12wc-ISS-056': { type:'iss', title:'Sampler deletion use-after-free', status:'resolved', category:'C-STB', session:'P2.12wc', desc:'Importance geometry sampler was used after deletion.' },
+    'P2.12wc-ISS-057': { type:'iss', title:'shieldHalfXY magic number duplication', status:'resolved', category:'M-CLI', session:'P2.12wc', desc:'Magic number for shield half-XY duplicated across files.' },
+    'P2.12wc-ISS-058': { type:'iss', title:'TrackingRecorder::Destroy mutex unprotected', status:'resolved', category:'C-STB', session:'P2.12wc', desc:'TrackingRecorder destruction not protected by mutex.' },
+    'P2.12wc-ISS-059': { type:'iss', title:'NIST material registration warning absent', status:'resolved', category:'M-GUI', session:'P2.12wc', desc:'No warning when registering NIST material directly.' },
+    'P2.12wc-ISS-060': { type:'iss', title:'Multi-layer n_hvl single-layer calculation', status:'resolved', category:'C-PHY', session:'P2.12wc', desc:'N-layer HVL calculation only used single layer formula.' },
+    'P2.12wc-ISS-061': { type:'iss', title:'Multi-layer buildup independent product assumption', status:'resolved', category:'C-PHY', session:'P2.12wc', desc:'Multi-layer buildup used independent product of single-layer factors, ignoring inter-layer effects.' },
+    'P2.12wc-ISS-062': { type:'iss', title:'MaterialDataStore::Add() non-existent', status:'resolved', category:'M-GUI', session:'P2.12wc', desc:'MaterialDataStore had no Add() method.' },
+    'P2.12wc-ISS-063': { type:'iss', title:'Build-time data sync missing', status:'resolved', category:'M-CLI', session:'P2.12wc', desc:'Build process did not sync data files.' },
+    'P2.12wc-ISS-064': { type:'iss', title:'IsCustom() substr vs compare', status:'resolved', category:'M-GUI', session:'P2.12wc', desc:'IsCustom() used substr instead of proper compare.' },
+    'P2.12wc-ISS-065': { type:'iss', title:'Dead code IncrementTrackCount', status:'wontfix', category:'m', session:'P2.12wc', desc:'Dead code removed. Won\'t fix.' },
 
-// ═══ Helpers ═══
-function badge(status) {
-  const labels = {
-    resolved: 'Resolved', unresolved: 'Unresolved', confirmed: 'Confirmed',
-    anticipated: 'Anticipated', wontfix: "Won't-fix", superseded: 'Superseded',
-    partial: 'Partial', done: 'Done', not_started: 'Not Started'
-  };
-  return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
-}
-function sevSpan(s) { return `<span class="sev-${s}">${s}</span>`; }
-function xrefSpan(arr) {
-  if (!arr || arr.length === 0) return '';
-  return arr.map(x => `<span class="xref">${x}</span>`).join(' ');
-}
+    // === PIT Nodes ===
+    'PIT-001': { type:'pit', title:'CPE failure -- thin detector', status:'confirmed', category:'Detector', desc:'Charged Particle Equilibrium fails in thin detectors. Dose != Kerma in this regime.' },
+    'PIT-002': { type:'pit', title:'Detector self-shielding -- thick detector', status:'confirmed', category:'Detector', desc:'Thick detectors attenuate the incident beam, causing self-shielding artifacts.' },
+    'PIT-003': { type:'pit', title:'Water Dose != Air Kerma unit conversion', status:'confirmed', category:'Dosimetry', desc:'Converting between water dose and air kerma requires careful mu_en ratio application.' },
+    'PIT-004': { type:'pit', title:'mu_en vs mu confusion', status:'confirmed', category:'Dosimetry', desc:'Energy absorption coefficient (mu_en) confused with linear attenuation coefficient (mu).' },
+    'PIT-005': { type:'pit', title:'gammas_per_decay missing', status:'confirmed', category:'Source', desc:'Some nuclide definitions lack proper gammas_per_decay values, affecting absolute dose.' },
+    'PIT-006': { type:'pit', title:'Detector-source solid angle bias', status:'confirmed', category:'Detector', desc:'Large detector subtends significant solid angle, biasing dose measurement.' },
+    'PIT-007': { type:'pit', title:'Variance Reduction weight artifact', status:'anticipated', category:'VR', desc:'Weight-based VR can produce artifacts in dose tallies if not carefully implemented.' },
+    'PIT-008': { type:'pit', title:'narrow-beam HVL vs broad-beam', status:'anticipated', category:'Shielding', desc:'HVL measured under narrow-beam differs from broad-beam conditions due to scatter.' },
+    'PIT-009': { type:'pit', title:'Low-energy photoelectric overestimation', status:'anticipated', category:'Physics', desc:'Photoelectric cross-section may be overestimated at very low energies in some physics lists.' },
+    'PIT-010': { type:'pit', title:'Production cut setting error', status:'anticipated', category:'Physics', desc:'Incorrect production cut can miss secondary particles affecting dose.' },
+    'PIT-011': { type:'pit', title:'MT + VR incompatibility', status:'anticipated', category:'VR', desc:'Multi-threading with variance reduction may produce race conditions in weight tracking.' },
+    'PIT-012': { type:'pit', title:'Weak gamma lines missing in source spectrum', status:'anticipated', category:'Source', desc:'Source spectrum may omit weak gamma lines that collectively contribute non-negligible dose.' },
+    'PIT-013': { type:'pit', title:'World volume overlap/protrusion', status:'resolved', category:'Geometry', desc:'Shield/detector volumes protruded from world volume. Fixed in P2.3wc.' },
+    'PIT-014': { type:'pit', title:'GPS User Histogram discrete energy smearing', status:'confirmed', category:'Source', desc:'GPS histograms smear discrete gamma lines into energy bins, altering the spectrum.' },
+    'PIT-015': { type:'pit', title:'QSA Cs-137 Pb HVL data error', status:'confirmed', category:'Reference', desc:'QSA manual Cs-137 lead HVL value appears incorrect based on MC validation.' },
+    'PIT-016': { type:'pit', title:'GPS multi-source intensity ratio error', status:'confirmed', category:'Source', desc:'Multiple GPS sources do not correctly ratio their intensities by default.' },
+    'PIT-017': { type:'pit', title:'Attenuation coefficient empirical vs NIST', status:'confirmed', category:'Dosimetry', desc:'Empirical attenuation formulae deviate from NIST tabulated values at certain energies.' },
+    'PIT-018': { type:'pit', title:'Cavity Theory domain misidentification', status:'confirmed', category:'Detector', desc:'Bragg-Gray vs Spencer-Attix cavity theory domain boundary incorrectly identified.' },
+    'PIT-019': { type:'pit', title:'High-Z detector mu_en energy dependence', status:'confirmed', category:'Detector', desc:'High-Z detector materials have strong energy dependence of mu_en, affecting dose conversion.' },
+    'PIT-020': { type:'pit', title:'Nuclide-specific optimal geometry', status:'confirmed', category:'Detector', desc:'Each nuclide requires different optimal detector geometry for accurate measurement.' },
+    'PIT-021': { type:'pit', title:'Multi-layer buildup non-independence', status:'confirmed', category:'Shielding', desc:'Multi-layer buildup factors are not independent products of single-layer factors.' },
+    'PIT-022': { type:'pit', title:'Multi-layer boundary electron equilibrium disruption', status:'confirmed', category:'Shielding', desc:'Material boundaries in multi-layer shields disrupt electron equilibrium.' },
+    'PIT-023': { type:'pit', title:'Neutron importance biasing mismatch', status:'confirmed', category:'Neutron', desc:'Importance biasing for neutrons does not match the actual flux distribution.' },
+    'PIT-024': { type:'pit', title:'Neutron dose equivalent single Wr limit', status:'confirmed', category:'Neutron', desc:'Using single radiation weighting factor for all neutron energies. Photon h_K conversion implemented in P2.14wc; neutron energy-binned fluence still pending.' },
+    'PIT-025': { type:'pit', title:'GPS multiplicity not reflected (Cf-252)', status:'partial', category:'Neutron', desc:'Cf-252 spontaneous fission multiplicity not properly reflected in GPS. Particle-separated scoring implemented in P2.14wc as partial fix.' },
+    'PIT-026': { type:'pit', title:'STL mesh quality -- particle leakage', status:'confirmed', category:'Geometry', desc:'Poor STL mesh quality causes particle leakage through geometry boundaries.' },
+    'PIT-027': { type:'pit', title:'Analytical buildup factor energy-independent assumption', status:'resolved', category:'Buildup', desc:'Analytical buildup used single energy-independent factor. Resolved with ANS 6.4.3 energy-dependent data (P2.12wc).' },
+    'PIT-028': { type:'pit', title:'Multi-layer buildup independent product assumption', status:'resolved', category:'Buildup', desc:'Multi-layer buildup used independent product of single-layer factors. Resolved with Kalos-Kitazume method (P2.12wc).' },
 
-// ═══ Fullscreen ═══
-function toggleFullscreen() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen().catch(()=>{});
-  } else {
-    document.exitFullscreen();
-  }
-}
+    // === LT Nodes ===
+    'LT-01': { type:'lt', title:'Secondary radiation', status:'not-started', priority:'mid', desc:'Secondary radiation generation and transport. Prerequisite: LT-04.' },
+    'LT-02': { type:'lt', title:'Photonuclear reactions', status:'not-started', priority:'mid', desc:'Photonuclear reaction physics (gamma,n) etc.' },
+    'LT-03': { type:'lt', title:'Activation', status:'not-started', priority:'mid', desc:'Material activation and induced radioactivity. Prerequisite: LT-04 or LT-02.' },
+    'LT-04': { type:'lt', title:'Cf-252 nuclide (neutron source)', status:'in-progress', priority:'high', desc:'Cf-252 neutron source implementation. Phase 1 done (basic neutron), Phase 2 in-progress (H*(10)/ICRP-74 conversion -- photon h_K done in P2.14wc, neutron fluence scoring pending).' },
+    'LT-05': { type:'lt', title:'Scattered particle tracking', status:'done', priority:'high', desc:'Particle trajectory tracking for scattered radiation analysis. Phase 1 complete.' },
+    'LT-06': { type:'lt', title:'Complex geometry (STL)', status:'done', priority:'high', desc:'STL geometry import for complex shielding configurations. Phase 1 complete.' },
+    'LT-07': { type:'lt', title:'Electron/Beta transport', status:'not-started', priority:'mid', desc:'Electron and beta particle transport physics.' },
+    'LT-08': { type:'lt', title:'Proton/Heavy ion transport', status:'not-started', priority:'low', desc:'Proton and heavy ion transport physics.' },
+    'LT-09': { type:'lt', title:'Dose evaluation enhancement', status:'done', priority:'mid', desc:'Energy-dependent buildup factors (ANS 6.4.3), bilinear interpolation, Kalos-Kitazume multi-layer method. Phase 1~2 complete.' },
+    'LT-10': { type:'lt', title:'Detector response simulation', status:'not-started', priority:'low', desc:'Detector response function simulation.' },
+    'LT-11': { type:'lt', title:'Time-dependent simulation', status:'not-started', priority:'low', desc:'Time-dependent decay and dose rate calculations.' },
+    'LT-12': { type:'lt', title:'Distributed/Parallel computing (MT)', status:'not-started', priority:'low', desc:'Multi-threading and MPI support for distributed computing.' },
+    'LT-13': { type:'lt', title:'Visualization & Reports', status:'in-progress', priority:'low', desc:'Report generation and visualization. Phase 1 done (SVG attenuation curves + regulatory gauge bar in P2.14wc).' },
+    'LT-14': { type:'lt', title:'Shield design optimization (inverse problem)', status:'done', priority:'low', desc:'Inverse problem solver for shield thickness determination. Bisection solver + attenuation curve.' },
+    'LT-15': { type:'lt', title:'Optical photon transport', status:'not-started', priority:'low', desc:'Optical photon transport (scintillation etc.).' },
+    'LT-16': { type:'lt', title:'Medical physics', status:'not-started', priority:'low', desc:'Medical physics applications.' },
+    'LT-17': { type:'lt', title:'Nuclear/Waste', status:'not-started', priority:'low', desc:'Nuclear facility and waste management applications.' },
+    'LT-18': { type:'lt', title:'Environmental/Emergency', status:'not-started', priority:'low', desc:'Environmental monitoring and emergency response.' },
+    'LT-19': { type:'lt', title:'Cosmic/High-energy particles', status:'not-started', priority:'low', desc:'Cosmic ray and high-energy particle applications.' },
+    'LT-20': { type:'lt', title:'Special radiation', status:'not-started', priority:'low', desc:'Special radiation types and applications.' },
+    'LT-21': { type:'lt', title:'Shielding material expansion (57 types)', status:'done', priority:'high', desc:'Expanded from 15 to 57 built-in materials. Gas support, enriched isotopes, custom materials.' },
+    'LT-22': { type:'lt', title:'Internal exposure', status:'not-started', priority:'low', desc:'Internal exposure dose calculation.' },
+    'LT-23': { type:'lt', title:'Magnetic/Electric fields', status:'not-started', priority:'low', desc:'Electromagnetic field effects on particle transport.' },
+    'LT-24': { type:'lt', title:'Surface/Interface physics', status:'not-started', priority:'low', desc:'Surface and interface interaction physics.' },
+    'LT-25': { type:'lt', title:'Material interaction full implementation', status:'not-started', priority:'mid', desc:'Complete material interaction physics implementation.' },
+    'LT-26': { type:'lt', title:'Radiation damage / DPA', status:'not-started', priority:'low', desc:'Displacement per atom and radiation damage calculations.' },
 
-// ═══ Modal system ═══
-let _DATA = null;
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+    // === REQ Nodes ===
+    'REQ-001': { type:'req', title:'GEANT4 simulation code implementation', status:'pending', desc:'Core simulation code based on project spec.' },
+    'REQ-002': { type:'req', title:'ShieldDose GUI version development', status:'pending', desc:'Qt5-based GUI for ShieldDose.' },
+    'REQ-003': { type:'req', title:'Major nuclide gamma constant validation', status:'pending', desc:'Validate gamma constants for Co-60, Cs-137, Cf-252 etc.' },
+    'REQ-004': { type:'req', title:'OnShape STL 3D geometry integration', status:'pending', desc:'STL import from OnShape CAD.' },
+    'REQ-005': { type:'req', title:'OnShape point-source example STL set', status:'pending', desc:'Example STL files for point sources.' },
+    'REQ-006': { type:'req', title:'GUI system user manual', status:'pending', desc:'User documentation for GUI system.' },
+    'REQ-007': { type:'req', title:'Spec v3 enhancement', status:'pending', desc:'PR strategy and software naming.' },
+    'REQ-008': { type:'req', title:'Regulatory submission report PDF', status:'pending', desc:'PDF output for regulatory authority submission.' },
+    'REQ-009': { type:'req', title:'Development directive document', status:'pending', desc:'Development directive based on spec v3.' },
+    'REQ-010': { type:'req', title:'Gamma constant API + manual input', status:'pending', desc:'IAEA gamma constant API integration + manual entry.' },
+    'REQ-011': { type:'req', title:'UI layout reorganization', status:'pending', desc:'Control panel collapse, fullscreen mode.' },
+    'REQ-012': { type:'req', title:'Report tab UI -- PDF preview', status:'pending', desc:'PDF preview in results tab.' },
+    'REQ-013': { type:'req', title:'Layer delete & coordinate edit', status:'pending', desc:'Source/Shield/Detector layer management.' },
+    'REQ-014': { type:'req', title:'All-type nuclide evaluation', status:'pending', desc:'Alpha, Beta, Neutron, Gamma evaluation.' },
+    'REQ-015': { type:'req', title:'Offline kill-switch license', status:'pending', desc:'Timer-based license management.' },
+    'REQ-016': { type:'req', title:'Phase build independent management', status:'pending', desc:'Separate phase2/phase3 builds.' },
+    'REQ-017': { type:'req', title:'Detector type + unit selection', status:'pending', desc:'R/Sv/h unit selection.' },
+    'REQ-018': { type:'req', title:'Event count user setting', status:'pending', desc:'User-configurable event count (10M+).' }
+  },
 
-function sevColor(s) {
-  return { C: 'var(--alert)', H: 'var(--warn)', M: 'var(--cyan)', m: 'var(--dim)' }[s] || 'var(--dim)';
-}
-function sevLabel(s) {
-  return { C: 'Critical', H: 'High', M: 'Major', m: 'Minor' }[s] || s;
-}
-function xrefTags(arr) {
-  if (!arr || !arr.length) return '';
-  return arr.map(x => {
-    let cls = 'tag-iss';
-    if (x.startsWith('PIT')) cls = 'tag-pit';
-    else if (x.startsWith('LT')) cls = 'tag-lt';
-    else if (x.startsWith('REQ')) cls = 'tag-req';
-    const onclick = cls === 'tag-pit' ? `showPITDetail('${x}')` :
-                    cls === 'tag-lt' ? `showLTDetail('${x}')` :
-                    cls === 'tag-iss' ? `showISSDetailByShort('${x}')` : '';
-    return `<span class="modal-xref-tag ${cls}" onclick="${onclick}">${x}</span>`;
-  }).join('');
-}
+  edges: [
+    // Cluster 1: Buildup
+    { from:'P2.11wc-ISS-002', to:'PIT-027', relation:'physics-root' },
+    { from:'P2.11wc-ISS-002', to:'LT-09', relation:'resolved-by' },
+    { from:'P2.11wc-ISS-030', to:'PIT-027', relation:'physics-root' },
+    { from:'P2.11wc-ISS-030', to:'LT-09', relation:'resolved-by' },
+    { from:'P2.12wc-ISS-061', to:'PIT-028', relation:'physics-root' },
+    { from:'P2.12wc-ISS-061', to:'LT-09', relation:'resolved-by' },
+    { from:'PIT-027', to:'LT-09', relation:'addressed-by' },
+    { from:'PIT-028', to:'LT-09', relation:'addressed-by' },
+    { from:'PIT-008', to:'PIT-021', relation:'related' },
+    { from:'PIT-008', to:'PIT-028', relation:'related' },
+    { from:'PIT-021', to:'PIT-028', relation:'related' },
+    { from:'PIT-021', to:'PIT-008', relation:'related' },
 
-function openModal(html) {
-  document.getElementById('modal-content').innerHTML = html;
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
+    // Cluster 2: Neutron / Cf-252
+    { from:'P2.2wc-ISS-020', to:'LT-04', relation:'resolved-by' },
+    { from:'P2.2wc-ISS-020', to:'PIT-024', relation:'physics-root' },
+    { from:'P2.2wc-ISS-021', to:'LT-04', relation:'resolved-by' },
+    { from:'PIT-023', to:'PIT-007', relation:'related' },
+    { from:'PIT-023', to:'LT-04', relation:'addressed-by' },
+    { from:'PIT-024', to:'LT-04', relation:'addressed-by' },
+    { from:'PIT-024', to:'P2.2wc-ISS-020', relation:'manifests-as' },
+    { from:'PIT-025', to:'LT-04', relation:'addressed-by' },
+    { from:'LT-01', to:'LT-04', relation:'depends-on' },
+    { from:'LT-03', to:'LT-04', relation:'depends-on' },
 
-function showISSDetail(id) {
-  const item = _DATA.iss.find(i => i.id === id);
-  if (!item) return;
-  const col = sevColor(item.sev);
-  const timeline = item.resolved_in ? `
-    <div class="modal-section">
-      <div class="modal-section-title">Timeline</div>
-      <div class="modal-timeline">
-        <div class="modal-timeline-node"><div class="dot" style="background:var(--orange)"></div><span style="color:var(--dim)">${item.session}</span><br><span style="color:var(--dim);font-size:10px">Discovered</span></div>
-        <div class="modal-timeline-line"></div>
-        <div class="modal-timeline-node"><div class="dot" style="background:var(--green)"></div><span style="color:var(--green)">${item.resolved_in}</span><br><span style="color:var(--dim);font-size:10px">Resolved</span></div>
-      </div>
-    </div>` : `
-    <div class="modal-section">
-      <div class="modal-section-title">Timeline</div>
-      <div class="modal-timeline">
-        <div class="modal-timeline-node"><div class="dot" style="background:var(--orange)"></div><span style="color:var(--dim)">${item.session}</span><br><span style="color:var(--dim);font-size:10px">Discovered</span></div>
-        <div class="modal-timeline-line" style="background:var(--alert);opacity:0.4"></div>
-        <div class="modal-timeline-node"><div class="dot" style="background:var(--alert);box-shadow:0 0 8px var(--alert)"></div><span style="color:var(--alert)">Unresolved</span></div>
-      </div>
-    </div>`;
+    // Cluster 3: Detector
+    { from:'PIT-001', to:'PIT-002', relation:'tradeoff' },
+    { from:'PIT-001', to:'PIT-006', relation:'related' },
+    { from:'PIT-001', to:'PIT-020', relation:'related' },
+    { from:'PIT-002', to:'PIT-001', relation:'tradeoff' },
+    { from:'PIT-002', to:'PIT-020', relation:'related' },
+    { from:'PIT-006', to:'PIT-020', relation:'related' },
+    { from:'PIT-018', to:'PIT-001', relation:'related' },
+    { from:'PIT-018', to:'PIT-019', relation:'related' },
+    { from:'PIT-019', to:'PIT-001', relation:'related' },
+    { from:'PIT-019', to:'PIT-018', relation:'related' },
+    { from:'PIT-020', to:'PIT-001', relation:'related' },
+    { from:'PIT-020', to:'PIT-002', relation:'related' },
+    { from:'PIT-020', to:'PIT-006', relation:'related' },
+    { from:'PIT-001', to:'LT-10', relation:'addressed-by' },
+    { from:'PIT-002', to:'LT-10', relation:'addressed-by' },
+    { from:'PIT-006', to:'LT-10', relation:'addressed-by' },
 
-  openModal(`
-    <div class="modal-sev-bar" style="background:${col}"></div>
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <div class="modal-header">
-      <div class="modal-id">${item.id}${item.audit ? ' &middot; <span style="color:var(--cyan)">'+item.audit+'</span>' : ''}</div>
-      <div class="modal-title">${item.title}</div>
-      <div class="modal-meta">
-        <span class="badge badge-${item.status}">${item.status === 'resolved' ? 'Resolved' : item.status === 'unresolved' ? 'Unresolved' : item.status === 'superseded' ? 'Superseded' : item.status}</span>
-        <span class="sev-${item.sev}" style="font-size:12px;padding:2px 8px;background:rgba(255,255,255,0.05);border-radius:4px;">${sevLabel(item.sev)}</span>
-      </div>
-    </div>
-    <div class="modal-body">
-      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
-      ${item.impact ? `<div class="modal-section"><div class="modal-section-title">Impact</div><div class="modal-impact">${item.impact}</div></div>` : ''}
-      ${item.cause ? `<div class="modal-section"><div class="modal-section-title">Cause</div><div class="modal-section-content">${item.cause}</div></div>` : ''}
-      ${item.fix ? `<div class="modal-section"><div class="modal-section-title">Fix</div><div class="modal-fix">${item.fix}</div></div>` : ''}
-      ${item.location ? `<div class="modal-section"><div class="modal-section-title">Location</div><span class="modal-location">${item.location}</span></div>` : ''}
-      ${timeline}
-      ${item.terms && item.terms.length ? `<div class="modal-section"><div class="modal-section-title">Key Terms <span style="font-size:10px;color:var(--dim);text-transform:none;letter-spacing:0">(click to learn)</span></div><div class="modal-terms">${termChips(item.terms)}</div></div>` : ''}
-      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
-      ${item.note ? `<div class="modal-section"><div class="modal-section-title">Note</div><div class="modal-section-content" style="color:var(--dim);font-style:italic;">${item.note}</div></div>` : ''}
-    </div>
-  `);
-}
+    // Cluster 4: Source
+    { from:'PIT-005', to:'PIT-016', relation:'related' },
+    { from:'PIT-016', to:'PIT-005', relation:'related' },
+    { from:'P2.11wc-ISS-004', to:'PIT-005', relation:'physics-root' },
 
-function showISSDetailByShort(shortId) {
-  // e.g. "ISS-002" → find matching item
-  const num = shortId.replace('ISS-','');
-  const item = _DATA.iss.find(i => i.id.endsWith('-ISS-' + num.padStart(3,'0')));
-  if (item) showISSDetail(item.id);
-}
+    // Cluster 5: Stability
+    { from:'P2.11wc-ISS-037', to:'LT-12', relation:'resolved-by' },
+    { from:'P2.11wc-ISS-037', to:'PIT-011', relation:'physics-root' },
+    { from:'PIT-007', to:'PIT-011', relation:'related' },
+    { from:'PIT-011', to:'PIT-007', relation:'related' },
+    { from:'PIT-011', to:'LT-12', relation:'addressed-by' },
 
-function showPITDetail(id) {
-  const item = _DATA.pit.find(i => i.id === id);
-  if (!item) return;
-  const statusColor = item.status === 'resolved' ? 'var(--green)' : item.status === 'confirmed' ? 'var(--orange)' : 'var(--purple)';
+    // Cluster 6: Geometry
+    { from:'PIT-022', to:'PIT-001', relation:'related' },
+    { from:'PIT-026', to:'LT-06', relation:'addressed-by' },
 
-  openModal(`
-    <div class="modal-sev-bar" style="background:${statusColor}"></div>
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <div class="modal-header">
-      <div class="modal-id">${item.id} &middot; <span style="color:var(--dim)">${item.cat || 'General'}</span></div>
-      <div class="modal-title">${item.title}</div>
-      <div class="modal-meta">
-        ${badge(item.status)}
-        <span style="font-size:12px;padding:2px 8px;background:rgba(219,109,40,0.15);border-radius:4px;color:var(--orange);">MC Pitfall</span>
-      </div>
-    </div>
-    <div class="modal-body">
-      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
-      ${item.symptoms ? `<div class="modal-section"><div class="modal-section-title">Symptoms</div><div class="modal-section-content">${item.symptoms}</div></div>` : ''}
-      ${item.impact ? `<div class="modal-section"><div class="modal-section-title">Quantitative Impact</div><div class="modal-impact">${item.impact}</div></div>` : ''}
-      ${item.todo ? `<div class="modal-section"><div class="modal-section-title">System Response (TODO)</div><div class="modal-todo">${item.todo}</div></div>` : ''}
-      ${item.note ? `<div class="modal-section"><div class="modal-section-title">Note</div><div class="modal-fix">${item.note}</div></div>` : ''}
-      ${item.terms && item.terms.length ? `<div class="modal-section"><div class="modal-section-title">Key Terms <span style="font-size:10px;color:var(--dim);text-transform:none;letter-spacing:0">(click to learn)</span></div><div class="modal-terms">${termChips(item.terms)}</div></div>` : ''}
-      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
-    </div>
-  `);
-}
+    // Dosimetry cross-links
+    { from:'PIT-003', to:'PIT-004', relation:'related' },
+    { from:'PIT-003', to:'PIT-005', relation:'related' },
+    { from:'PIT-004', to:'PIT-003', relation:'related' },
+    { from:'PIT-004', to:'PIT-017', relation:'related' },
+    { from:'PIT-017', to:'PIT-004', relation:'related' },
+    { from:'PIT-009', to:'PIT-019', relation:'related' },
+    { from:'PIT-010', to:'PIT-001', relation:'related' },
 
-function showLTDetail(id) {
-  const item = _DATA.lt.find(i => i.id === id);
-  if (!item) return;
-  const prColor = item.priority === 3 ? 'var(--alert)' : item.priority === 2 ? 'var(--warn)' : 'var(--dim)';
-  const stColor = item.status === 'done' ? 'var(--green)' : item.status === 'partial' ? 'var(--warn)' : 'var(--dim)';
+    // REQ -> LT mappings
+    { from:'REQ-001', to:'LT-04', relation:'implemented-by' },
+    { from:'REQ-001', to:'LT-05', relation:'implemented-by' },
+    { from:'REQ-001', to:'LT-06', relation:'implemented-by' },
+    { from:'REQ-001', to:'LT-21', relation:'implemented-by' },
+    { from:'REQ-004', to:'LT-06', relation:'implemented-by' },
+    { from:'REQ-008', to:'LT-13', relation:'implemented-by' },
+    { from:'REQ-014', to:'LT-04', relation:'implemented-by' },
+    { from:'REQ-014', to:'LT-07', relation:'implemented-by' },
+    { from:'REQ-014', to:'LT-08', relation:'implemented-by' },
 
-  let phasesHtml = '';
-  if (item.done || item.remaining) {
-    phasesHtml = '<div class="modal-section"><div class="modal-section-title">Progress</div><div class="modal-phases">';
-    if (item.done) phasesHtml += `<div class="modal-phase"><span class="modal-phase-icon">✅</span><div><strong style="color:var(--green)">Done</strong><br><span style="color:var(--text)">${item.done}</span></div></div>`;
-    if (item.remaining) phasesHtml += `<div class="modal-phase"><span class="modal-phase-icon">⏳</span><div><strong style="color:var(--warn)">Remaining</strong><br><span style="color:var(--text)">${item.remaining}</span></div></div>`;
-    phasesHtml += '</div></div>';
-  }
-
-  let depsHtml = '';
-  if (item.deps && item.deps.length) {
-    depsHtml = `<div class="modal-section"><div class="modal-section-title">Dependencies</div><div class="modal-deps">${
-      item.deps.map(d => `<span class="modal-dep-tag" onclick="showLTDetail('${d}')" style="cursor:pointer">${d}</span>`).join('')
-    }</div></div>`;
-  }
-
-  openModal(`
-    <div class="modal-sev-bar" style="background:${stColor}"></div>
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <div class="modal-header">
-      <div class="modal-id">${item.id}${item.session ? ' &middot; <span style="color:var(--dim)">'+item.session+'</span>' : ''}</div>
-      <div class="modal-title">${item.title}</div>
-      <div class="modal-meta">
-        ${badge(item.status)}
-        <span style="font-size:12px;padding:2px 8px;border-radius:4px;color:${prColor};background:rgba(255,255,255,0.05);">${'★'.repeat(item.priority)} Priority</span>
-      </div>
-    </div>
-    <div class="modal-body">
-      ${item.desc ? `<div class="modal-section"><div class="modal-section-title">Description</div><div class="modal-section-content">${item.desc}</div></div>` : ''}
-      ${phasesHtml}
-      ${depsHtml}
-      ${item.phase ? `<div class="modal-section"><div class="modal-section-title">Phase Status</div><div class="modal-section-content" style="font-family:var(--body-font);font-size:13px;color:var(--cyan)">${item.phase}</div></div>` : ''}
-      ${item.terms && item.terms.length ? `<div class="modal-section"><div class="modal-section-title">Key Terms <span style="font-size:10px;color:var(--dim);text-transform:none;letter-spacing:0">(click to learn)</span></div><div class="modal-terms">${termChips(item.terms)}</div></div>` : ''}
-      ${item.xref && item.xref.length ? `<div class="modal-section"><div class="modal-section-title">Cross-References</div><div class="modal-xref-tags">${xrefTags(item.xref)}</div></div>` : ''}
-    </div>
-  `);
-}
-
-// ═══ Term helpers ═══
-const catColors = {
-  physics: { bg: 'rgba(0,247,255,0.12)', color: 'var(--cyan)', label: 'Physics' },
-  dosimetry: { bg: 'rgba(0,255,51,0.12)', color: 'var(--green)', label: 'Dosimetry' },
-  nuclear: { bg: 'rgba(255,204,0,0.12)', color: 'var(--warn)', label: 'Nuclear' },
-  geant4: { bg: 'rgba(88,166,255,0.12)', color: '#58a6ff', label: 'GEANT4' },
-  software: { bg: 'rgba(188,140,255,0.12)', color: 'var(--purple)', label: 'Software' },
-  standards: { bg: 'rgba(224,108,117,0.12)', color: 'var(--pink)', label: 'Standards' }
+    // LT dependencies
+    { from:'LT-03', to:'LT-02', relation:'depends-on' },
+    { from:'LT-12', to:'PIT-011', relation:'blocks' }
+  ]
 };
 
-function termChips(termIds) {
-  if (!termIds || !termIds.length || !_DATA) return '';
-  return termIds.map(tid => {
-    const t = _DATA.terms.find(x => x.id === tid);
-    if (!t) return '';
-    const c = catColors[t.cat] || catColors.physics;
-    return `<span class="term-chip term-chip-${t.cat}" onclick="event.stopPropagation();showTermDetail('${t.id}')" title="${t.ko}">${t.term.split('(')[0].trim()}</span>`;
-  }).join('');
+// ======= Graph query functions =======
+function getForwardRefs(id) {
+  return knowledgeGraph.edges.filter(e => e.from === id);
+}
+function getBackRefs(id) {
+  return knowledgeGraph.edges.filter(e => e.to === id);
+}
+function getRelatedCluster(id) {
+  const connected = new Set();
+  const visited = new Set();
+  function walk(nodeId, depth) {
+    if (depth > 2 || visited.has(nodeId)) return;
+    visited.add(nodeId);
+    connected.add(nodeId);
+    knowledgeGraph.edges.forEach(e => {
+      if (e.from === nodeId && !visited.has(e.to)) walk(e.to, depth+1);
+      if (e.to === nodeId && !visited.has(e.from)) walk(e.from, depth+1);
+    });
+  }
+  walk(id, 0);
+  connected.delete(id);
+  return Array.from(connected);
 }
 
-function showTermDetail(id) {
-  const t = _DATA.terms.find(x => x.id === id);
-  if (!t) return;
-  const c = catColors[t.cat] || catColors.physics;
+// ======= Navigation =======
+const navHistory = [];
 
-  let relatedHtml = '';
-  if (t.related && t.related.length) {
-    relatedHtml = `<div class="modal-section"><div class="modal-section-title">Related Issues</div><div class="modal-xref-tags">${xrefTags(t.related)}</div></div>`;
+function navigateToId(id) {
+  if (event) event.preventDefault();
+  const node = knowledgeGraph.nodes[id];
+  if (node) {
+    openDetailPanel(id, node);
   }
-
-  let seeAlsoHtml = '';
-  if (t.seeAlso && t.seeAlso.length) {
-    seeAlsoHtml = `<div class="modal-section"><div class="modal-section-title">See Also</div><div class="modal-see-also">${
-      t.seeAlso.map(sid => {
-        const st = _DATA.terms.find(x => x.id === sid);
-        if (!st) return '';
-        return `<span class="term-chip term-chip-${st.cat}" onclick="showTermDetail('${st.id}')">${st.term.split('(')[0].trim()}</span>`;
-      }).join('')
-    }</div></div>`;
+  // Scroll and flash the target row
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior:'smooth', block:'center' });
+    el.classList.remove('flash');
+    void el.offsetWidth;
+    el.classList.add('flash');
   }
-
-  openModal(`
-    <div class="modal-sev-bar" style="background:${c.color}"></div>
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <div class="modal-header">
-      <div class="modal-id" style="color:${c.color}">${c.label}</div>
-      <div class="modal-title">${t.term}</div>
-      <div class="modal-meta">
-        <span style="font-size:13px;color:var(--dim)">${t.ko}</span>
-      </div>
-    </div>
-    <div class="modal-body">
-      <div class="modal-section"><div class="modal-section-title">Definition</div><div class="modal-section-content">${t.desc}</div></div>
-      ${t.formula ? `<div class="modal-section"><div class="modal-section-title">Formula</div><div class="modal-formula">${t.formula}</div></div>` : ''}
-      ${t.visual ? `<div class="modal-section"><div class="modal-section-title">Visual</div><div class="modal-visual">${t.visual}</div></div>` : ''}
-      ${relatedHtml}
-      ${seeAlsoHtml}
-    </div>
-  `);
+  return false;
 }
 
-// ═══ Terminology tab rendering ═══
-let termCatFilter = 'all';
-function filterTerms() {
-  if (!_DATA) return;
-  const q = (document.getElementById('term-search').value || '').toLowerCase();
-  const filtered = _DATA.terms.filter(t => {
-    if (termCatFilter !== 'all' && t.cat !== termCatFilter) return false;
-    if (!q) return true;
-    return t.term.toLowerCase().includes(q) || t.ko.includes(q) || t.desc.toLowerCase().includes(q) || t.id.includes(q);
+function openDetailPanel(id, node) {
+  navHistory.push(id);
+  const panel = document.getElementById('detail-panel');
+  const overlay = document.getElementById('panel-overlay');
+  const breadcrumb = document.getElementById('panel-breadcrumb');
+  const title = document.getElementById('panel-title');
+  const status = document.getElementById('panel-status');
+  const body = document.getElementById('panel-body');
+
+  // Breadcrumb
+  let bc = navHistory.map((h, i) => {
+    if (i === navHistory.length - 1) return '<b>' + h + '</b>';
+    return '<span onclick="navBack(' + i + ')">' + h + '</span>';
+  }).join(' > ');
+  breadcrumb.innerHTML = bc;
+
+  // Type color
+  const typeColors = { iss: 'var(--accent)', pit: 'var(--orange)', lt: 'var(--purple)', req: '#e06c75' };
+  const typeLabels = { iss: 'ISS', pit: 'PIT', lt: 'LT', req: 'REQ' };
+  const statusColors = { resolved:'var(--green)', confirmed:'var(--yellow)', anticipated:'var(--gray)', 'not-started':'var(--gray)', done:'var(--green)', 'in-progress':'var(--yellow)', unresolved:'var(--red)', wontfix:'var(--gray)', pending:'var(--red)', partial:'var(--cyan)' };
+
+  title.innerHTML = '<span style="color:' + (typeColors[node.type]||'var(--text)') + '">[' + (typeLabels[node.type]||node.type).toUpperCase() + ']</span> ' + id;
+  status.innerHTML = '<span style="color:' + (statusColors[node.status]||'var(--text2)') + ';">' + node.status.toUpperCase() + '</span> &mdash; ' + node.title;
+
+  let html = '';
+
+  // Description
+  html += '<div class="panel-section"><div class="panel-section-title">Description</div>';
+  html += '<div class="panel-desc">' + (node.desc || 'No description available.') + '</div></div>';
+
+  // Extra metadata
+  if (node.category) html += '<div class="panel-section"><div class="panel-section-title">Category</div><div class="panel-desc">' + node.category + '</div></div>';
+  if (node.session) html += '<div class="panel-section"><div class="panel-section-title">Origin Session</div><div class="panel-desc">' + node.session + '</div></div>';
+  if (node.resolvedIn) html += '<div class="panel-section"><div class="panel-section-title">Resolved In</div><div class="panel-desc" style="color:var(--green)">' + node.resolvedIn + '</div></div>';
+  if (node.priority) html += '<div class="panel-section"><div class="panel-section-title">Priority</div><div class="panel-desc">' + node.priority + '</div></div>';
+
+  // Forward references
+  const fwd = getForwardRefs(id);
+  if (fwd.length > 0) {
+    html += '<div class="panel-section"><div class="panel-section-title">Forward References (this item references)</div><div class="panel-refs">';
+    fwd.forEach(e => {
+      const tNode = knowledgeGraph.nodes[e.to];
+      const cls = tNode ? 'b-' + tNode.type : 'b-iss';
+      html += '<a href="#' + e.to + '" class="badge ' + cls + '" onclick="navigateToId(\'' + e.to + '\')" title="' + e.relation + '">' + e.to + ' (' + e.relation + ')</a> ';
+    });
+    html += '</div></div>';
+  }
+
+  // Back references (KEY INNOVATION)
+  const back = getBackRefs(id);
+  if (back.length > 0) {
+    html += '<div class="panel-section"><div class="panel-section-title">Back References (items referencing this)</div><div class="panel-refs">';
+    back.forEach(e => {
+      const fNode = knowledgeGraph.nodes[e.from];
+      const cls = fNode ? 'b-' + fNode.type : 'b-iss';
+      html += '<a href="#' + e.from + '" class="badge ' + cls + '" onclick="navigateToId(\'' + e.from + '\')" title="' + e.relation + '">' + e.from + ' (' + e.relation + ')</a> ';
+    });
+    html += '</div></div>';
+  }
+
+  // Related cluster
+  const cluster = getRelatedCluster(id);
+  if (cluster.length > 0) {
+    html += '<div class="panel-section"><div class="panel-section-title">Related Cluster (2-hop neighborhood)</div><div class="panel-refs">';
+    cluster.slice(0, 15).forEach(cid => {
+      const cNode = knowledgeGraph.nodes[cid];
+      const cls = cNode ? 'b-' + cNode.type : 'b-iss';
+      html += '<a href="#' + cid + '" class="badge ' + cls + '" onclick="navigateToId(\'' + cid + '\')">' + cid + '</a> ';
+    });
+    if (cluster.length > 15) html += '<span style="color:var(--text2); font-size:0.8em;">+' + (cluster.length - 15) + ' more</span>';
+    html += '</div></div>';
+  }
+
+  body.innerHTML = html;
+  panel.classList.add('open');
+  overlay.classList.add('open');
+}
+
+function navBack(index) {
+  navHistory.length = index + 1;
+  const id = navHistory[navHistory.length - 1];
+  navHistory.pop();
+  navigateToId(id);
+}
+
+function closePanel() {
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('panel-overlay').classList.remove('open');
+  navHistory.length = 0;
+}
+
+// ======= Tab switching =======
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ======= Filters =======
+function filterISS(filter) {
+  event.target.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.iss-row').forEach(row => {
+    if (filter === 'all') { row.style.display = ''; return; }
+    row.style.display = row.classList.contains(filter) ? '' : 'none';
   });
-  document.getElementById('term-count').textContent = `${filtered.length} / ${_DATA.terms.length} terms`;
-  document.getElementById('term-grid').innerHTML = filtered.map(t => {
-    const relTags = (t.related || []).slice(0, 3).map(r => {
-      let cls = 'tag-iss';
-      if (r.startsWith('PIT')) cls = 'tag-pit';
-      if (r.startsWith('LT')) cls = 'tag-lt';
-      return `<span class="cluster-tag ${cls}" style="font-size:10px;padding:1px 5px;">${r}</span>`;
-    }).join('');
-    return `<div class="term-card" data-cat="${t.cat}" onclick="showTermDetail('${t.id}')">
-      <div class="tc-name">${t.term}</div>
-      <div class="tc-ko">${t.ko}</div>
-      <div class="tc-desc">${t.desc}</div>
-      ${relTags ? `<div class="tc-ids">${relTags}</div>` : ''}
-    </div>`;
-  }).join('');
 }
 
-function renderTermTab() {
-  const cats = ['all','physics','dosimetry','nuclear','geant4','software','standards'];
-  const labels = { all:'All', physics:'Physics', dosimetry:'Dosimetry', nuclear:'Nuclear', geant4:'GEANT4', software:'Software', standards:'Standards' };
-  document.getElementById('term-cat-filters').innerHTML = cats.map(c =>
-    `<button class="filter-btn ${c==='all'?'active':''}" onclick="termCatFilter='${c}';document.querySelectorAll('#term-cat-filters .filter-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');filterTerms()">${labels[c]}${c!=='all'?' ('+_DATA.terms.filter(t=>t.cat===c).length+')':''}</button>`
+function filterPIT(filter) {
+  event.target.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.pit-row').forEach(row => {
+    if (filter === 'all') { row.style.display = ''; return; }
+    row.style.display = row.classList.contains(filter) ? '' : 'none';
+  });
+}
+
+function filterLT(filter) {
+  event.target.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.lt-row').forEach(row => {
+    if (filter === 'all') { row.style.display = ''; return; }
+    row.style.display = row.classList.contains(filter) ? '' : 'none';
+  });
+}
+
+function filterREQ(filter) {
+  event.target.parentElement.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.req-row').forEach(row => {
+    if (filter === 'all') { row.style.display = ''; return; }
+    row.style.display = row.classList.contains(filter) ? '' : 'none';
+  });
+}
+
+// ======= Global Search =======
+function handleSearch(query) {
+  const results = document.getElementById('search-results');
+  if (!query || query.length < 2) { results.style.display = 'none'; return; }
+  query = query.toLowerCase();
+
+  const matches = [];
+  for (const [id, node] of Object.entries(knowledgeGraph.nodes)) {
+    const searchText = (id + ' ' + node.title + ' ' + (node.desc||'') + ' ' + (node.category||'')).toLowerCase();
+    if (searchText.includes(query)) {
+      matches.push({ id, node });
+    }
+    if (matches.length >= 20) break;
+  }
+
+  if (matches.length === 0) { results.style.display = 'none'; return; }
+
+  const typeColors = { iss:'var(--accent)', pit:'var(--orange)', lt:'var(--purple)', req:'#e06c75' };
+  const typeBgs = { iss:'rgba(88,166,255,0.2)', pit:'rgba(219,109,40,0.2)', lt:'rgba(188,140,255,0.2)', req:'rgba(224,108,117,0.2)' };
+
+  results.innerHTML = matches.map(m =>
+    '<div class="sr-item" onclick="navigateToId(\'' + m.id + '\'); document.getElementById(\'search-results\').style.display=\'none\';">' +
+    '<span class="sr-type" style="background:' + (typeBgs[m.node.type]||'var(--border)') + '; color:' + (typeColors[m.node.type]||'var(--text)') + ';">' + m.node.type.toUpperCase() + '</span>' +
+    '<b>' + m.id + '</b> &mdash; ' + m.node.title +
+    '</div>'
   ).join('');
-  filterTerms();
+  results.style.display = 'block';
 }
 
-// ═══ Data loading ═══
-fetch('data.json').then(r => r.json()).then(data => {
-  _DATA = data;
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  render(data);
-}).catch(err => {
-  document.getElementById('loading').innerHTML = '<span style="color:var(--alert)">Failed to load data.json: ' + err.message + '</span>';
+// Close search on click outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-container')) {
+    document.getElementById('search-results').style.display = 'none';
+  }
 });
 
-function render(D) {
-  // ═══ TAXONOMY TREE ═══
-  document.getElementById('taxonomy-tree').innerHTML =
-`<span style="color:var(--cyan); font-weight:bold">ShieldDose Tracking Systems (${D.meta.totalItems} items)</span>
-<span style="color:var(--dim)">├──</span> <span style="color:var(--teal)">P</span>  Session IDs ........... <span style="color:var(--teal)">${D.systems[0].count}</span>
-<span style="color:var(--dim)">├──</span> <span style="color:#58a6ff">ISS</span> Issue Tracking ........ <span style="color:#58a6ff">${D.systems[1].count}</span>
-<span style="color:var(--dim)">│   └──</span> <span style="color:#58a6ff">Audit ID</span> (1:1 ISS mapping) <span style="color:#58a6ff">${D.systems[2].count}</span>
-<span style="color:var(--dim)">│       ├──</span> C-PHY / C-DAT / C-FUN / C-STB
-<span style="color:var(--dim)">│       ├──</span> M-CLI / M-GUI / M-DAT
-<span style="color:var(--dim)">│       └──</span> m (minor)
-<span style="color:var(--dim)">├──</span> <span style="color:var(--orange)">PIT</span> MC Pitfalls ........... <span style="color:var(--orange)">${D.systems[3].count}</span>
-<span style="color:var(--dim)">├──</span> <span style="color:var(--purple)">LT</span>  Long-Term Roadmap ..... <span style="color:var(--purple)">${D.systems[4].count}</span>
-<span style="color:var(--dim)">├──</span> <span style="color:var(--pink)">REQ</span> Requirements .......... <span style="color:var(--pink)">${D.systems[5].count}</span>
-<span style="color:var(--dim)">└──</span> <span style="color:var(--green)">MOD</span> Reusable Modules ...... <span style="color:var(--green)">${D.systems[6].count}</span>`;
-
-  // ═══ SUMMARY CARDS ═══
-  const cardsDef = [
-    { num: D.meta.totalItems, label: 'Total Items', color: 'var(--cyan)' },
-    { num: D.systems[1].count, label: 'ISS Issues', color: '#58a6ff' },
-    { num: D.systems[1].resolved, label: 'ISS Resolved', color: 'var(--green)' },
-    { num: D.systems[3].count, label: 'PIT Pitfalls', color: 'var(--orange)' },
-    { num: D.systems[4].count, label: 'LT Tasks', color: 'var(--purple)' },
-    { num: D.systems[5].count, label: 'REQ Items', color: 'var(--pink)' },
-    { num: D.systems[6].count, label: 'MOD Modules', color: 'var(--green)' },
-    { num: D.systems[0].count, label: 'Sessions', color: 'var(--teal)' }
-  ];
-  document.getElementById('summary-cards').innerHTML = cardsDef.map(c =>
-    `<div class="card"><span class="num" style="color:${c.color}">${c.num}</span><span class="label">${c.label}</span></div>`
-  ).join('');
-
-  // ═══ PROGRESS BARS ═══
-  const issRes = D.systems[1].resolved || 0;
-  const issTotal = D.systems[1].count;
-  const issPct = Math.round(issRes / issTotal * 100);
-
-  const pitRes = D.systems[3].resolved || 0;
-  const pitTotal = D.systems[3].count;
-  const pitPct = Math.round(pitRes / pitTotal * 100);
-
-  const ltImpl = D.systems[4].implemented || 0;
-  const ltTotal = D.systems[4].count;
-  const ltPct = Math.round(ltImpl / ltTotal * 100);
-
-  const bars = [
-    { label: 'ISS', pct: issPct, color: '#58a6ff', detail: `${issRes}/${issTotal}` },
-    { label: 'PIT', pct: pitPct, color: 'var(--orange)', detail: `${pitRes}/${pitTotal} resolved` },
-    { label: 'LT', pct: ltPct, color: 'var(--purple)', detail: `${ltImpl}/${ltTotal} implemented` }
-  ];
-  document.getElementById('progress-bars').innerHTML = bars.map(b =>
-    `<div class="progress-row">
-      <span class="label">${b.label}</span>
-      <div class="bar"><div class="fill" style="width:${b.pct}%; background:${b.color};"></div></div>
-      <span class="pct">${b.pct}% <span style="color:var(--dim); font-size:11px">(${b.detail})</span></span>
-    </div>`
-  ).join('');
-
-  // ═══ CROSS-REF CLUSTERS ═══
-  const clusters = [
-    { title: 'Buildup Factor', items: ['ISS-002','ISS-030','ISS-061','PIT-021','PIT-027','PIT-028','LT-09'] },
-    { title: 'Neutron / Cf-252', items: ['PIT-023','PIT-024','PIT-025','LT-04','ISS-020','ISS-021'] },
-    { title: 'Detector Physics', items: ['PIT-001','PIT-002','PIT-006','PIT-018','PIT-019','PIT-020'] },
-    { title: 'Source Definition', items: ['PIT-005','PIT-012','PIT-014','PIT-016'] },
-    { title: 'Dosimetry', items: ['PIT-003','PIT-004','PIT-017','ISS-024'] },
-    { title: 'Stability / MT', items: ['PIT-007','PIT-011','LT-12','ISS-037'] },
-    { title: 'Geometry', items: ['PIT-013','PIT-026','LT-06'] }
-  ];
-  document.getElementById('xref-clusters').innerHTML = clusters.map(c => {
-    const tags = c.items.map(id => {
-      let cls = 'tag-iss';
-      let onclick = `showISSDetailByShort('${id}')`;
-      if (id.startsWith('PIT')) { cls = 'tag-pit'; onclick = `showPITDetail('${id}')`; }
-      if (id.startsWith('LT')) { cls = 'tag-lt'; onclick = `showLTDetail('${id}')`; }
-      return `<span class="cluster-tag ${cls}" style="cursor:pointer" onclick="${onclick}">${id}</span>`;
-    }).join('');
-    return `<div class="cluster"><div class="cluster-title">${c.title}</div><div class="cluster-items">${tags}</div></div>`;
-  }).join('');
-
-  // Audit ID mapping table
-  const auditCats = {};
-  for (const [aid, iss] of Object.entries(D.auditMapping)) {
-    const cat = aid.replace(/-\d+$/, '');
-    if (!auditCats[cat]) auditCats[cat] = [];
-    auditCats[cat].push({ aid, iss });
-  }
-  let auditHtml = '';
-  for (const [cat, items] of Object.entries(auditCats)) {
-    auditHtml += `<h3>${cat}</h3><table><thead><tr><th>Audit ID</th><th>ISS #</th></tr></thead><tbody>`;
-    items.forEach(i => {
-      auditHtml += `<tr><td>${i.aid}</td><td>${i.iss}</td></tr>`;
-    });
-    auditHtml += '</tbody></table>';
-  }
-  document.getElementById('audit-map').innerHTML = auditHtml;
-
-  // ═══ ISS TABLE ═══
-  let issFilter = 'all';
-  const issFilters = ['all','C','H','M','m','unresolved'];
-  document.getElementById('iss-filters').innerHTML = issFilters.map(f =>
-    `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterISS('${f}',this)">${f === 'all' ? 'All' : f === 'unresolved' ? 'Unresolved' : 'Sev ' + f}</button>`
-  ).join('');
-  window.filterISS = function(f, btn) {
-    issFilter = f;
-    document.querySelectorAll('#iss-filters .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderISS();
-  };
-  function renderISS() {
-    const filtered = D.iss.filter(i => {
-      if (issFilter === 'all') return true;
-      if (issFilter === 'unresolved') return i.status === 'unresolved';
-      return i.sev === issFilter;
-    });
-    document.getElementById('iss-tbody').innerHTML = filtered.map(i =>
-      `<tr data-clickable onclick="showISSDetail('${i.id}')"><td style="white-space:nowrap; font-family:var(--body-font); font-size:12px;">${i.id}${i.audit ? '<br><span style="color:var(--dim); font-size:11px;">'+i.audit+'</span>' : ''}</td>
-       <td>${sevSpan(i.sev)}</td>
-       <td>${badge(i.status)}</td>
-       <td>${i.title}</td>
-       <td style="color:var(--dim); font-size:12px;">${i.session}${i.resolved_in ? '<br>&rarr; '+i.resolved_in : ''}</td>
-       <td>${xrefSpan(i.xref)}</td></tr>`
-    ).join('');
-  }
-  renderISS();
-
-  // ═══ PIT TABLE ═══
-  let pitFilter = 'all';
-  const pitFilters = ['all','confirmed','anticipated','resolved'];
-  document.getElementById('pit-filters').innerHTML = pitFilters.map(f =>
-    `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterPIT('${f}',this)">${f === 'all' ? 'All' : f.charAt(0).toUpperCase()+f.slice(1)}</button>`
-  ).join('');
-  window.filterPIT = function(f, btn) {
-    pitFilter = f;
-    document.querySelectorAll('#pit-filters .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPIT();
-  };
-  function renderPIT() {
-    const filtered = D.pit.filter(i => pitFilter === 'all' || i.status === pitFilter);
-    document.getElementById('pit-tbody').innerHTML = filtered.map(i =>
-      `<tr data-clickable onclick="showPITDetail('${i.id}')"><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
-       <td>${badge(i.status)}</td>
-       <td style="color:var(--dim);">${i.cat || ''}</td>
-       <td>${i.title}${i.note ? '<br><span style="color:var(--dim); font-size:11px;">'+i.note+'</span>' : ''}</td>
-       <td>${xrefSpan(i.xref)}</td></tr>`
-    ).join('');
-  }
-  renderPIT();
-
-  // ═══ LT TABLE ═══
-  let ltFilter = 'all';
-  const ltFilters = ['all','priority-3','priority-2','partial','done','not_started'];
-  document.getElementById('lt-filters').innerHTML = ltFilters.map(f => {
-    const labels = { all:'All', 'priority-3':'Priority ★★★', 'priority-2':'Priority ★★', partial:'Partial', done:'Done', not_started:'Not Started' };
-    return `<button class="filter-btn ${f==='all'?'active':''}" onclick="filterLT('${f}',this)">${labels[f]}</button>`;
-  }).join('');
-  window.filterLT = function(f, btn) {
-    ltFilter = f;
-    document.querySelectorAll('#lt-filters .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderLT();
-  };
-  function renderLT() {
-    const filtered = D.lt.filter(i => {
-      if (ltFilter === 'all') return true;
-      if (ltFilter === 'priority-3') return i.priority === 3;
-      if (ltFilter === 'priority-2') return i.priority === 2;
-      return i.status === ltFilter;
-    });
-    document.getElementById('lt-tbody').innerHTML = filtered.map(i =>
-      `<tr data-clickable onclick="showLTDetail('${i.id}')"><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
-       <td><span class="priority-${i.priority}">${'★'.repeat(i.priority)}</span></td>
-       <td>${badge(i.status)}</td>
-       <td>${i.title}</td>
-       <td style="color:var(--dim); font-size:12px;">${i.phase || '-'}</td>
-       <td style="color:var(--dim); font-size:12px;">${i.session || '-'}</td>
-       <td>${xrefSpan(i.xref)}</td></tr>`
-    ).join('');
-  }
-  renderLT();
-
-  // ═══ REQ TABLE ═══
-  document.getElementById('req-tbody').innerHTML = D.req.map(i => {
-    const covNum = parseInt(i.coverage) || 0;
-    const covColor = covNum >= 80 ? 'var(--green)' : covNum >= 40 ? 'var(--warn)' : covNum > 0 ? 'var(--orange)' : 'var(--dim)';
-    return `<tr><td style="font-family:var(--body-font); font-size:12px;">${i.id}</td>
-     <td style="color:var(--dim);">${i.cat}</td>
-     <td>${i.title}</td>
-     <td style="color:${covColor}; font-weight:600;">${i.coverage}</td></tr>`;
-  }).join('');
-
-  // ═══ MOD TABLE ═══
-  document.getElementById('mod-tbody').innerHTML = D.mod.map(i =>
-    `<tr><td style="font-family:var(--body-font); color:var(--green);">${i.id}</td>
-     <td>${i.name}</td>
-     <td style="color:var(--cyan);">${i.version}</td>
-     <td style="color:var(--dim);">${i.origin}</td>
-     <td style="color:var(--dim); font-size:12px;">${i.deps}</td>
-     <td style="color:var(--purple); font-size:12px;">${(i.usedBy || []).join(', ') || '-'}</td></tr>`
-  ).join('');
-
-  // ═══ TIMELINE ═══
-  document.getElementById('timeline-list').innerHTML = D.sessions.map(s => {
-    let stats = [];
-    if (s.issNew) stats.push(`<span style="color:#58a6ff;">+${s.issNew} ISS</span>`);
-    if (s.issResolved) stats.push(`<span style="color:var(--green);">${s.issResolved} resolved</span>`);
-    if (s.pitNew) stats.push(`<span style="color:var(--orange);">+${s.pitNew} PIT</span>`);
-    if (s.pitResolved) stats.push(`<span style="color:var(--green);">${s.pitResolved} PIT resolved</span>`);
-    if (s.ltDone) stats.push(`<span style="color:var(--purple);">${s.ltDone}</span>`);
-    return `<div class="timeline-row">
-      <div class="timeline-date"><strong style="color:var(--cyan);">${s.id}</strong><br>${s.date}</div>
-      <div><strong>${s.title}</strong><div class="timeline-stats">${stats.join(' &middot; ') || '<span style="color:var(--dim);">-</span>'}</div></div>
-    </div>`;
-  }).join('');
-
-  // ═══ TERMINOLOGY ═══
-  if (D.terms) renderTermTab();
-
-  // ═══ FOOTER ═══
-  document.getElementById('footer').innerHTML =
-    `Updated: ${D.meta.updated} &middot; Session: ${D.meta.session} &middot; ${D.meta.totalItems} items tracked<br>
-     Edit <code>data.json</code> to update &middot; Changes deploy automatically via GitHub Pages`;
+// ======= Collapsible =======
+function toggleCollapsible(id) {
+  const header = document.getElementById(id + '-header');
+  const body = document.getElementById(id + '-body');
+  header.classList.toggle('open');
+  body.classList.toggle('open');
 }
+
+// ======= Badge hover highlight =======
+document.addEventListener('mouseover', function(e) {
+  if (e.target.classList.contains('badge') && e.target.href) {
+    const hash = e.target.getAttribute('href');
+    if (hash && hash.startsWith('#') && hash.length > 1) {
+      const targetId = hash.substring(1);
+      const el = document.getElementById(targetId);
+      if (el) { el.style.background = 'rgba(210,153,34,0.15)'; }
+    }
+  }
+});
+document.addEventListener('mouseout', function(e) {
+  if (e.target.classList.contains('badge') && e.target.href) {
+    const hash = e.target.getAttribute('href');
+    if (hash && hash.startsWith('#') && hash.length > 1) {
+      const targetId = hash.substring(1);
+      const el = document.getElementById(targetId);
+      if (el) { el.style.background = ''; }
+    }
+  }
+});
 </script>
+
+<footer style="margin-top:32px; padding-top:12px; border-top:1px solid var(--border); color:var(--text2); font-size:0.75em;">
+  ShieldDose P2 GEANT4 -- Issue Dashboard v2.0 (ID Interconnection System) -- Generated 2026-03-31 by Claude (P2.14wc)<br>
+  Design: Knowledge Graph + Linked Data + Zettelkasten + Traceability Matrix<br>
+  Sources: <code>memory/issues/_index.md</code> | <code>docs/MC_PITFALLS.md</code> | <code>memory/longterm_roadmap.md</code>
+</footer>
 
 </body>
 </html>
