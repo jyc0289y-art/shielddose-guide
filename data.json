@@ -20,7 +20,8 @@
       "impact": "빌드 불가 — 시뮬레이션 실행 자체 불가능",
       "cause": "GEANT4 enum 직접 참조 대신 미정의 변수 사용",
       "fix": "GEANT4 enum 직접 사용으로 변경",
-      "location": "GEANT4 enum 참조부"
+      "location": "GEANT4 enum 참조부",
+      "terms": ["mfd"]
     },
     {
       "id": "P2.2wc-ISS-002", "sev": "C", "status": "resolved", "title": "에너지 이중 집계 (SteppingAction + MFD)", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -28,7 +29,8 @@
       "impact": "선량 결과 2배 과대평가 가능",
       "cause": "SteppingAction에서 에너지 집계와 궤적 기록을 동시 수행",
       "fix": "SteppingAction 역할을 궤적 기록 전용으로 분리",
-      "location": "SteppingAction, MFD scorer"
+      "location": "SteppingAction, MFD scorer",
+      "terms": ["stepping-action", "mfd", "absorbed-dose"]
     },
     {
       "id": "P2.2wc-ISS-003", "sev": "C", "status": "resolved", "title": "Co-60 매크로 감마 1개만 생성 (50% 과소)", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -36,7 +38,8 @@
       "impact": "선량 50% 과소평가",
       "cause": "GPS 소스 정의에서 multiplevertex 미사용",
       "fix": "multiplevertex 방식으로 2개 감마 동시 생성",
-      "location": "Co-60 소스 매크로"
+      "location": "Co-60 소스 매크로",
+      "terms": ["gps", "gpd", "branching-ratio", "nuclide"]
     },
     {
       "id": "P2.2wc-ISS-004", "sev": "C", "status": "resolved", "title": "99.9995% 상대오차 (VR 부재)", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -45,7 +48,8 @@
       "cause": "Importance biasing 등 VR 기법 미구현",
       "fix": "Importance biasing 구현",
       "location": "시뮬레이션 전반",
-      "xref": ["PIT-007"]
+      "xref": ["PIT-007"],
+      "terms": ["vr", "importance-biasing", "fom"]
     },
     {
       "id": "P2.2wc-ISS-005", "sev": "C", "status": "resolved", "title": "ntuple 파일 데이터 없음", "session": "P2.2wc", "resolved_in": "P2.4wc",
@@ -61,7 +65,8 @@
       "impact": "공간 선량 분포 정보 완전 손실",
       "cause": "Scoring mesh 방식의 구조적 한계",
       "fix": "MFD(Multi-Functional Detector) 방식으로 전환",
-      "location": "scoring mesh 설정"
+      "location": "scoring mesh 설정",
+      "terms": ["scoring-mesh", "mfd", "absorbed-dose"]
     },
     {
       "id": "P2.2wc-ISS-007", "sev": "C", "status": "resolved", "title": "에너지 벡터 비어있을 때 0 나누기", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -77,7 +82,8 @@
       "impact": "연속 핵종 평가 시 결과 오염",
       "cause": "초기화 로직 누락",
       "fix": "초기화 로직 수정",
-      "location": "핵종 평가 루프"
+      "location": "핵종 평가 루프",
+      "terms": ["nuclide"]
     },
     {
       "id": "P2.2wc-ISS-009", "sev": "H", "status": "resolved", "title": "GPS 다중소스 강도 오류", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-016"],
@@ -85,7 +91,8 @@
       "impact": "에너지 스펙트럼 왜곡 → 선량 오차",
       "cause": "GPS 소스 강도의 절대값 vs 비율 혼동",
       "fix": "Co-60에 대해 multiplevertex 방식 적용",
-      "location": "GPS 소스 설정"
+      "location": "GPS 소스 설정",
+      "terms": ["gps", "branching-ratio", "gpd"]
     },
     {
       "id": "P2.2wc-ISS-010", "sev": "H", "status": "resolved", "title": "Qt BeamOn() UI 스레드 블로킹", "session": "P2.2wc", "resolved_in": "P2.7wc",
@@ -93,7 +100,8 @@
       "impact": "시뮬레이션 중 GUI 완전 동결 (응답 없음)",
       "cause": "시뮬레이션 연산이 UI 스레드에서 직접 실행",
       "fix": "CLI-spawn 하이브리드 아키텍처로 근본 해결 (별도 프로세스에서 시뮬레이션 실행)",
-      "location": "GUI BeamOn() 호출부"
+      "location": "GUI BeamOn() 호출부",
+      "terms": ["cli-spawn"]
     },
     {
       "id": "P2.2wc-ISS-011", "sev": "H", "status": "resolved", "title": "선량률 공식 거리항(1/r²) 누락", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -101,7 +109,8 @@
       "impact": "선량 계산 완전히 오류 — 거리 반영 안 됨",
       "cause": "해석적 계산식 작성 시 거리항 누락",
       "fix": "해석적 계산 전체 재작성",
-      "location": "해석적 선량 계산부"
+      "location": "해석적 선량 계산부",
+      "terms": ["inverse-square", "gamma-constant", "absorbed-dose"]
     },
     {
       "id": "P2.2wc-ISS-012", "sev": "C", "status": "resolved", "title": "CADMesh 로드 실패 → null 더미 삽입", "session": "P2.2wc", "resolved_in": "P2.10wc",
@@ -117,7 +126,8 @@
       "impact": "광전효과 에지 근처에서 수십% 오차",
       "cause": "NIST 데이터 대신 경험식 사용",
       "fix": "P2.11wc-ISS-002 (에너지 의존 빌드업 시스템)로 승계",
-      "location": "AnalyticalCalc 감쇠계수부"
+      "location": "AnalyticalCalc 감쇠계수부",
+      "terms": ["mu", "mu-en", "nist-xcom", "photoelectric"]
     },
     {
       "id": "P2.2wc-ISS-014", "sev": "H", "status": "resolved", "title": "STL 모드 디텍터 중심 = 바운딩박스 중심", "session": "P2.2wc", "resolved_in": "P2.10wc",
@@ -141,7 +151,8 @@
       "impact": "두꺼운 차폐체에서 99.9995% 상대오차",
       "cause": "Importance biasing 등 VR 기법 미구현",
       "fix": "Importance biasing 구현",
-      "location": "시뮬레이션 엔진 전반"
+      "location": "시뮬레이션 엔진 전반",
+      "terms": ["vr", "importance-biasing", "fom", "parallel-world"]
     },
     {
       "id": "P2.2wc-ISS-017", "sev": "M", "status": "resolved", "title": "Co-60 감마상수 메타데이터 40000배 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc",
@@ -149,7 +160,8 @@
       "impact": "참고값(감마상수 기반 선량률) 완전히 오류",
       "cause": "단위 불일치 (R·m²/Ci·h vs Sv·m²/Bq·h 혼동)",
       "fix": "단위를 Sv·m²/Bq·h로 통일",
-      "location": "감마상수 메타데이터"
+      "location": "감마상수 메타데이터",
+      "terms": ["gamma-constant", "activity", "inverse-square"]
     },
     {
       "id": "P2.2wc-ISS-018", "sev": "M", "status": "resolved", "title": "Main/GUI 매크로 감마 가중치 불일치", "session": "P2.2wc", "resolved_in": "P2.3wc",
@@ -157,7 +169,8 @@
       "impact": "CLI와 GUI 결과 불일치",
       "cause": "소스 매크로 표준화 미비",
       "fix": "소스 매크로 표준화",
-      "location": "소스 매크로 파일들"
+      "location": "소스 매크로 파일들",
+      "terms": ["gps", "branching-ratio", "cli-spawn"]
     },
     {
       "id": "P2.2wc-ISS-019", "sev": "M", "status": "resolved", "title": "감마 전용 소스에 하드론/이온 물리 (40% CPU)", "session": "P2.2wc", "resolved_in": "P2.4wc",
@@ -165,7 +178,8 @@
       "impact": "CPU 40% 낭비",
       "cause": "물리 리스트 조건부 활성화 미구현",
       "fix": "PhysicsConfig에서 매크로 스캔 후 조건부 활성화",
-      "location": "PhysicsConfig"
+      "location": "PhysicsConfig",
+      "terms": ["physics-list"]
     },
     {
       "id": "P2.2wc-ISS-020", "sev": "H", "status": "unresolved", "title": "H*(10) 주변선량당량 미구현", "session": "P2.2wc", "xref": ["LT-04", "PIT-024"],
@@ -173,7 +187,8 @@
       "impact": "규제 선량 단위(중성자 H*(10))로 보고 불가",
       "cause": "에너지 의존 중성자 선량 환산 계수 미구현",
       "fix": "LT-04 Phase 2에서 ICRP-74 H*(10) 에너지 의존 환산 구현 예정",
-      "location": "선량 평가 모듈"
+      "location": "선량 평가 모듈",
+      "terms": ["h-star-10", "dose-equivalent", "wr", "icrp", "icru", "thermal-neutron"]
     },
     {
       "id": "P2.2wc-ISS-021", "sev": "H", "status": "unresolved", "title": "ICRP 116 변환계수 부재", "session": "P2.2wc", "xref": ["LT-04"],
@@ -181,7 +196,8 @@
       "impact": "에너지 의존 중성자 선량 변환 불가",
       "cause": "ICRP 116 데이터 테이블 및 변환 로직 미구현",
       "fix": "LT-04 Phase 2에서 구현 예정",
-      "location": "선량 변환 모듈"
+      "location": "선량 변환 모듈",
+      "terms": ["icrp", "dose-equivalent", "effective-dose", "wr"]
     },
     {
       "id": "P2.2wc-ISS-022", "sev": "M", "status": "resolved", "title": "조직 vs 공기 매질 불일치", "session": "P2.2wc", "resolved_in": "P2.4wc", "xref": ["PIT-003"],
@@ -189,7 +205,8 @@
       "impact": "~10% 오차",
       "cause": "MC 디텍터 매질과 해석적 기준 매질 불일치",
       "fix": "PIT-003 문서화 + 사용자 선택 기능",
-      "location": "디텍터 매질 설정"
+      "location": "디텍터 매질 설정",
+      "terms": ["air-kerma", "kerma", "absorbed-dose", "mu-en"]
     },
     {
       "id": "P2.2wc-ISS-023", "sev": "M", "status": "resolved", "title": "RunAction 선량률 Co-60 1Ci 하드코딩", "session": "P2.2wc", "resolved_in": "P2.4wc",
@@ -197,7 +214,8 @@
       "impact": "다른 핵종/방사능에서 결과 오류",
       "cause": "핵종별 방사능 파라미터화 미구현",
       "fix": "매크로를 통한 핵종별 방사능 파라미터화",
-      "location": "RunAction"
+      "location": "RunAction",
+      "terms": ["activity", "gamma-constant", "nuclide"]
     },
     {
       "id": "P2.2wc-ISS-024", "sev": "H", "status": "resolved", "title": "mu_en vs mu 혼동 (6.4배 차이)", "session": "P2.2wc", "resolved_in": "P2.3wc", "xref": ["PIT-004"],
@@ -205,7 +223,8 @@
       "impact": "Se-75 120keV에서 μ/ρ≈0.167 vs μ_en/ρ≈0.026 → 6.4배 차이",
       "cause": "계수 혼동 (총 감쇠 vs 에너지 흡수)",
       "fix": "올바른 μ_en 데이터 적용",
-      "location": "선량 변환 계수 참조부"
+      "location": "선량 변환 계수 참조부",
+      "terms": ["mu-en", "mu", "nist-xcom", "photoelectric"]
     },
     {
       "id": "P2.2wc-ISS-025", "sev": "M", "status": "resolved", "title": "과도한 물리 리스트", "session": "P2.2wc", "resolved_in": "P2.4wc",
@@ -213,7 +232,8 @@
       "impact": "CPU 낭비 (40%)",
       "cause": "물리 리스트 조건부 활성화 미구현",
       "fix": "ISS-019와 동일 (PhysicsConfig 조건부 활성화)",
-      "location": "PhysicsConfig"
+      "location": "PhysicsConfig",
+      "terms": ["physics-list"]
     },
     {
       "id": "P2.11wc-ISS-001", "sev": "C", "status": "resolved", "audit": "C-PHY-03", "title": "ImportanceGeometry 좌표 불일치", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -221,7 +241,8 @@
       "impact": "VR 효율 저하, 수렴 속도 감소",
       "cause": "레이어 좌표를 front face 기준으로 계산",
       "fix": "중심(center) 기준 좌표 계산으로 수정",
-      "location": "ImportanceGeometry.cc:45"
+      "location": "ImportanceGeometry.cc:45",
+      "terms": ["importance-biasing", "vr", "parallel-world"]
     },
     {
       "id": "P2.11wc-ISS-002", "sev": "C", "status": "resolved", "audit": "C-PHY-02", "title": "빌드업팩터 에너지 무시", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["PIT-027", "LT-09"],
@@ -229,7 +250,8 @@
       "impact": "Cs-137+Pb 차폐 투과율 2-3배 과대평가",
       "cause": "에너지 파라미터를 함수 내부에서 무시",
       "fix": "P2.12wc LT-09에서 에너지 의존 빌드업 시스템 구현 (86행 CSV, 이중선형 보간)",
-      "location": "AnalyticalCalc.cc:15"
+      "location": "AnalyticalCalc.cc:15",
+      "terms": ["buildup-factor", "mfp", "ans-643", "kalos-kitazume"]
     },
     {
       "id": "P2.11wc-ISS-003", "sev": "C", "status": "resolved", "audit": "C-PHY-01", "title": "avgEnergy 강도 미가중 산술평균", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -237,7 +259,8 @@
       "impact": "다선 핵종(Se-75, Ir-192)에서 평균 에너지 오류 → 감쇠/빌드업 계산 오류",
       "cause": "avgEnergy_MeV()에서 intensity 가중 미적용",
       "fix": "강도 가중 평균 계산으로 수정",
-      "location": "DataTypes.hh:50-55"
+      "location": "DataTypes.hh:50-55",
+      "terms": ["branching-ratio", "gpd", "mu", "buildup-factor"]
     },
     {
       "id": "P2.11wc-ISS-004", "sev": "C", "status": "resolved", "audit": "C-DAT-01", "title": "I-131 GammasPerDecay 오류", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -245,7 +268,8 @@
       "impact": "I-131 선량 ~18% 과소평가",
       "cause": "CSV 데이터 입력 오류",
       "fix": "NNDC 기준값 0.989로 수정",
-      "location": "gamma_constants.csv:5"
+      "location": "gamma_constants.csv:5",
+      "terms": ["gpd", "branching-ratio", "nndc", "nuclide"]
     },
     {
       "id": "P2.11wc-ISS-005", "sev": "C", "status": "resolved", "audit": "C-DAT-02", "title": "커스텀재료 파싱 실패 시 불완전 잔류", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -269,7 +293,8 @@
       "impact": "트랙 제한 없음 → 메모리 이슈 가능",
       "cause": "트랙 카운트 함수가 존재하지만 통합되지 않음",
       "fix": "적절한 위치에서 IncrementTrackCount() 호출 통합",
-      "location": "TrackingRecorder.hh:55"
+      "location": "TrackingRecorder.hh:55",
+      "terms": ["stepping-action", "singleton"]
     },
     {
       "id": "P2.11wc-ISS-008", "sev": "C", "status": "resolved", "audit": "C-FUN-02", "title": "NIST 직접입력 크래시", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -277,7 +302,8 @@
       "impact": "CLI 크래시 (segfault)",
       "cause": "MaterialBrowserDialog에서 NIST 재료명에 Custom_ 접두사 미부착",
       "fix": "접두사 처리 로직 추가",
-      "location": "MaterialBrowserDialog.cc:271"
+      "location": "MaterialBrowserDialog.cc:271",
+      "terms": ["cli-spawn", "nist-xcom"]
     },
     {
       "id": "P2.11wc-ISS-009", "sev": "C", "status": "resolved", "audit": "C-STB-01", "title": "0 나누기", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -285,7 +311,8 @@
       "impact": "NaN 결과 또는 크래시",
       "cause": "numPoints==1 경계 조건 미처리",
       "fix": "가드 조건 추가",
-      "location": "AnalyticalCalc.cc:166"
+      "location": "AnalyticalCalc.cc:166",
+      "terms": ["mu", "hvl"]
     },
     {
       "id": "P2.11wc-ISS-010", "sev": "C", "status": "resolved", "audit": "C-STB-02", "title": "DataStore dangling ref", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -293,7 +320,8 @@
       "impact": "Use-after-free, undefined behavior",
       "cause": "벡터 재할당 시 참조 무효화",
       "fix": "값 반환(return by value) 또는 reserve 사용",
-      "location": "MaterialDataStore.cc:370"
+      "location": "MaterialDataStore.cc:370",
+      "terms": ["dangling-ref", "use-after-free"]
     },
     {
       "id": "P2.11wc-ISS-011", "sev": "M", "status": "resolved", "audit": "M-CLI-01", "title": "G4GeometrySampler 2개 미삭제", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -301,7 +329,8 @@
       "impact": "메모리 누수",
       "cause": "소멸자에서 삭제 누락",
       "fix": "적절한 삭제 추가",
-      "location": "main.cc:90-99"
+      "location": "main.cc:90-99",
+      "terms": ["importance-biasing", "parallel-world"]
     },
     {
       "id": "P2.11wc-ISS-012", "sev": "M", "status": "resolved", "audit": "M-CLI-02", "title": "EnrichIsotopeMaterial 2회 이상 호출 실패", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -309,7 +338,8 @@
       "impact": "다중 농축 재료 설정 불가",
       "cause": "상태 초기화 누락",
       "fix": "함수 내부 상태 초기화 수정",
-      "location": "DetectorConstruction.cc:650"
+      "location": "DetectorConstruction.cc:650",
+      "terms": ["isotope-enrichment"]
     },
     {
       "id": "P2.11wc-ISS-022", "sev": "M", "status": "resolved", "audit": "M-DAT-02a", "title": "빌드업팩터 테이블 2개 복사본 (동기화 위험)", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -317,7 +347,8 @@
       "impact": "데이터 불일치 위험",
       "cause": "빌드업 데이터를 2곳에서 관리",
       "fix": "MaterialDataStore.cc로 위임 (단일 소스)",
-      "location": "AnalyticalCalc.cc"
+      "location": "AnalyticalCalc.cc",
+      "terms": ["buildup-factor", "ans-643"]
     },
     {
       "id": "P2.11wc-ISS-023", "sev": "M", "status": "resolved", "audit": "M-CLI-03a", "title": "ProcessRunner CLI 마지막 줄 수신 실패", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -325,7 +356,8 @@
       "impact": "최종 결과 데이터 누락 가능",
       "cause": "프로세스 종료 시 버퍼 플러시 누락",
       "fix": "onFinished에서 flush 처리",
-      "location": "ProcessRunner.cc:226"
+      "location": "ProcessRunner.cc:226",
+      "terms": ["cli-spawn"]
     },
     {
       "id": "P2.11wc-ISS-025", "sev": "M", "status": "resolved", "audit": "M-GUI-01a", "title": "STL 모드 디텍터 재료 미전달 (기본 WATER)", "session": "P2.11wc", "resolved_in": "P2.11wc",
@@ -333,7 +365,8 @@
       "impact": "사용자 지정 디텍터 재료 무시",
       "cause": "GeometryPanel에서 디텍터 재료 파라미터 전달 누락",
       "fix": "재료 파라미터 전달 추가",
-      "location": "GeometryPanel.cc:404"
+      "location": "GeometryPanel.cc:404",
+      "terms": ["cli-spawn"]
     },
     {
       "id": "P2.11wc-ISS-030", "sev": "M", "status": "resolved", "audit": "M-DAT-02", "title": "buildup CSV 6재료×2에너지만", "session": "P2.11wc", "resolved_in": "P2.12wc", "xref": ["LT-09"],
@@ -341,7 +374,8 @@
       "impact": "빌드업팩터 보간 오차 큼",
       "cause": "초기 데이터 테이블의 불완전 구축",
       "fix": "P2.12wc LT-09에서 13재료 × 6-8에너지 (86행)로 확장",
-      "location": "data/buildup_ans643.csv"
+      "location": "data/buildup_ans643.csv",
+      "terms": ["buildup-factor", "ans-643", "mfp"]
     },
     {
       "id": "P2.11wc-ISS-037", "sev": "m", "status": "unresolved", "audit": "m-06", "title": "Serial 모드 강제 (MT 미지원)", "session": "P2.11wc", "xref": ["LT-12", "PIT-011"],
@@ -349,7 +383,8 @@
       "impact": "멀티스레딩 활용 불가 → 시뮬레이션 속도 제한",
       "cause": "GEANT4의 VR + MT 호환성 미보장",
       "fix": "LT-12에서 해결 예정",
-      "location": "main.cc (MT 비활성화)"
+      "location": "main.cc (MT 비활성화)",
+      "terms": ["serial-mode", "mt-mode", "vr", "parallel-world", "importance-biasing"]
     },
     {
       "id": "P2.12wc-ISS-055", "sev": "M", "status": "resolved", "title": "FindMaterial isotope 검색 실패", "session": "P2.12wc", "resolved_in": "P2.12wc",
@@ -357,7 +392,8 @@
       "impact": "다중 동위원소 농축 재료 검색 실패",
       "cause": "_iso 접미사만 검색하는 단순 로직",
       "fix": "다중 농축 반영 검색 로직으로 수정",
-      "location": "DetectorConstruction.cc:157"
+      "location": "DetectorConstruction.cc:157",
+      "terms": ["isotope-enrichment"]
     },
     {
       "id": "P2.12wc-ISS-056", "sev": "M", "status": "resolved", "title": "Sampler use-after-free 삭제 순서", "session": "P2.12wc", "resolved_in": "P2.12wc",
@@ -365,7 +401,8 @@
       "impact": "종료 시 크래시 또는 undefined behavior",
       "cause": "객체 삭제 순서 오류 (RunManager보다 후순위 삭제)",
       "fix": "삭제 순서 수정 (Sampler를 RunManager 이전에 삭제)",
-      "location": "main.cc:148"
+      "location": "main.cc:148",
+      "terms": ["use-after-free", "importance-biasing", "parallel-world"]
     },
     {
       "id": "P2.12wc-ISS-061", "sev": "M", "status": "resolved", "title": "다층 빌드업 독립곱 가정", "session": "P2.12wc", "resolved_in": "P2.12wc", "xref": ["PIT-028", "LT-09"],
@@ -373,7 +410,8 @@
       "impact": "두꺼운 다층 차폐에서 2-5배 과대평가 가능",
       "cause": "빌드업팩터의 층간 비독립성 미반영",
       "fix": "Kalos-Kitazume MFP 가중 등가 단층법 구현",
-      "location": "AnalyticalCalc.cc:94"
+      "location": "AnalyticalCalc.cc:94",
+      "terms": ["buildup-factor", "kalos-kitazume", "mfp", "spectral-hardening", "ans-643"]
     }
   ],
   "pit": [
@@ -382,84 +420,96 @@
       "desc": "디텍터가 2차 전자 비정(range)보다 얇으면 흡수선량 << 커마(kerma)",
       "symptoms": "고에너지 핵종에서 선량이 현저히 과소평가됨",
       "impact": "Co-60 + 2mm water → -46% 과소평가. 최소 디텍터 두께: Co-60 ≥10mm, Cs-137 ≥5mm, Ir-192 ≥3mm, Se-75 ≥1mm, I-131 ≥3mm, Tc-99m ≥0.5mm (water)",
-      "todo": "소스 에너지 대비 디텍터 두께 자동 경고 구현"
+      "todo": "소스 에너지 대비 디텍터 두께 자동 경고 구현",
+      "terms": ["cpe", "kerma", "absorbed-dose", "cavity-theory", "production-cut"]
     },
     {
       "id": "PIT-002", "title": "디텍터 자기차폐 — 두꺼운 디텍터", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-020"],
       "desc": "두꺼운 디텍터가 감마선을 내부에서 감쇠시켜 평균 선량 < 전면 커마",
       "symptoms": "디텍터가 두꺼울수록 선량이 낮게 측정됨",
       "impact": "5cm water 기준 — Co-60: 14%, Cs-137: 19%, Ir-192: 23%, Se-75: 30% 손실. 보정식: (1-exp(-μd))/(μd)",
-      "todo": "자기차폐 보정 팩터 자동 계산 구현"
+      "todo": "자기차폐 보정 팩터 자동 계산 구현",
+      "terms": ["self-shielding", "cpe", "mu", "hvl"]
     },
     {
       "id": "PIT-003", "title": "Water Dose ≠ Air Kerma 단위 변환", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004","PIT-005"],
       "desc": "MC 출력은 water dose이나 감마상수는 R/hr(air kerma 기준) → (μ_en/ρ)_air/(μ_en/ρ)_water 비율 변환 필요",
       "symptoms": "MC 결과와 해석적 기준값 간 ~10% 체계적 차이",
       "impact": "~10% 차이. 다선 에너지 핵종은 에너지 가중 변환 필요",
-      "todo": "Water dose와 air kerma 동시 표시 구현"
+      "todo": "Water dose와 air kerma 동시 표시 구현",
+      "terms": ["air-kerma", "kerma", "absorbed-dose", "mu-en", "gamma-constant"]
     },
     {
       "id": "PIT-004", "title": "μ_en vs μ 혼동", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-003","PIT-017"],
       "desc": "질량 에너지 흡수 계수(μ_en/ρ)와 총 감쇠 계수(μ/ρ)를 혼동하여 선량 변환 오류",
       "symptoms": "저에너지 영역에서 선량이 수 배 이상 과대평가",
       "impact": "Se-75 120keV: μ/ρ≈0.167 vs μ_en/ρ≈0.026 → 6.4배 차이",
-      "todo": "NIST XCOM 룩업 테이블 내부 사용"
+      "todo": "NIST XCOM 룩업 테이블 내부 사용",
+      "terms": ["mu-en", "mu", "nist-xcom", "photoelectric"]
     },
     {
       "id": "PIT-005", "title": "gammas_per_decay 누락", "status": "confirmed", "cat": "Source", "xref": ["PIT-016"],
       "desc": "GPS User histogram은 1 event = 1 gamma이나 실제 핵종은 붕괴당 N개 감마 방출 → gpd 보정 필요",
       "symptoms": "다선 핵종에서 선량이 체계적으로 과소평가",
       "impact": "Ir-192 gpd=2.072 → 보정 없으면 2배 과소평가",
-      "todo": "소스 매크로에서 gpd 자동 파싱"
+      "todo": "소스 매크로에서 gpd 자동 파싱",
+      "terms": ["gpd", "gps", "branching-ratio", "nndc"]
     },
     {
       "id": "PIT-006", "title": "디텍터-소스 거리 대비 크기 편향", "status": "confirmed", "cat": "Detector", "xref": ["PIT-020"],
       "desc": "가까운 거리에서 큰 디텍터를 사용하면 점선원 1/r² 가정 위반 → 입체각 편향",
       "symptoms": "디텍터 위치별 선량 균일하지 않음",
       "impact": "권장 기준: 디텍터 반폭/거리 < 0.1. 현재 10cm/30cm = 0.33 → 위반",
-      "todo": "기하학적 보정 팩터 자동 계산"
+      "todo": "기하학적 보정 팩터 자동 계산",
+      "terms": ["solid-angle", "inverse-square"]
     },
     {
       "id": "PIT-007", "title": "VR weight artifact", "status": "anticipated", "cat": "VR", "xref": ["PIT-011"],
       "desc": "Importance biasing에서 큰 가중치 변동이 발생하면 평균은 OK이나 분산이 비정상적으로 높아짐",
       "symptoms": "FOM(Figure of Merit)이 VR 미적용보다 나빠짐",
       "impact": "심한 가중치 변동 시 결과 신뢰도 저하. 예방: 레이어당 importance factor ≤ 4",
-      "todo": "가중치 분포 모니터링 구현"
+      "todo": "가중치 분포 모니터링 구현",
+      "terms": ["vr", "importance-biasing", "fom", "weight-window"]
     },
     {
       "id": "PIT-008", "title": "narrow-beam HVL vs broad-beam", "status": "anticipated", "cat": "Shielding", "xref": ["PIT-021","PIT-028"],
       "desc": "QSA HVL 데이터는 narrow-beam(좁은 빔) 조건만 반영. Broad-beam에서는 콤프턴 산란 빌드업 존재",
       "symptoms": "MC 결과가 HVL 기반 계산보다 높은 투과율 표시",
       "impact": "Co-60 5HVL에서 빌드업 팩터 B ≈ 3-5",
-      "todo": "차폐 결과에 빌드업팩터 추정값 표시"
+      "todo": "차폐 결과에 빌드업팩터 추정값 표시",
+      "terms": ["hvl", "buildup-factor", "compton", "qsa"]
     },
     {
       "id": "PIT-009", "title": "저에너지 photoelectric 효과 과대평가", "status": "anticipated", "cat": "Physics",
       "desc": "Se-75, Yb-169 등 저에너지 핵종에서 GEANT4 재료 조성 정확도가 결과에 치명적 영향",
       "symptoms": "재료 조성 미세 변화에 결과가 크게 변동",
       "impact": "광전효과 단면적 ∝ Z^4-5 → 조성 오류가 증폭됨",
-      "todo": "커스텀 재료 조성 유효성 검증 기능"
+      "todo": "커스텀 재료 조성 유효성 검증 기능",
+      "terms": ["photoelectric", "mu-en", "nist-xcom"]
     },
     {
       "id": "PIT-010", "title": "Production cut 설정 오류", "status": "anticipated", "cat": "Physics", "xref": ["PIT-001"],
       "desc": "Production cut(range cut)이 디텍터 크기보다 크면 2차 입자 생성 안 됨 → 선량 과소평가",
       "symptoms": "디텍터 선량이 비정상적으로 낮음",
       "impact": "현재 1mm 설정. 작은 디텍터에서 2차 입자 누락 가능",
-      "todo": "cut vs 디텍터 크기 자동 검증"
+      "todo": "cut vs 디텍터 크기 자동 검증",
+      "terms": ["production-cut", "cpe", "absorbed-dose"]
     },
     {
       "id": "PIT-011", "title": "Multi-threading + VR 비호환", "status": "anticipated", "cat": "VR", "xref": ["PIT-007","LT-12"],
       "desc": "G4ImportanceBiasing + 평행세계가 MT 모드에서 보장되지 않음 → Serial 모드 강제",
       "symptoms": "MT 모드에서 VR 적용 시 결과 불일치 또는 크래시",
       "impact": "멀티스레딩 활용 불가 → 시뮬레이션 속도 제한",
-      "todo": "자동 경고 및 Serial 모드 전환"
+      "todo": "자동 경고 및 Serial 모드 전환",
+      "terms": ["mt-mode", "serial-mode", "vr", "parallel-world", "importance-biasing", "mutex", "race-condition"]
     },
     {
       "id": "PIT-012", "title": "선원 스펙트럼 불완전 — 약한 감마선", "status": "anticipated", "cat": "Source",
       "desc": "주요 감마선(BR > 5%)만 포함하고 약한 선이 생략됨",
       "symptoms": "총 선량이 체계적으로 약간 과소평가",
       "impact": "총 선량 기여 ~2-5% 누락",
-      "todo": "NNDC/ENSDF 데이터와 비교 검증"
+      "todo": "NNDC/ENSDF 데이터와 비교 검증",
+      "terms": ["branching-ratio", "gpd", "nndc", "gps"]
     },
     {
       "id": "PIT-013", "title": "World volume overlap / protrusion", "status": "resolved", "cat": "Geometry", "note": "P2.3wc fix",
@@ -473,84 +523,96 @@
       "desc": "넓은 bin edge 설정 시 GPS가 bin 내에서 균일 샘플링 → 이산 감마가 연속 스펙트럼으로 변환",
       "symptoms": "에너지 스펙트럼이 예상과 다름, 특정 에너지 피크 사라짐",
       "impact": "I-131에서 넓은 bin 사용 시 ~50% 선량 과소평가. 해결: ≤1 keV 좁은 bin + zero-weight spacer 사용",
-      "todo": "이산 감마에는 항상 좁은 bin 사용 강제"
+      "todo": "이산 감마에는 항상 좁은 bin 사용 강제",
+      "terms": ["gps", "branching-ratio"]
     },
     {
       "id": "PIT-015", "title": "QSA Cs-137 Pb HVL 데이터 오류", "status": "confirmed", "cat": "Reference",
       "desc": "QSA Table 7에서 Cs-137 Pb HVL = 22.9mm로 기재 — Steel과 동일값으로 물리적으로 불가능 (Pb Z=82 → HVL이 더 낮아야 함). NIST XCOM 기준: ~5.56mm",
       "symptoms": "Pb 차폐 계산 시 HVL이 비정상적으로 높음",
       "impact": "Pb 차폐 두께 4배 과대산정. 원인: Steel 값이 Pb 열에 잘못 복사된 것으로 추정",
-      "todo": "산업 매뉴얼 기준값도 NIST 교차 검증 필수"
+      "todo": "산업 매뉴얼 기준값도 NIST 교차 검증 필수",
+      "terms": ["hvl", "mu", "qsa", "nist-xcom"]
     },
     {
       "id": "PIT-016", "title": "GPS 다중소스 intensity 비율 오류", "status": "confirmed", "cat": "Source", "xref": ["PIT-005"],
       "desc": "다중 GPS 소스에서 강도 비율 오류 → 에너지 스펙트럼 왜곡. PIT-005(gpd 보정)와는 별개 문제",
       "symptoms": "에너지 스펙트럼이 NNDC 분기비와 불일치",
       "impact": "에너지 스펙트럼 왜곡 → 선량 결과 오류",
-      "todo": "NNDC branching ratio와 자동 비교"
+      "todo": "NNDC branching ratio와 자동 비교",
+      "terms": ["gps", "branching-ratio", "gpd", "nndc"]
     },
     {
       "id": "PIT-017", "title": "감쇠계수 경험식 vs NIST", "status": "confirmed", "cat": "Dosimetry", "xref": ["PIT-004"],
       "desc": "GUI에서 HVL/차폐 계산에 경험식 사용 → NIST XCOM 대비 유의미한 편차. CLI(GEANT4)는 내부적으로 올바른 단면적 사용",
       "symptoms": "GUI 해석적 결과와 CLI MC 결과 간 체계적 차이",
       "impact": "광전효과 에지 근처에서 수십% 오차",
-      "todo": "경험식을 NIST 룩업 테이블로 교체"
+      "todo": "경험식을 NIST 룩업 테이블로 교체",
+      "terms": ["mu", "mu-en", "nist-xcom", "hvl", "photoelectric"]
     },
     {
       "id": "PIT-018", "title": "Cavity Theory 적용 영역 오판", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-019"],
       "desc": "디텍터 크기 vs 전자 비정에 따라 적용해야 할 공동 이론이 달라짐. 잘못된 이론 적용 → 수십% 오차",
       "symptoms": "선량 변환 결과가 기대값과 크게 괴리",
       "impact": ">>range → Large cavity, <<range → Bragg-Gray, ≈range → Burlin (가장 복잡). 오판 시 수십% 오차",
-      "todo": "공동 이론 적용 영역 자동 판별"
+      "todo": "공동 이론 적용 영역 자동 판별",
+      "terms": ["cavity-theory", "bragg-gray", "burlin", "large-cavity", "cpe", "mu-en"]
     },
     {
       "id": "PIT-019", "title": "고Z 디텍터 μ_en 에너지 의존성", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-018"],
       "desc": "고Z 디텍터 재료는 μ_en 보정 비율이 에너지에 따라 급격히 변동",
       "symptoms": "에너지에 따라 보정 비율이 극단적으로 변화",
       "impact": "Pb→Air: 140keV=4.47, 1250keV=0.95 (370% 변동). Water→Air는 ~4% 변동만",
-      "todo": "고Z 디텍터 재료 선택 시 경고"
+      "todo": "고Z 디텍터 재료 선택 시 경고",
+      "terms": ["mu-en", "photoelectric", "nist-xcom"]
     },
     {
       "id": "PIT-020", "title": "핵종별 최적 기하 필요", "status": "confirmed", "cat": "Detector", "xref": ["PIT-001","PIT-002","PIT-006"],
       "desc": "CPE(PIT-001)와 자기차폐(PIT-002) trade-off가 핵종 에너지별로 다름 → 단일 디텍터로 모든 핵종 평가 불가",
       "symptoms": "특정 핵종에서 체계적 과소/과대평가",
       "impact": "Co-60 1cm water → -10.4% (CPE 실패). Se-75 최적화 후 → +1.5%. 핵종별 최적 디텍터 테이블 제공됨",
-      "todo": "핵종별 최적 디텍터 기하 자동 추천"
+      "todo": "핵종별 최적 디텍터 기하 자동 추천",
+      "terms": ["cpe", "self-shielding", "solid-angle", "nuclide"]
     },
     {
       "id": "PIT-021", "title": "다층 차폐 빌드업 비독립성", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-008","PIT-028"],
       "desc": "각 층의 빌드업팩터를 독립적으로 곱하지만, 실제로는 스펙트럼 경화/연화로 층간 독립이 아님",
       "symptoms": "다층 차폐에서 해석적 vs MC 결과 괴리 증가",
       "impact": "층 순서가 결과에 영향 (Pb→Concrete vs Concrete→Pb). 3HVL 초과 다층에서 해석적-MC 괴리 증가",
-      "todo": "다층 해석적 결과에 근사 경고 표시"
+      "todo": "다층 해석적 결과에 근사 경고 표시",
+      "terms": ["buildup-factor", "spectral-hardening", "compton", "mfp"]
     },
     {
       "id": "PIT-022", "title": "다층 경계면 2차 전자 평형 교란", "status": "confirmed", "cat": "Shielding", "xref": ["PIT-001"],
       "desc": "고Z→저Z 경계에서 2차 전자 평형이 깨짐 → dose enhancement factor(DEF) 발생",
       "symptoms": "경계면 근처에서 선량 이상 증가",
       "impact": "DEF 1.1-1.5배 (경계면). 해석적 모델로는 반영 불가",
-      "todo": "고Z↔저Z 인접 레이어 시 경고"
+      "todo": "고Z↔저Z 인접 레이어 시 경고",
+      "terms": ["def", "cpe", "backscatter"]
     },
     {
       "id": "PIT-023", "title": "중성자 importance biasing 불일치", "status": "confirmed", "cat": "Neutron", "xref": ["PIT-007","LT-04"],
       "desc": "현재 importance factor(×2/layer)는 감마의 지수적 감쇠에 최적화됨. 중성자 감속/흡수 패턴은 다름",
       "symptoms": "중성자 시뮬레이션에서 가중치 변동 증가, FOM 저하",
       "impact": "가중치 변동 증가 → FOM 저하",
-      "todo": "입자별 importance factor 제어 구현"
+      "todo": "입자별 importance factor 제어 구현",
+      "terms": ["importance-biasing", "neutron-moderation", "thermal-neutron", "vr", "fom"]
     },
     {
       "id": "PIT-024", "title": "중성자 선량당량 단일 Wr 한계", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"],
       "desc": "흡수선량(Gy)만 기록하며 중성자 방사선 가중치(Wr)는 에너지 의존 (열중성자 2.5, 1MeV ~20). 단일 Wr=20 적용 시 오류",
       "symptoms": "차폐 후 중성자 선량이 비현실적으로 높음",
       "impact": "단일 Wr=20 → 차폐 후 선량 2-4배 과대평가",
-      "todo": "에너지빈 fluence scoring → ICRP-74 H*(10) 구현"
+      "todo": "에너지빈 fluence scoring → ICRP-74 H*(10) 구현",
+      "terms": ["wr", "dose-equivalent", "h-star-10", "thermal-neutron", "icrp", "absorbed-dose"]
     },
     {
       "id": "PIT-025", "title": "GPS multiplicity 미반영 (Cf-252)", "status": "confirmed", "cat": "Neutron", "xref": ["LT-04"],
       "desc": "실제 Cf-252: ~3.757 n/fission + ~7.9 γ/fission이나 1n+1g/event만 시뮬레이션",
       "symptoms": "중성자/감마 선량 비율 왜곡",
       "impact": "선형 보정 가능하나 n/γ 선량 분리 스코어링 필요",
-      "todo": "입자 타입별 분리 스코어링 구현"
+      "todo": "입자 타입별 분리 스코어링 구현",
+      "terms": ["spontaneous-fission", "gps", "watt-spectrum", "nuclide"]
     },
     {
       "id": "PIT-026", "title": "STL 메시 품질 — 입자 누설", "status": "confirmed", "cat": "Geometry", "xref": ["LT-06"],
@@ -564,14 +626,16 @@
       "desc": "GetBuildupFactor()가 에너지를 무시하고 항상 Co-60 값 반환",
       "symptoms": "Co-60 외 핵종에서 빌드업팩터 오류",
       "impact": "Cs-137+Pb 투과율 2-3배 과대평가",
-      "todo": "해결됨: 86행 CSV, 이중선형 보간, 에너지 파라미터 활성화"
+      "todo": "해결됨: 86행 CSV, 이중선형 보간, 에너지 파라미터 활성화",
+      "terms": ["buildup-factor", "mfp", "ans-643"]
     },
     {
       "id": "PIT-028", "title": "다층 차폐 빌드업팩터 독립 곱 가정", "status": "resolved", "cat": "Buildup", "xref": ["ISS-061","LT-09","PIT-021"], "note": "P2.12wc LT-09 해결",
       "desc": "totalBuildup *= B_i로 각 층 빌드업을 독립 곱으로 계산하나, 빌드업은 층간 독립이 아님",
       "symptoms": "두꺼운 다층 차폐에서 해석적 투과율이 MC보다 현저히 높음",
       "impact": "두꺼운 다층 차폐에서 2-5배 과대평가 가능",
-      "todo": "해결됨: Kalos-Kitazume MFP 가중 등가 단층법 구현"
+      "todo": "해결됨: Kalos-Kitazume MFP 가중 등가 단층법 구현",
+      "terms": ["buildup-factor", "kalos-kitazume", "mfp", "spectral-hardening", "ans-643"]
     }
   ],
   "lt": [
@@ -579,34 +643,39 @@
       "id": "LT-01", "title": "2차방사선", "priority": 2, "status": "not_started", "deps": ["LT-04"],
       "desc": "(n,γ) 포획 감마, (n,p)(n,α) 하전입자, EM 샤워 2차 입자 추적",
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["thermal-neutron", "activation", "bremsstrahlung"]
     },
     {
       "id": "LT-02", "title": "광핵반응", "priority": 2, "status": "not_started",
       "desc": "GDR(거대공명) 10-30 MeV 감마 → (γ,n)(γ,p) 반응. 의료 LINAC 중성자 생성, NDT 응용",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["pair-production", "physics-list"]
     },
     {
       "id": "LT-03", "title": "방사화", "priority": 2, "status": "not_started", "deps": ["LT-04"],
       "desc": "중성자 방사화 → 방사성 핵종 생성률, 붕괴 체인 추적",
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["activation", "decay-chain", "half-life", "thermal-neutron", "nuclide"]
     },
     {
       "id": "LT-04", "title": "Cf-252 핵종 (중성자원)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-024","PIT-025"],
       "desc": "Cf-252 중성자원 시뮬레이션: Watt 스펙트럼, 혼합 n+γ 장, 이중 바이어싱",
       "deps": [],
       "done": "Phase 1 — Watt spectrum GPS, 혼합 n+γ field, QGSP_BERT_HP 물리, dual biasing, G4NDL 4.7",
-      "remaining": "Phase 2 — ICRP-74 H*(10) 에너지 의존 환산, 입자 분리 스코어링, 실제 다중도(multiplicity)"
+      "remaining": "Phase 2 — ICRP-74 H*(10) 에너지 의존 환산, 입자 분리 스코어링, 실제 다중도(multiplicity)",
+      "terms": ["spontaneous-fission", "watt-spectrum", "thermal-neutron", "neutron-moderation", "h-star-10", "wr", "physics-list", "gps", "importance-biasing", "endf"]
     },
     {
       "id": "LT-05", "title": "산란선 입자 추적", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc",
       "desc": "입자 궤적 CSV 출력, 산란각 분석, 3D 시각화",
       "deps": [],
       "done": "Phase 1 — Trajectory CSV 출력 (SteppingAction → TrackingRecorder), 매크로 제어(/tracks/*), thread-safe",
-      "remaining": "Phase 2 — 3D WebGL 시각화, 산란각 분석, maze/duct STL 예제"
+      "remaining": "Phase 2 — 3D WebGL 시각화, 산란각 분석, maze/duct STL 예제",
+      "terms": ["stepping-action", "compton", "singleton", "mutex"]
     },
     {
       "id": "LT-06", "title": "복합 기하 (STL)", "priority": 3, "status": "partial", "phase": "Ph1 ✅ / Ph2 ⏳", "session": "P2.10wc", "xref": ["PIT-026"],
@@ -620,21 +689,24 @@
       "desc": "Sr-90/Y-90, P-32 베타 차폐, 제동복사 X선 생성. Physics: G4EmStandardPhysics_option4",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["bremsstrahlung", "physics-list", "production-cut"]
     },
     {
       "id": "LT-08", "title": "양성자/중이온 수송", "priority": 1, "status": "not_started",
       "desc": "양성자 치료 Bragg peak, 중이온 치료, GCR/SPE 우주 방사선. Physics: QGSP_BIC_HP, G4IonPhysics",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["physics-list"]
     },
     {
       "id": "LT-09", "title": "선량 평가 고도화", "priority": 2, "status": "partial", "phase": "Ph1~2 ✅ (빌드업)", "session": "P2.12wc", "xref": ["PIT-027","PIT-028"],
       "desc": "에너지 의존 빌드업팩터, 다층 빌드업, 스펙트럼 분석, 유효선량, 장기선량, H*(10)",
       "deps": [],
       "done": "Phase 1-2 — ANS 6.4.3 에너지 의존 빌드업 (86행 CSV, 13재료×6-8에너지), 이중선형 보간, Kalos-Kitazume 다층법",
-      "remaining": "에너지 스펙트럼 분석, PDD curves, 등선량 맵, KERMA vs Dose, 유효선량(ICRP-103), 장기선량, H*(10)"
+      "remaining": "에너지 스펙트럼 분석, PDD curves, 등선량 맵, KERMA vs Dose, 유효선량(ICRP-103), 장기선량, H*(10)",
+      "terms": ["buildup-factor", "ans-643", "kalos-kitazume", "mfp", "h-star-10", "effective-dose", "icrp", "icru", "kerma", "absorbed-dose"]
     },
     {
       "id": "LT-10", "title": "검출기 응답 시뮬레이션", "priority": 1, "status": "not_started",
@@ -648,14 +720,16 @@
       "desc": "반감기 보정, 붕괴 체인(Mo-99→Tc-99m), 만성 피폭, 조사 후 방사화 붕괴",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["half-life", "decay-chain", "activity", "activation"]
     },
     {
       "id": "LT-12", "title": "분산/병렬 컴퓨팅 (MT)", "priority": 1, "status": "not_started", "xref": ["PIT-011"],
       "desc": "GEANT4 MT 모드, MPI 분산, GPU 가속(Opticks), 클라우드 컴퓨팅",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["mt-mode", "serial-mode", "mutex", "race-condition", "parallel-world"]
     },
     {
       "id": "LT-13", "title": "시각화 & 보고서", "priority": 1, "status": "not_started",
@@ -669,63 +743,72 @@
       "desc": "역문제 풀기(이분법 + 해석적), ShieldDesignDialog GUI, 규제 프리셋, 다목적 최적화",
       "deps": [],
       "done": "Phase 1 — 역문제 솔버(이분법 + 해석적), ShieldDesignDialog GUI, 규제 프리셋",
-      "remaining": "다목적 최적화(비용/무게/선량 Pareto), 재료 조합 탐색, 유전/베이지안 최적화"
+      "remaining": "다목적 최적화(비용/무게/선량 Pareto), 재료 조합 탐색, 유전/베이지안 최적화",
+      "terms": ["hvl", "tvl", "buildup-factor", "mu"]
     },
     {
       "id": "LT-15", "title": "광학 광자 수송", "priority": 1, "status": "not_started",
       "desc": "섬광체 시뮬레이션(NaI, CsI, LaBr3), 체렌코프 방사선, 광섬유 선량계. Physics: G4OpticalPhysics",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["physics-list"]
     },
     {
       "id": "LT-16", "title": "의료 물리", "priority": 1, "status": "not_started",
       "desc": "RT QA (LINAC head, MLC), 진단 CT 선량(CTDI), 핵의학(I-131, Lu-177), 근접치료(Ir-192, Cs-137), ICRP 팬텀",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["effective-dose", "icrp", "absorbed-dose"]
     },
     {
       "id": "LT-17", "title": "원자력/방폐물", "priority": 1, "status": "not_started",
       "desc": "사용후핵연료 캐스크 차폐, 폐기물 드럼 외부 선량률, 해체 절단 선량, 임계안전",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["activation", "decay-chain", "neutron-moderation"]
     },
     {
       "id": "LT-18", "title": "환경/비상 대응", "priority": 1, "status": "not_started",
       "desc": "대기 확산 + 지면 침적 선량, 오염 구역 선량률, 사고 시나리오 선량 재구성, 이동식 차폐",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["effective-dose", "inverse-square", "activity"]
     },
     {
       "id": "LT-19", "title": "우주선/고에너지 입자", "priority": 1, "status": "not_started",
       "desc": "지표면 뮤온 선량률, 지하시설 차폐, 파이온/카온 HEP 차폐, GCR/SPE 모델(CREME96, ISO-15390), 항공승무원 선량. Physics: FTFP_BERT, QGSP_BERT",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["physics-list", "effective-dose"]
     },
     {
       "id": "LT-20", "title": "특수 복사", "priority": 1, "status": "not_started",
       "desc": "전이 방사선, 싱크로트론 방사선, 델타선, 하드론/EM 캐스케이드, 파쇄 생성물, 지발 중성자",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["bremsstrahlung"]
     },
     {
       "id": "LT-21", "title": "차폐체 자유도 확장 (57종)", "priority": 3, "status": "done", "phase": "Ph1~5 ✅", "session": "P2.9wc",
       "desc": "15→57종 재료 확장, 커스텀 화합물(조성식 파서 + 질량분율 + 혼합법칙 μ), NIST 300+ 직접입력, N-layer 적층, 동위원소 농축 + 가스 T/P 밀도",
       "deps": [],
       "done": "Phase 1-5 전체 완료 — 57종 재료, 커스텀 화합물, NIST 300+, N-layer, 동위원소 농축, 가스 T/P",
-      "remaining": "구배/곡면 차폐 (LT-06 필요), 나노구조/복합 차폐재"
+      "remaining": "구배/곡면 차폐 (LT-06 필요), 나노구조/복합 차폐재",
+      "terms": ["mu", "nist-xcom", "isotope-enrichment", "endf"]
     },
     {
       "id": "LT-22", "title": "내부 피폭", "priority": 1, "status": "not_started",
       "desc": "흡입/섭취 경로, ICRP 130-137 생체동력학 모델, S-factor/SAF, 복셀 팬텀(ICRP-110), 알파 방출체(Rn-222, Ra-226, Am-241)",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["effective-dose", "icrp", "dose-equivalent", "wr"]
     },
     {
       "id": "LT-23", "title": "자기장/전기장", "priority": 1, "status": "not_started",
@@ -739,21 +822,24 @@
       "desc": "차폐체 입구 후방산란, 경계면 surface current/flux, 결정 내 채널링",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["backscatter", "def"]
     },
     {
       "id": "LT-25", "title": "물질 상호작용 완전 구현", "priority": 2, "status": "not_started",
       "desc": "모든 GEANT4 물리 프로세스(EM 14종, Hadronic 9종, Decay 5종, Optical 5종, Low-energy 4종)를 ShieldDose에서 평가 가능하게 구현",
       "deps": ["LT-04", "LT-07", "LT-08"],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["physics-list", "photoelectric", "compton", "pair-production", "bremsstrahlung"]
     },
     {
       "id": "LT-26", "title": "방사선 손상 / DPA", "priority": 1, "status": "not_started",
       "desc": "DPA 평가, PKA 에너지 스펙트럼, 반도체/광학 NIEL 손상, 전자장비 SEE, RPV 취화",
       "deps": [],
       "done": "",
-      "remaining": "전체 미착수"
+      "remaining": "전체 미착수",
+      "terms": ["endf", "thermal-neutron"]
     }
   ],
   "req": [
@@ -808,5 +894,777 @@
     "M-GUI-01": "P2.11wc-ISS-022", "M-GUI-02": "P2.11wc-ISS-023", "M-GUI-03": "P2.11wc-ISS-024",
     "M-GUI-04": "P2.11wc-ISS-025", "M-GUI-05": "P2.11wc-ISS-026", "M-GUI-06": "P2.11wc-ISS-027",
     "M-GUI-07": "P2.11wc-ISS-028", "M-GUI-08": "P2.11wc-ISS-029"
-  }
+  },
+  "terms": [
+    {
+      "id": "cpe",
+      "term": "CPE (Charged Particle Equilibrium)",
+      "ko": "하전입자평형",
+      "cat": "physics",
+      "desc": "2차 하전입자(주로 전자)가 어떤 체적 내로 들어오는 양과 나가는 양이 같아지는 상태입니다. CPE가 성립하면 흡수선량(dose)과 커마(kerma)가 같아집니다. 디텍터가 2차 전자의 비정(range)보다 얇으면 전자가 탈출하여 CPE가 깨지고, 흡수선량이 커마보다 크게 낮아집니다.",
+      "formula": "CPE 성립 시: D = K (흡수선량 = 커마)",
+      "visual": "<pre style=\"color:var(--cyan)\">  <span style=\"color:var(--yellow)\">[ 얇은 디텍터 — CPE 미성립 ]</span>\n  ~~~γ~~~▸ ┃e⁻→  →  →┃ e⁻ 탈출!\n           ┃ ←e⁻     ┃\n           ┃  D &lt;&lt; K  ┃\n           ┗━━━━━━━━━━┛\n             &lt; range\n\n  <span style=\"color:var(--green)\">[ 두꺼운 디텍터 — CPE 성립 ]</span>\n  ~~~γ~~~▸ ┃e⁻→   ·   ┃\n           ┃ ←e⁻  ·e⁻→┃ 탈출 = 진입\n           ┃  D ≈ K    ┃\n           ┗━━━━━━━━━━━━━━━━┛\n                &gt; range</pre>",
+      "related": ["PIT-001"],
+      "seeAlso": ["kerma", "absorbed-dose"]
+    },
+    {
+      "id": "kerma",
+      "term": "Kerma",
+      "ko": "커마",
+      "cat": "physics",
+      "desc": "Kinetic Energy Released per unit MAss의 약자로, 광자가 물질과 상호작용하여 2차 하전입자에게 전달한 운동에너지를 단위 질량당으로 나눈 양입니다. 단위는 Gy(J/kg)입니다. 커마는 에너지 '전달'을 측정하고, 흡수선량은 에너지 '흡수'를 측정한다는 점에서 다릅니다.",
+      "formula": "K = dE_tr / dm  (단위: Gy = J/kg)",
+      "visual": "<pre style=\"color:var(--cyan)\">  광자(γ) 에너지 흐름:\n\n  γ ═══╤════════════▸ 투과\n       │\n       ▼ <span style=\"color:var(--yellow)\">E_tr (전달된 에너지)</span>\n     e⁻ ──────▸ <span style=\"color:var(--green)\">Kerma = 이 에너지 / 질량</span>\n       ╰──▸ 제동복사 (일부 탈출)\n\n  <span style=\"color:var(--red)\">Kerma ≥ Dose</span> (항상)</pre>",
+      "related": ["PIT-001", "PIT-003"],
+      "seeAlso": ["absorbed-dose", "cpe"]
+    },
+    {
+      "id": "absorbed-dose",
+      "term": "Absorbed Dose",
+      "ko": "흡수선량",
+      "cat": "physics",
+      "desc": "방사선에 의해 물질 단위 질량에 실제로 흡수(deposit)된 에너지입니다. 단위는 Gy(Gray) = J/kg입니다. 모든 방사선 종류와 에너지에 적용되는 기본 물리량으로, 생물학적 효과를 고려하려면 가중치를 곱해 선량당량(Sv)으로 환산합니다.",
+      "formula": "D = dE_ab / dm  (단위: Gy = J/kg)",
+      "visual": "<pre style=\"color:var(--cyan)\">  에너지 흡수 과정:\n\n  γ ──▸ ┃ <span style=\"color:var(--yellow)\">●</span> e⁻ 생성  ┃\n        ┃   <span style=\"color:var(--yellow)\">●●●</span> 이온화 ┃  Absorbed\n        ┃  <span style=\"color:var(--yellow)\">●●</span> 여기    ┃  Dose\n        ┃  <span style=\"color:var(--yellow)\">●</span> 열 변환  ┃  = 총 ● / 질량\n        ┗━━━━━━━━━━━━┛</pre>",
+      "related": ["PIT-001", "PIT-024"],
+      "seeAlso": ["kerma", "dose-equivalent"]
+    },
+    {
+      "id": "self-shielding",
+      "term": "Self-Shielding",
+      "ko": "자기차폐",
+      "cat": "physics",
+      "desc": "디텍터 자체가 방사선을 감쇠시켜 뒷면이 앞면보다 적은 선량을 받는 현상입니다. 디텍터가 두꺼울수록 효과가 커지며, 보정식 (1-exp(-μd))/(μd)로 평균 선량을 구합니다. 5cm 물 디텍터 기준으로 Co-60에서 14%, Se-75에서 30%의 선량 손실이 발생합니다.",
+      "formula": "보정팩터 = (1 - exp(-μd)) / (μd)",
+      "visual": "<pre style=\"color:var(--cyan)\">  자기차폐 효과:\n\n  γ ══▸ ┃<span style=\"color:var(--green)\">████</span><span style=\"color:var(--yellow)\">███</span><span style=\"color:var(--red)\">██</span>┃\n        ┃<span style=\"color:var(--green)\">████</span><span style=\"color:var(--yellow)\">███</span><span style=\"color:var(--red)\">██</span>┃\n        ┃<span style=\"color:var(--green)\">████</span><span style=\"color:var(--yellow)\">███</span><span style=\"color:var(--red)\">██</span>┃\n        ┗━━━━━━━━━━┛\n  <span style=\"color:var(--green)\">100%</span>  <span style=\"color:var(--yellow)\">~70%</span>  <span style=\"color:var(--red)\">~50%</span>\n  ← 선량 감소 방향 →\n\n  <span style=\"color:var(--yellow)\">평균 선량 &lt; 전면 선량</span></pre>",
+      "related": ["PIT-002"],
+      "seeAlso": ["cpe", "hvl"]
+    },
+    {
+      "id": "mu-en",
+      "term": "μ_en/ρ (Mass Energy-Absorption Coefficient)",
+      "ko": "질량에너지흡수계수",
+      "cat": "physics",
+      "desc": "광자 에너지 중 물질에 실제로 흡수되는 비율을 나타내는 계수입니다. 총 감쇠계수(μ/ρ)와 달리, 산란되어 빠져나가는 에너지는 제외하고 흡수되는 에너지만 반영합니다. 선량 계산의 핵심 계수이며, μ/ρ와 혼동하면 저에너지에서 6배 이상 오차가 발생할 수 있습니다.",
+      "formula": "D = Ψ × (μ_en/ρ)  (Ψ = energy fluence)",
+      "visual": "<pre style=\"color:var(--cyan)\">  μ/ρ vs μ_en/ρ 비교 (Se-75, 120keV):\n\n  <span style=\"color:var(--red)\">μ/ρ   = 0.167</span> (산란+흡수 전체)\n  <span style=\"color:var(--green)\">μ_en/ρ = 0.026</span> (흡수분만)\n\n  γ ──▸ ┃ 물질 ┃\n        ┃ <span style=\"color:var(--red)\">━━▸ 산란 (μ에 포함, μ_en에 미포함)</span>\n        ┃ <span style=\"color:var(--green)\">●●● 흡수 (둘 다 포함)</span>\n        ┗━━━━━━┛\n\n  <span style=\"color:var(--yellow)\">혼동 시 6.4배 차이!</span></pre>",
+      "related": ["PIT-004", "PIT-019"],
+      "seeAlso": ["mu", "nist-xcom"]
+    },
+    {
+      "id": "mu",
+      "term": "μ/ρ (Mass Attenuation Coefficient)",
+      "ko": "질량감쇠계수",
+      "cat": "physics",
+      "desc": "광자가 물질과 상호작용할 총 확률을 단위 면적밀도(g/cm²)당으로 나타낸 계수입니다. 광전효과, 콤프턴 산란, 쌍생성 등 모든 상호작용을 포함합니다. 차폐 두께 계산(HVL, TVL)에 사용되며, 선량 계산에는 μ_en/ρ를 사용해야 합니다.",
+      "formula": "I = I₀ × exp(-μ/ρ × ρ × d)  (Beer-Lambert 법칙)",
+      "visual": "<pre style=\"color:var(--cyan)\">  μ/ρ = 모든 상호작용의 합:\n\n  <span style=\"color:var(--yellow)\">광전효과</span>  (저E, ∝ Z⁴·⁵)\n  + <span style=\"color:var(--green)\">콤프턴</span>    (중간E, ∝ Z)\n  + <span style=\"color:var(--red)\">쌍생성</span>    (>1.022MeV, ∝ Z²)\n  ─────────────────────\n  = μ/ρ (total)\n\n    μ/ρ │<span style=\"color:var(--yellow)\">\\</span>\n        │ <span style=\"color:var(--yellow)\">\\</span><span style=\"color:var(--green)\">──────</span><span style=\"color:var(--red)\">/</span>\n        │  <span style=\"color:var(--yellow)\">\\</span><span style=\"color:var(--green)\">────</span><span style=\"color:var(--red)\">/</span>\n        └──────────── E</pre>",
+      "related": ["PIT-004", "PIT-017"],
+      "seeAlso": ["mu-en", "hvl"]
+    },
+    {
+      "id": "buildup-factor",
+      "term": "Buildup Factor (B)",
+      "ko": "빌드업팩터",
+      "cat": "physics",
+      "desc": "차폐체를 투과한 총 선량(산란선 포함)과 비산란선(uncollided) 선량의 비율입니다. 항상 1 이상이며, 두꺼운 차폐체일수록, 에너지가 높을수록 증가합니다. 차폐 계산에서 빌드업을 무시하면 투과선량을 심각하게 과소평가합니다.",
+      "formula": "B = (비산란 + 산란) / 비산란  ≥ 1",
+      "visual": "<pre style=\"color:var(--cyan)\">  빌드업 팩터 개념:\n\n  Source   <span style=\"color:var(--yellow)\">Shield</span>      Detector\n    ●━━━━━┃<span style=\"color:var(--yellow)\">██████</span>┃━━━━━━▸ <span style=\"color:var(--green)\">직진선(uncollided)</span>\n    ●━━━┓ ┃<span style=\"color:var(--yellow)\">██████</span>┃\n         ╲┃<span style=\"color:var(--yellow)\">██</span>╱━━━┃━━━━━━▸ <span style=\"color:var(--red)\">산란선(scattered)</span>\n          ┃<span style=\"color:var(--yellow)\">█</span>╱    ┃\n          ┃╱     ┃━━━━━━▸ <span style=\"color:var(--red)\">산란선</span>\n\n  B = <span style=\"color:var(--green)\">직진</span> + <span style=\"color:var(--red)\">산란</span> / <span style=\"color:var(--green)\">직진만</span>\n\n  예: Co-60, 5 MFP Pb → B ≈ 3~5</pre>",
+      "related": ["PIT-008", "PIT-021", "PIT-027", "PIT-028", "LT-09"],
+      "seeAlso": ["mfp", "hvl", "kalos-kitazume"]
+    },
+    {
+      "id": "hvl",
+      "term": "HVL (Half-Value Layer)",
+      "ko": "반가층",
+      "cat": "physics",
+      "desc": "방사선 강도를 50%로 줄이는 데 필요한 차폐체 두께입니다. 좁은 빔(narrow beam) 조건에서 정의되며, 넓은 빔(broad beam)에서는 빌드업으로 실제 투과율이 더 높습니다. HVL = 0.693/μ 관계를 가지며, 재료와 에너지에 따라 달라집니다.",
+      "formula": "HVL = ln(2) / μ = 0.693 / μ",
+      "visual": "<pre style=\"color:var(--cyan)\">  Source ═══╪═══╪═══╪═══▸\n            │   │   │\n   <span style=\"color:var(--green)\">100%</span>   <span style=\"color:var(--yellow)\">50%</span>  <span style=\"color:var(--red)\">25%</span> <span style=\"color:var(--red)\">12.5%</span>\n            1   2   3  HVL\n\n  ┌──────────────────────┐\n  │ <span style=\"color:var(--green)\">████████████████</span> 100% │ 0 HVL\n  │ <span style=\"color:var(--yellow)\">████████</span>          50% │ 1 HVL\n  │ <span style=\"color:var(--red)\">████</span>              25% │ 2 HVL\n  │ <span style=\"color:var(--red)\">██</span>             12.5% │ 3 HVL\n  └──────────────────────┘</pre>",
+      "related": ["PIT-008", "PIT-015"],
+      "seeAlso": ["tvl", "mu", "buildup-factor"]
+    },
+    {
+      "id": "tvl",
+      "term": "TVL (Tenth-Value Layer)",
+      "ko": "십분의일가층",
+      "cat": "physics",
+      "desc": "방사선 강도를 10%(1/10)로 줄이는 데 필요한 차폐체 두께입니다. TVL = 2.303/μ 관계를 가지며, HVL의 약 3.32배입니다. 의료 및 산업 차폐 설계에서 자주 사용되는 단위입니다.",
+      "formula": "TVL = ln(10) / μ = 2.303 / μ ≈ 3.32 × HVL",
+      "visual": "<pre style=\"color:var(--cyan)\">  ┌──────────────────────────┐\n  │ <span style=\"color:var(--green)\">████████████████████</span> 100% │\n  │ <span style=\"color:var(--yellow)\">██</span>                   10% │ 1 TVL\n  │ <span style=\"color:var(--red)\">▏</span>                     1% │ 2 TVL\n  │                    0.1% │ 3 TVL\n  └──────────────────────────┘\n\n  <span style=\"color:var(--yellow)\">TVL ≈ 3.32 × HVL</span></pre>",
+      "related": [],
+      "seeAlso": ["hvl", "mu"]
+    },
+    {
+      "id": "mfp",
+      "term": "MFP (Mean Free Path)",
+      "ko": "평균자유행정",
+      "cat": "physics",
+      "desc": "광자가 물질 내에서 상호작용 없이 이동하는 평균 거리입니다. MFP = 1/μ 관계를 가집니다. 빌드업팩터 테이블은 차폐 두께를 MFP 단위로 표현하여 재료에 독립적인 비교를 가능하게 합니다.",
+      "formula": "MFP = 1/μ  (λ = 1/(μ/ρ × ρ))",
+      "visual": "<pre style=\"color:var(--cyan)\">  광자의 이동 경로:\n\n  γ ──<span style=\"color:var(--green)\">───────</span>● 상호작용\n          <span style=\"color:var(--green)\">↑ 1 MFP</span>\n\n  빌드업 테이블 (MFP 단위):\n  ┌─────┬────┬────┬────┐\n  │ MFP │ Pb │ Fe │ H₂O│\n  ├─────┼────┼────┼────┤\n  │  1  │1.4 │1.6 │2.1 │\n  │  5  │3.2 │4.8 │8.5 │\n  │ 10  │5.5 │9.2 │21  │\n  └─────┴────┴────┴────┘</pre>",
+      "related": ["PIT-020", "PIT-027"],
+      "seeAlso": ["mu", "buildup-factor"]
+    },
+    {
+      "id": "solid-angle",
+      "term": "Solid Angle",
+      "ko": "입체각",
+      "cat": "physics",
+      "desc": "점선원에서 보았을 때 디텍터가 차지하는 3차원 각도 범위입니다. 디텍터 반폭/거리 비율이 0.1을 초과하면 점선원 근사(1/r²)가 부정확해집니다. 단위는 스테라디안(sr)이며, 전체 구면은 4π sr입니다.",
+      "formula": "Ω ≈ A/r² (원거리 근사, A=면적, r=거리)",
+      "visual": "<pre style=\"color:var(--cyan)\">  점선원에서 본 디텍터 입체각:\n\n  <span style=\"color:var(--green)\">[ OK: 반폭/거리 &lt; 0.1 ]</span>\n    ● ─────────────── ┃▪┃\n   src    (30cm)       1cm\n         Ω 작음 → 1/r² 유효\n\n  <span style=\"color:var(--red)\">[ 위반: 반폭/거리 = 0.33 ]</span>\n    ●╲ ──── ┃█████████████┃\n   src╲     ┃█████████████┃\n    (30cm)  ┃█████████████┃\n         Ω 큼 → 1/r² 위반</pre>",
+      "related": ["PIT-006"],
+      "seeAlso": ["inverse-square"]
+    },
+    {
+      "id": "inverse-square",
+      "term": "Inverse-Square Law",
+      "ko": "역제곱법칙",
+      "cat": "physics",
+      "desc": "점선원에서 방출된 방사선의 강도는 거리의 제곱에 반비례합니다. 거리가 2배가 되면 강도는 1/4이 됩니다. 선원이 점선원이 아니거나 디텍터가 선원에 비해 매우 큰 경우에는 정확하지 않습니다.",
+      "formula": "I = I₀ / r²  또는  I₁/I₂ = r₂²/r₁²",
+      "visual": "<pre style=\"color:var(--cyan)\">  역제곱 법칙 — 면적 확산:\n\n    ● ─▸  r=1   r=2     r=3\n   src    ┃     ┃       ┃\n          ┃<span style=\"color:var(--green)\">█</span>┃   ┃       ┃\n          ┃     ┃<span style=\"color:var(--yellow)\">█ █</span>┃   ┃\n          ┃     ┃<span style=\"color:var(--yellow)\">█ █</span>┃   ┃<span style=\"color:var(--red)\">█ █ █</span>┃\n                        ┃<span style=\"color:var(--red)\">█ █ █</span>┃\n                        ┃<span style=\"color:var(--red)\">█ █ █</span>┃\n   면적:  <span style=\"color:var(--green)\">1</span>     <span style=\"color:var(--yellow)\">4</span>       <span style=\"color:var(--red)\">9</span>\n   강도:  <span style=\"color:var(--green)\">1</span>    <span style=\"color:var(--yellow)\">1/4</span>     <span style=\"color:var(--red)\">1/9</span></pre>",
+      "related": ["PIT-006", "ISS-011"],
+      "seeAlso": ["solid-angle"]
+    },
+    {
+      "id": "spectral-hardening",
+      "term": "Spectral Hardening",
+      "ko": "스펙트럼 경화",
+      "cat": "physics",
+      "desc": "방사선이 차폐체를 투과할 때 저에너지 광자가 우선적으로 흡수되어, 투과 후 빔의 평균 에너지가 높아지는 현상입니다. 두꺼운 차폐체나 고Z 재료에서 두드러지며, 다층 차폐 빌드업 계산에 영향을 줍니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  스펙트럼 경화 과정:\n\n  <span style=\"color:var(--green)\">입사 빔 (넓은 스펙트럼)</span>    <span style=\"color:var(--yellow)\">투과 빔 (경화됨)</span>\n\n  │ <span style=\"color:var(--green)\">█</span>                       │\n  │ <span style=\"color:var(--green)\">██</span>   <span style=\"color:var(--green)\">█</span>                  │      <span style=\"color:var(--yellow)\">█</span>\n  │ <span style=\"color:var(--green)\">███</span>  <span style=\"color:var(--green)\">██</span>      ══▸       │    <span style=\"color:var(--yellow)\">███</span>\n  │ <span style=\"color:var(--green)\">████</span> <span style=\"color:var(--green)\">███</span>     차폐체      │   <span style=\"color:var(--yellow)\">████</span>\n  └──────────── E        └──────────── E\n    <span style=\"color:var(--red)\">↑ 저E 흡수</span>  ↑평균          ↑평균↑</pre>",
+      "related": ["PIT-021"],
+      "seeAlso": []
+    },
+    {
+      "id": "photoelectric",
+      "term": "Photoelectric Effect",
+      "ko": "광전효과",
+      "cat": "physics",
+      "desc": "광자가 원자에 완전히 흡수되면서 내각 전자를 방출하는 상호작용입니다. 저에너지 영역에서 지배적이며, 단면적이 Z의 4~5승에 비례하고 에너지의 3.5승에 반비례합니다. 고Z 재료(Pb 등)가 저에너지 차폐에 효과적인 이유입니다.",
+      "formula": "σ_pe ∝ Z⁴⁻⁵ / E³·⁵",
+      "visual": "<pre style=\"color:var(--cyan)\">  광전효과:\n\n     γ (소멸)\n      ╲\n       ╲\n    ┌───●───┐\n    │ <span style=\"color:var(--yellow)\">K</span> <span style=\"color:var(--green)\">L</span> <span style=\"color:var(--red)\">M</span> │  원자\n    │   ╳   │  ← 내각 전자 방출\n    └───┼───┘\n        │\n        ▼\n    e⁻ (광전자)\n    E_e = E_γ - E_binding\n\n  <span style=\"color:var(--yellow)\">저에너지에서 지배적 (∝ Z⁴⁻⁵)</span></pre>",
+      "related": ["PIT-009", "PIT-019"],
+      "seeAlso": ["compton", "pair-production"]
+    },
+    {
+      "id": "compton",
+      "term": "Compton Scattering",
+      "ko": "콤프턴 산란",
+      "cat": "physics",
+      "desc": "광자가 외각 전자에 부분적으로 에너지를 전달하고 방향이 바뀌어 계속 진행하는 상호작용입니다. 0.2~5 MeV 범위에서 대부분의 재료에서 지배적인 상호작용이며, 빌드업 현상의 주요 원인입니다.",
+      "formula": "λ' - λ = (h/m_e·c)(1 - cosθ)",
+      "visual": "<pre style=\"color:var(--cyan)\">  콤프턴 산란:\n\n  γ (E₀) ───▸╲\n               ╲ θ\n          e⁻ ──▸  반동 전자\n               ╱\n              ╱\n  γ' (E'&lt;E₀) ──▸ 산란 광자\n\n  <span style=\"color:var(--yellow)\">에너지 전달 → 광자는 계속 진행</span>\n  <span style=\"color:var(--yellow)\">→ 빌드업의 주요 원인!</span></pre>",
+      "related": [],
+      "seeAlso": ["photoelectric", "pair-production"]
+    },
+    {
+      "id": "pair-production",
+      "term": "Pair Production",
+      "ko": "쌍생성",
+      "cat": "physics",
+      "desc": "1.022 MeV 이상의 에너지를 가진 광자가 원자핵 근처에서 전자-양전자 쌍으로 변환되는 상호작용입니다. 양전자는 소멸 시 511 keV 감마선 2개를 방출합니다. 고에너지 영역(>5 MeV)에서 지배적인 상호작용입니다.",
+      "formula": "E_γ → e⁻ + e⁺ (E_γ ≥ 1.022 MeV = 2m_e·c²)",
+      "visual": "<pre style=\"color:var(--cyan)\">  쌍생성 과정:\n\n             <span style=\"color:var(--green)\">e⁻</span> ──▸\n            ╱\n  γ (≥1.022 MeV) ──▸ <span style=\"color:var(--yellow)\">●</span> (핵 근처)\n            ╲\n             <span style=\"color:var(--red)\">e⁺</span> ──▸ ● → <span style=\"color:var(--yellow)\">γ(511keV)</span> + <span style=\"color:var(--yellow)\">γ(511keV)</span>\n                    소멸\n\n  <span style=\"color:var(--yellow)\">문턱 에너지: 2 × 511 keV = 1.022 MeV</span></pre>",
+      "related": [],
+      "seeAlso": ["compton", "photoelectric"]
+    },
+    {
+      "id": "bremsstrahlung",
+      "term": "Bremsstrahlung",
+      "ko": "제동복사",
+      "cat": "physics",
+      "desc": "하전입자(주로 전자)가 원자핵의 전기장에서 감속될 때 방출되는 X선입니다. 고Z 재료에서 더 강하게 발생하므로, 베타 차폐에서는 먼저 저Z 재료(아크릴 등)로 전자를 멈추고 그 뒤에 고Z 재료(납)로 제동복사를 차폐하는 전략을 사용합니다.",
+      "formula": "P_brem ∝ Z² × E_e² / m_e²",
+      "visual": "<pre style=\"color:var(--cyan)\">  제동복사 발생:\n\n  e⁻ ──<span style=\"color:var(--green)\">─────</span>╲\n               ╲ <span style=\"color:var(--yellow)\">~~~γ (X-ray)</span>\n            ●  ╱  (핵)\n  e⁻ ──<span style=\"color:var(--red)\">───</span>╱ (감속됨)\n\n  <span style=\"color:var(--yellow)\">베타 차폐 전략:</span>\n  β ▸ ┃<span style=\"color:var(--green)\">아크릴</span>┃<span style=\"color:var(--red)\">납</span>┃\n       저Z       고Z\n       e⁻ 정지   Brem 차폐</pre>",
+      "related": ["LT-07"],
+      "seeAlso": []
+    },
+    {
+      "id": "backscatter",
+      "term": "Backscatter",
+      "ko": "후방산란",
+      "cat": "physics",
+      "desc": "방사선이 차폐체 입사면에서 후방으로 산란되는 현상입니다. 차폐체 앞면의 선량을 증가시킬 수 있으며, 특히 고Z 재료에서 두드러집니다. 차폐 설계 시 입사면 방향의 작업자 위치를 고려해야 합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  후방산란:\n\n  γ ──▸ ┃<span style=\"color:var(--yellow)\">████████</span>┃\n   <span style=\"color:var(--red)\">╱</span>    ┃<span style=\"color:var(--yellow)\">████████</span>┃\n  <span style=\"color:var(--red)\">γ'</span>     ┃<span style=\"color:var(--yellow)\">████████</span>┃  차폐체\n   <span style=\"color:var(--red)\">╲</span>    ┃<span style=\"color:var(--yellow)\">████████</span>┃\n  <span style=\"color:var(--red)\">γ'</span>     ┃<span style=\"color:var(--yellow)\">████████</span>┃\n  ───────┗━━━━━━━━┛\n  <span style=\"color:var(--red)\">↑ 후방산란</span>\n  입사면 선량 ↑</pre>",
+      "related": ["LT-24"],
+      "seeAlso": []
+    },
+    {
+      "id": "def",
+      "term": "DEF (Dose Enhancement Factor)",
+      "ko": "선량증강계수",
+      "cat": "physics",
+      "desc": "고Z/저Z 재료 경계면에서 전자 후방산란으로 인해 선량이 국소적으로 증폭되는 비율입니다. 일반적으로 1.1~1.5배 증강이 발생하며, 해석적 모델로는 정확히 반영하기 어려워 MC 시뮬레이션이 필요합니다.",
+      "formula": "DEF = D_interface / D_homogeneous  (1.1 ~ 1.5)",
+      "visual": "<pre style=\"color:var(--cyan)\">  경계면 선량 증강:\n\n  γ ──▸  <span style=\"color:var(--red)\">고Z (Pb)</span> │ <span style=\"color:var(--green)\">저Z (물)</span>\n                  │\n  e⁻ ──▸  <span style=\"color:var(--red)\">████</span>  │ <span style=\"color:var(--green)\">████</span>\n         e⁻ <span style=\"color:var(--yellow)\">◀──</span> │  ← 후방산란 e⁻\n              <span style=\"color:var(--yellow)\">◀──</span>│\n                  │\n  선량:       <span style=\"color:var(--red)\">보통</span>  │<span style=\"color:var(--yellow)\">█ 1.5×</span> <span style=\"color:var(--green)\">보통</span>\n                  ↑ DEF 피크</pre>",
+      "related": ["PIT-022"],
+      "seeAlso": []
+    },
+    {
+      "id": "dose-equivalent",
+      "term": "Dose Equivalent (H)",
+      "ko": "선량당량",
+      "cat": "dosimetry",
+      "desc": "흡수선량에 방사선 가중치(Wr)를 곱한 양으로, 방사선의 생물학적 효과를 반영합니다. 단위는 Sv(시버트)입니다. 감마선은 Wr=1이라 흡수선량과 같지만, 중성자나 알파는 Wr이 크므로 같은 흡수선량이라도 생물학적 영향이 훨씬 큽니다.",
+      "formula": "H = D × Wr  (단위: Sv)",
+      "visual": "<pre style=\"color:var(--cyan)\">  같은 1 Gy 흡수선량이라도:\n\n  방사선     Wr    H (Sv)\n  ─────────────────────\n  <span style=\"color:var(--green)\">감마(γ)</span>     1     <span style=\"color:var(--green)\">1 Sv</span>\n  <span style=\"color:var(--yellow)\">중성자(n)</span>  2.5~20 <span style=\"color:var(--yellow)\">2.5~20 Sv</span>\n  <span style=\"color:var(--red)\">알파(α)</span>    20     <span style=\"color:var(--red)\">20 Sv</span>\n\n  <span style=\"color:var(--red)\">α는 γ보다 20배 위험!</span></pre>",
+      "related": ["PIT-024"],
+      "seeAlso": ["absorbed-dose", "wr"]
+    },
+    {
+      "id": "wr",
+      "term": "Wr (Radiation Weighting Factor)",
+      "ko": "방사선가중치",
+      "cat": "dosimetry",
+      "desc": "방사선 종류에 따른 생물학적 효과 차이를 보정하는 무차원 계수입니다. ICRP에서 정하며, 중성자의 경우 에너지에 따라 2.5(열중성자)에서 20(~1 MeV)까지 변합니다. 단일 Wr 값을 적용하면 차폐 후 중성자 선량을 크게 오평가할 수 있습니다.",
+      "formula": "H = D × Wr",
+      "visual": "<pre style=\"color:var(--cyan)\">  방사선 가중치 (ICRP-103):\n  ┌─────────────────┬──────┐\n  │ 방사선 종류     │  Wr  │\n  ├─────────────────┼──────┤\n  │ <span style=\"color:var(--green)\">광자 (γ, X)</span>     │ <span style=\"color:var(--green)\">  1</span>  │\n  │ <span style=\"color:var(--green)\">전자 (e⁻, β)</span>    │ <span style=\"color:var(--green)\">  1</span>  │\n  │ <span style=\"color:var(--yellow)\">양성자</span>          │ <span style=\"color:var(--yellow)\">  2</span>  │\n  │ <span style=\"color:var(--yellow)\">중성자 (열)</span>     │ <span style=\"color:var(--yellow)\">2.5</span>  │\n  │ <span style=\"color:var(--red)\">중성자 (~1MeV)</span>  │ <span style=\"color:var(--red)\"> 20</span>  │\n  │ <span style=\"color:var(--red)\">알파 (α)</span>        │ <span style=\"color:var(--red)\"> 20</span>  │\n  └─────────────────┴──────┘</pre>",
+      "related": ["PIT-024"],
+      "seeAlso": ["dose-equivalent"]
+    },
+    {
+      "id": "h-star-10",
+      "term": "H*(10) (Ambient Dose Equivalent)",
+      "ko": "주변선량당량",
+      "cat": "dosimetry",
+      "desc": "ICRU 구(30cm 직경 조직등가 구) 내부 깊이 10mm 지점에서의 선량당량입니다. 환경 방사선 모니터링의 표준 측정량으로, 서베이미터 교정 기준입니다. 중성자의 경우 에너지에 따라 환산계수가 크게 달라져 에너지 의존 환산이 필요합니다.",
+      "formula": "H*(10) = Φ × h*(10,E)  (에너지 의존 환산)",
+      "visual": "<pre style=\"color:var(--cyan)\">  ICRU 구에서의 H*(10):\n\n        γ ──▸  ┌─────────┐\n               │ <span style=\"color:var(--yellow)\">● 10mm</span>  │\n               │  ICRU    │ 30cm\n               │  sphere  │\n               └─────────┘\n                조직등가 구\n\n  <span style=\"color:var(--yellow)\">● = H*(10) 측정 지점</span>\n  서베이미터 교정 기준량</pre>",
+      "related": ["PIT-024", "ISS-020", "LT-09"],
+      "seeAlso": ["dose-equivalent", "icru"]
+    },
+    {
+      "id": "effective-dose",
+      "term": "Effective Dose",
+      "ko": "실효선량",
+      "cat": "dosimetry",
+      "desc": "ICRP-103 조직가중치를 사용하여 각 장기별 등가선량의 가중합으로 계산되는 전신 선량 지표입니다. 규제 선량한도의 기준 양으로, 방사선 작업 종사자는 연 50 mSv (5년 평균 20 mSv) 한도가 적용됩니다.",
+      "formula": "E = Σ(w_T × H_T)  (w_T = 조직가중치)",
+      "visual": "<pre style=\"color:var(--cyan)\">  주요 조직가중치 (ICRP-103):\n  ┌───────────────┬───────┐\n  │ 장기          │  w_T  │\n  ├───────────────┼───────┤\n  │ <span style=\"color:var(--red)\">골수, 대장, 폐</span>│ <span style=\"color:var(--red)\">0.12</span>  │\n  │ <span style=\"color:var(--red)\">위, 유방</span>      │ <span style=\"color:var(--red)\">0.12</span>  │\n  │ <span style=\"color:var(--yellow)\">생식선</span>        │ <span style=\"color:var(--yellow)\">0.08</span>  │\n  │ <span style=\"color:var(--green)\">갑상선, 간</span>    │ <span style=\"color:var(--green)\">0.04</span>  │\n  │ 나머지        │ 0.12  │\n  │ Σ            │ <span style=\"color:var(--yellow)\">1.00</span>  │\n  └───────────────┴───────┘</pre>",
+      "related": ["LT-09"],
+      "seeAlso": ["dose-equivalent"]
+    },
+    {
+      "id": "gamma-constant",
+      "term": "Gamma Constant (Γ)",
+      "ko": "감마상수",
+      "cat": "dosimetry",
+      "desc": "단위 방사능의 점선원으로부터 단위 거리에서의 선량률을 나타내는 상수입니다. 핵종마다 고유한 값을 가지며, 단위는 Sv·m²/(Bq·h) 또는 R·cm²/(mCi·h)입니다. 차폐 없는 상태의 해석적 선량률 계산에 사용됩니다.",
+      "formula": "Ḋ = Γ × A / r²  (A=방사능, r=거리)",
+      "visual": "<pre style=\"color:var(--cyan)\">  감마상수 사용 예:\n\n  ● (A Bq) ──── r(m) ────▸ Ḋ = Γ × A / r²\n  선원                     선량률\n\n  주요 핵종 감마상수 (Sv·m²/Bq·h):\n  ┌────────┬──────────────┐\n  │ Co-60  │ 3.41 × 10⁻¹³│\n  │ Cs-137 │ 0.85 × 10⁻¹³│\n  │ Ir-192 │ 1.25 × 10⁻¹³│\n  └────────┴──────────────┘</pre>",
+      "related": ["ISS-017", "ISS-021"],
+      "seeAlso": ["inverse-square", "activity"]
+    },
+    {
+      "id": "air-kerma",
+      "term": "Air Kerma",
+      "ko": "공기커마",
+      "cat": "dosimetry",
+      "desc": "공기 매질에서 측정한 커마 값입니다. 전통적인 조사선량(R, 뢴트겐) 단위와 관련되며, 감마상수 기반 선량률 계산의 기준 매질입니다. MC 시뮬레이션은 보통 물 선량을 출력하므로, 비교 시 μ_en 비율로 환산이 필요합니다.",
+      "formula": "K_air = Φ × E × (μ_en/ρ)_air",
+      "visual": "<pre style=\"color:var(--cyan)\">  MC(물) vs 해석적(공기) 비교:\n\n  <span style=\"color:var(--green)\">MC 출력:  D_water</span> (물 디텍터)\n  <span style=\"color:var(--yellow)\">해석적:   K_air</span>   (공기커마)\n\n  환산: D_water/K_air\n    = (μ_en/ρ)_water / (μ_en/ρ)_air\n    ≈ <span style=\"color:var(--yellow)\">1.10~1.12</span> (에너지 범위에 따라)\n\n  <span style=\"color:var(--red)\">환산 없이 비교 → ~10% 오차</span></pre>",
+      "related": ["PIT-003"],
+      "seeAlso": ["kerma", "mu-en"]
+    },
+    {
+      "id": "activity",
+      "term": "Activity",
+      "ko": "방사능(활동도)",
+      "cat": "nuclear",
+      "desc": "방사성 물질이 단위 시간당 붕괴하는 원자핵의 수입니다. SI 단위는 Bq(베크렐, 1 붕괴/초)이며, 전통 단위 Ci(큐리) = 3.7×10¹⁰ Bq입니다. 선량률 계산의 기본 입력값이며, 반감기에 따라 시간이 지남에 따라 지수적으로 감소합니다.",
+      "formula": "A = A₀ × exp(-0.693t/T½)  또는  A = λN",
+      "visual": "<pre style=\"color:var(--cyan)\">  방사능 감소 곡선:\n\n  A │<span style=\"color:var(--green)\">█████</span>\n    │<span style=\"color:var(--green)\">███</span>\n    │<span style=\"color:var(--yellow)\">██</span>\n    │<span style=\"color:var(--yellow)\">█</span>\n    │<span style=\"color:var(--red)\">▪</span>\n    │<span style=\"color:var(--red)\">.</span>\n    └──────────── t\n     T½  2T½  3T½\n\n  단위 환산:\n  <span style=\"color:var(--yellow)\">1 Ci = 3.7 × 10¹⁰ Bq = 37 GBq</span></pre>",
+      "related": ["ISS-023"],
+      "seeAlso": ["half-life", "gamma-constant"]
+    },
+    {
+      "id": "half-life",
+      "term": "Half-Life",
+      "ko": "반감기",
+      "cat": "nuclear",
+      "desc": "방사성 물질의 방사능이 초기값의 절반으로 줄어드는 데 걸리는 시간입니다. 각 핵종마다 고유한 값을 가지며, 밀리초에서 수십억 년까지 범위가 넓습니다. 선원 관리와 시간 의존 선량 계산의 핵심 파라미터입니다.",
+      "formula": "T½ = ln(2)/λ = 0.693/λ",
+      "visual": "<pre style=\"color:var(--cyan)\">  주요 핵종 반감기:\n  ┌──────────┬────────────┐\n  │ Tc-99m   │ 6.0 시간   │\n  │ I-131    │ 8.0 일     │\n  │ Ir-192   │ 73.8 일    │\n  │ Se-75    │ 119.8 일   │\n  │ Co-60    │ 5.27 년    │\n  │ Cs-137   │ 30.2 년    │\n  │ Cf-252   │ 2.65 년    │\n  └──────────┴────────────┘</pre>",
+      "related": ["LT-11"],
+      "seeAlso": ["activity", "decay-chain"]
+    },
+    {
+      "id": "decay-chain",
+      "term": "Decay Chain",
+      "ko": "붕괴 체인",
+      "cat": "nuclear",
+      "desc": "모핵종이 붕괴하여 딸핵종을 생성하고, 딸핵종이 다시 붕괴하는 연쇄적 방사성 붕괴 과정입니다. 예를 들어 Mo-99 → Tc-99m → Tc-99 체인에서 딸핵종(Tc-99m)은 의료 영상에 사용됩니다. 시간 의존 선량 평가에서 중요합니다.",
+      "formula": "A_daughter = (λ_d/(λ_d-λ_p)) × A_p₀ × (e^(-λ_p·t) - e^(-λ_d·t))",
+      "visual": "<pre style=\"color:var(--cyan)\">  Mo-99 → Tc-99m → Tc-99 붕괴 체인:\n\n  <span style=\"color:var(--red)\">Mo-99</span> ──β⁻──▸ <span style=\"color:var(--yellow)\">Tc-99m</span> ──γ──▸ <span style=\"color:var(--green)\">Tc-99</span> ──▸ (안정)\n  T½=66h          T½=6h         T½=2.1×10⁵y\n\n  활동도 시간 변화:\n  A │<span style=\"color:var(--red)\">\\</span>    <span style=\"color:var(--yellow)\">/\\</span>\n    │ <span style=\"color:var(--red)\">\\</span>  <span style=\"color:var(--yellow)\">/  \\</span>\n    │  <span style=\"color:var(--red)\">\\</span><span style=\"color:var(--yellow)\">/    \\───</span>\n    │   <span style=\"color:var(--red)\">\\──────</span>\n    └──────────── t</pre>",
+      "related": ["LT-03", "LT-11"],
+      "seeAlso": ["activity", "half-life"]
+    },
+    {
+      "id": "branching-ratio",
+      "term": "Branching Ratio",
+      "ko": "분기비",
+      "cat": "nuclear",
+      "desc": "방사성 붕괴에서 특정 감마선이 방출될 확률입니다. 예를 들어 Cs-137은 붕괴당 662 keV 감마선을 85.1%의 확률로 방출합니다(BR=0.851). 소스 매크로 정의 시 각 감마선의 분기비를 정확히 반영해야 선량 계산이 정확해집니다.",
+      "formula": "총 gpd = Σ(BR_i)  (모든 감마선의 분기비 합)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Cs-137 붕괴 스킴:\n\n  <span style=\"color:var(--red)\">Cs-137</span>\n    │\n    ├─ <span style=\"color:var(--yellow)\">94.6%</span> β⁻ → Ba-137m* (여기상태)\n    │              │\n    │              └─ <span style=\"color:var(--green)\">90%</span> γ (662 keV)\n    │                 ↓\n    │              BR = 0.946 × 0.90 = <span style=\"color:var(--green)\">0.851</span>\n    │\n    └─ <span style=\"color:var(--yellow)\">5.4%</span> β⁻ → Ba-137 (바닥상태, γ없음)</pre>",
+      "related": ["PIT-012", "PIT-016"],
+      "seeAlso": ["gpd"]
+    },
+    {
+      "id": "gpd",
+      "term": "Gammas Per Decay (gpd)",
+      "ko": "붕괴당 감마수",
+      "cat": "nuclear",
+      "desc": "하나의 방사성 붕괴 이벤트에서 방출되는 감마선의 총 수입니다. 단순 핵종은 gpd<1 (예: Cs-137=0.851)이고, 복잡한 핵종은 gpd>1 (예: Ir-192=2.072, Se-75=1.71)입니다. MC 시뮬레이션에서 gpd 보정을 누락하면 선량이 심각하게 오평가됩니다.",
+      "formula": "gpd = Σ(BR_i)  (모든 감마선 분기비의 합)",
+      "visual": "<pre style=\"color:var(--cyan)\">  핵종별 gpd:\n  ┌──────────┬───────┬────────────┐\n  │ 핵종     │  gpd  │ 주요 감마선│\n  ├──────────┼───────┼────────────┤\n  │ Tc-99m   │ 0.891 │ 140 keV    │\n  │ Cs-137   │ 0.851 │ 662 keV    │\n  │ I-131    │ 0.989 │ 365 keV 外 │\n  │ <span style=\"color:var(--yellow)\">Se-75</span>    │ <span style=\"color:var(--yellow)\">1.71</span>  │ 다선       │\n  │ <span style=\"color:var(--yellow)\">Co-60</span>    │ <span style=\"color:var(--yellow)\">2.00</span>  │ 1173+1332  │\n  │ <span style=\"color:var(--red)\">Ir-192</span>   │ <span style=\"color:var(--red)\">2.072</span> │ 다선       │\n  └──────────┴───────┴────────────┘\n  <span style=\"color:var(--red)\">gpd 보정 누락 → 최대 2배 과소평가!</span></pre>",
+      "related": ["PIT-005", "ISS-004"],
+      "seeAlso": ["branching-ratio"]
+    },
+    {
+      "id": "isotope-enrichment",
+      "term": "Isotope Enrichment",
+      "ko": "동위원소 농축",
+      "cat": "nuclear",
+      "desc": "특정 동위원소의 비율을 자연 존재비 이상으로 높이는 공정입니다. 예를 들어 B-10 농축 보론은 중성자 차폐에 사용됩니다 (자연 B-10: 19.8% → 농축 시 90%+). 농축비에 따라 차폐 성능이 크게 달라집니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  B-10 농축 예시:\n\n  <span style=\"color:var(--yellow)\">자연 보론:</span>  B-10 <span style=\"color:var(--green)\">██</span> 19.8%\n              B-11 <span style=\"color:var(--yellow)\">████████</span> 80.2%\n\n  <span style=\"color:var(--green)\">농축 보론:</span>  B-10 <span style=\"color:var(--green)\">█████████</span> 90%+\n              B-11 <span style=\"color:var(--yellow)\">█</span> 10%\n\n  B-10 + n → Li-7 + α\n  <span style=\"color:var(--green)\">σ_capture = 3840 barn (열중성자)</span>\n  → 중성자 차폐 핵심 재료</pre>",
+      "related": ["LT-21", "ISS-012"],
+      "seeAlso": []
+    },
+    {
+      "id": "spontaneous-fission",
+      "term": "Spontaneous Fission",
+      "ko": "자발핵분열",
+      "cat": "nuclear",
+      "desc": "외부 자극 없이 무거운 원자핵이 자발적으로 분열하는 과정입니다. Cf-252가 대표적이며, 분열당 평균 3.757개의 중성자와 약 7.9개의 감마선을 방출합니다. 중성자원으로 산업 및 연구용으로 사용됩니다.",
+      "formula": "Cf-252: ~3.757 n/fission, ~7.9 γ/fission",
+      "visual": "<pre style=\"color:var(--cyan)\">  Cf-252 자발핵분열:\n\n         <span style=\"color:var(--green)\">n</span>  <span style=\"color:var(--green)\">n</span>  <span style=\"color:var(--green)\">n</span>  <span style=\"color:var(--yellow)\">γ γ</span>\n          ╲ │ ╱   ╱\n     <span style=\"color:var(--red)\">FF₁</span> ◀─ <span style=\"color:var(--red)\">●</span> ─▸ <span style=\"color:var(--red)\">FF₂</span>  (fission fragments)\n          ╱ │ ╲   ╲\n         <span style=\"color:var(--green)\">n</span>  <span style=\"color:var(--yellow)\">γ γ γ γ γ γ γ</span>\n\n  ~3.757 <span style=\"color:var(--green)\">중성자</span>/분열\n  ~7.9 <span style=\"color:var(--yellow)\">감마</span>/분열\n  T½ = 2.645 년</pre>",
+      "related": ["LT-04", "PIT-025"],
+      "seeAlso": ["watt-spectrum"]
+    },
+    {
+      "id": "watt-spectrum",
+      "term": "Watt Spectrum",
+      "ko": "와트 스펙트럼",
+      "cat": "nuclear",
+      "desc": "자발핵분열 중성자의 에너지 분포를 나타내는 수학적 모델입니다. Cf-252의 경우 매개변수 a=1.025 MeV, b=2.926 /MeV를 사용합니다. 평균 에너지는 약 2.1 MeV이며, GEANT4 GPS에서 직접 지원됩니다.",
+      "formula": "f(E) = C × exp(-E/a) × sinh(√(b×E))",
+      "visual": "<pre style=\"color:var(--cyan)\">  Cf-252 Watt 스펙트럼:\n\n  f(E)│\n      │    <span style=\"color:var(--green)\">▄█▄</span>\n      │   <span style=\"color:var(--green)\">██████</span>\n      │  <span style=\"color:var(--green)\">████████</span>\n      │ <span style=\"color:var(--green)\">██████████</span>\n      │<span style=\"color:var(--green)\">████████████</span>\n      │<span style=\"color:var(--green)\">██████████████</span>╲\n      └──────────────────── E (MeV)\n       0  1  <span style=\"color:var(--yellow)\">2.1</span>  4  6  8\n           <span style=\"color:var(--yellow)\">↑ 평균 에너지</span>\n  a = 1.025 MeV, b = 2.926 /MeV</pre>",
+      "related": ["LT-04"],
+      "seeAlso": ["spontaneous-fission"]
+    },
+    {
+      "id": "thermal-neutron",
+      "term": "Thermal Neutron",
+      "ko": "열중성자",
+      "cat": "nuclear",
+      "desc": "주변 물질과 열평형 상태에 도달한 중성자로, 상온(20°C)에서 약 0.025 eV의 에너지를 가집니다. 원자핵에 의한 포획 확률이 매우 높아 방사화의 주요 원인이 됩니다. 중성자 차폐에서 감속과 흡수 두 단계 전략이 필요합니다.",
+      "formula": "E_thermal = kT ≈ 0.025 eV (at 20°C)",
+      "visual": "<pre style=\"color:var(--cyan)\">  중성자 에너지 분류:\n\n  <span style=\"color:var(--red)\">고속</span>    │ > 0.1 MeV  (핵분열 직후)\n  <span style=\"color:var(--yellow)\">에피열</span>  │ 0.5 eV ~ 0.1 MeV\n  <span style=\"color:var(--green)\">열</span>      │ ~ 0.025 eV (실온 평형)\n\n  차폐 전략:\n  <span style=\"color:var(--red)\">고속 n</span> ──▸ ┃<span style=\"color:var(--green)\">H₂O/PE</span>┃ ──▸ <span style=\"color:var(--green)\">열 n</span> ──▸ ┃<span style=\"color:var(--yellow)\">B/Cd</span>┃ ──▸ ✕\n              감속           흡수</pre>",
+      "related": ["PIT-024"],
+      "seeAlso": ["neutron-moderation"]
+    },
+    {
+      "id": "neutron-moderation",
+      "term": "Neutron Moderation",
+      "ko": "중성자 감속",
+      "cat": "nuclear",
+      "desc": "고속 중성자를 가벼운 원자핵과의 탄성 산란을 통해 열에너지까지 감속시키는 과정입니다. 수소가 가장 효과적인 감속재이며(한 번 충돌로 최대 에너지 절반 전달), 물이나 폴리에틸렌이 중성자 차폐에 사용되는 이유입니다.",
+      "formula": "ΔE_max = E × 4A/(1+A)²  (A=질량수, H: A=1 → 100% 전달 가능)",
+      "visual": "<pre style=\"color:var(--cyan)\">  중성자 감속 과정 (수소 충돌):\n\n  <span style=\"color:var(--red)\">n(빠름)</span> ──▸ ● H  →  <span style=\"color:var(--yellow)\">n(느림)</span> + <span style=\"color:var(--green)\">p(반동)</span>\n\n  에너지 전달 효율 (1회 충돌):\n  ┌──────────┬─────────────┐\n  │ 감속재   │ 에너지 전달 │\n  ├──────────┼─────────────┤\n  │ <span style=\"color:var(--green)\">H (A=1)</span>  │ <span style=\"color:var(--green)\">최대 100%</span>   │\n  │ <span style=\"color:var(--yellow)\">C (A=12)</span> │ 최대 28.4%  │\n  │ <span style=\"color:var(--red)\">Fe(A=56)</span>│ 최대 6.9%   │\n  └──────────┴─────────────┘</pre>",
+      "related": ["PIT-023"],
+      "seeAlso": ["thermal-neutron"]
+    },
+    {
+      "id": "activation",
+      "term": "Activation",
+      "ko": "방사화",
+      "cat": "nuclear",
+      "desc": "안정한 원자핵이 중성자를 포획하여 방사성 핵종으로 변환되는 과정입니다. 차폐 재료가 장기간 중성자에 노출되면 방사화되어 추가적인 방사선원이 됩니다. 해체/폐기 시 방사화 평가가 필요합니다.",
+      "formula": "A = N × σ × Φ × (1 - exp(-λt))  (포화 활동도 접근)",
+      "visual": "<pre style=\"color:var(--cyan)\">  방사화 과정:\n\n  <span style=\"color:var(--green)\">안정 핵</span> + n → <span style=\"color:var(--red)\">방사성 핵</span> → 붕괴\n\n  예: <span style=\"color:var(--green)\">Co-59</span> + n → <span style=\"color:var(--red)\">Co-60</span> → β⁻ + γ\n      <span style=\"color:var(--green)\">Fe-58</span> + n → <span style=\"color:var(--red)\">Fe-59</span> → β⁻ + γ\n\n  조사 시간에 따른 활동도:\n  A │         <span style=\"color:var(--red)\">━━━━━━━</span> (포화)\n    │      <span style=\"color:var(--red)\">╱</span>\n    │    <span style=\"color:var(--red)\">╱</span>\n    │  <span style=\"color:var(--red)\">╱</span>\n    │<span style=\"color:var(--red)\">╱</span>\n    └──────────── t</pre>",
+      "related": ["LT-03"],
+      "seeAlso": []
+    },
+    {
+      "id": "nuclide",
+      "term": "Nuclide",
+      "ko": "핵종",
+      "cat": "nuclear",
+      "desc": "원자번호(Z)와 질량수(A)로 정의되는 특정 원자핵 종류입니다. 같은 원소라도 질량수가 다르면 다른 핵종(동위원소)이며, 방사성 핵종은 고유한 붕괴 특성(반감기, 방출 에너지 등)을 가집니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ShieldDose 지원 핵종:\n  ┌──────────┬──────┬────────┐\n  │ 핵종     │ E(MeV)│ 용도   │\n  ├──────────┼──────┼────────┤\n  │ <span style=\"color:var(--green)\">Tc-99m</span>   │ 0.14 │ 의료영상│\n  │ <span style=\"color:var(--green)\">I-131</span>    │ 0.36 │ 갑상선 │\n  │ <span style=\"color:var(--yellow)\">Se-75</span>    │ 0.07~│ 비파괴 │\n  │ <span style=\"color:var(--yellow)\">Ir-192</span>   │ 0.06~│ 비파괴 │\n  │ <span style=\"color:var(--red)\">Cs-137</span>   │ 0.66 │ 계측   │\n  │ <span style=\"color:var(--red)\">Co-60</span>    │ 1.17+│ 조사   │\n  │ <span style=\"color:var(--red)\">Cf-252</span>   │ n+γ  │ 중성자원│\n  └──────────┴──────┴────────┘</pre>",
+      "related": [],
+      "seeAlso": ["activity", "half-life"]
+    },
+    {
+      "id": "mt-mode",
+      "term": "MT Mode (Multi-Threading)",
+      "ko": "멀티스레딩 모드",
+      "cat": "geant4",
+      "desc": "GEANT4의 병렬 실행 모드로, 여러 CPU 코어를 동시에 사용하여 시뮬레이션 속도를 높입니다. 그러나 현재 ShieldDose에서는 분산저감(VR)의 평행세계(Parallel World)가 MT 모드와 호환되지 않아 Serial 모드를 강제하고 있습니다.",
+      "formula": "속도 향상 ≈ N_threads (이상적)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Serial vs MT 비교:\n\n  <span style=\"color:var(--red)\">Serial:</span>  ┃█████████████████████┃ 1 thread\n           ~~~~~~~~ 100초 ~~~~~~~~\n\n  <span style=\"color:var(--green)\">MT (4t):</span> ┃█████┃ thread 1\n           ┃█████┃ thread 2\n           ┃█████┃ thread 3\n           ┃█████┃ thread 4\n           ~~ 25초 ~~\n\n  <span style=\"color:var(--red)\">⚠ VR + MT 비호환 → Serial 강제</span></pre>",
+      "related": ["PIT-011", "ISS-037", "LT-12"],
+      "seeAlso": ["serial-mode", "vr"]
+    },
+    {
+      "id": "serial-mode",
+      "term": "Serial Mode",
+      "ko": "직렬 모드",
+      "cat": "geant4",
+      "desc": "GEANT4의 단일 스레드 실행 모드입니다. 현재 ShieldDose에서는 VR(분산저감)과 MT(멀티스레딩)의 호환성 문제로 Serial 모드가 강제되고 있습니다. 속도는 느리지만 결과의 신뢰성이 보장됩니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  현재 ShieldDose 실행 모드:\n\n  main.cc:\n  <span style=\"color:var(--yellow)\">// G4MTRunManager* rm = new G4MTRunManager;</span>\n  <span style=\"color:var(--green)\">G4RunManager* rm = new G4RunManager;</span>  // Serial\n\n  이유:\n  ┌─────────────┐   ┌─────────┐\n  │ Importance  │ + │ Parallel│ = <span style=\"color:var(--red)\">MT 불가</span>\n  │ Biasing     │   │ World   │\n  └─────────────┘   └─────────┘</pre>",
+      "related": ["PIT-011", "ISS-037"],
+      "seeAlso": ["mt-mode"]
+    },
+    {
+      "id": "vr",
+      "term": "VR (Variance Reduction)",
+      "ko": "분산저감",
+      "cat": "geant4",
+      "desc": "더 많은 입자를 시뮬레이션하지 않고도 통계적 불확도를 줄이는 기법의 총칭입니다. 두꺼운 차폐체에서 필수적이며, Importance biasing이 ShieldDose의 주요 VR 방법입니다. VR 없이는 99.9995% 상대오차가 발생할 수 있습니다.",
+      "formula": "FOM = 1/(R² × T), R=상대오차, T=계산시간",
+      "visual": "<pre style=\"color:var(--cyan)\">  VR 유무 비교 (5 HVL 차폐):\n\n  <span style=\"color:var(--red)\">VR 없음:</span>\n  γγγγγ ──▸ ┃<span style=\"color:var(--yellow)\">██████</span>┃ ──▸ (거의 없음)\n  10⁶ 입자, <span style=\"color:var(--red)\">상대오차 99.9995%</span>\n\n  <span style=\"color:var(--green)\">VR 있음 (Importance Biasing):</span>\n  γ ──▸ ┃<span style=\"color:var(--yellow)\">█</span>│<span style=\"color:var(--yellow)\">█</span>│<span style=\"color:var(--yellow)\">█</span>│<span style=\"color:var(--yellow)\">█</span>│<span style=\"color:var(--yellow)\">█</span>┃ ──▸ γγγγγ\n        ×2 ×2 ×2 ×2 ×2  (분열)\n  10⁶ 입자, <span style=\"color:var(--green)\">상대오차 ~5%</span></pre>",
+      "related": ["PIT-007", "ISS-004"],
+      "seeAlso": ["importance-biasing", "fom"]
+    },
+    {
+      "id": "importance-biasing",
+      "term": "Importance Biasing",
+      "ko": "중요도 바이어싱",
+      "cat": "geant4",
+      "desc": "차폐체를 여러 층으로 나누고, 깊은 층에 높은 중요도를 부여하는 VR 기법입니다. 입자가 깊은 층으로 진입하면 분열(splitting)되어 통계를 확보하고, 반대 방향으로 가면 러시안 룰렛으로 제거됩니다. 일반적으로 층당 중요도 비율 2배를 사용합니다.",
+      "formula": "importance factor = I_deeper / I_current (보통 2)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Importance Biasing 작동:\n\n  γ ▸ ┃ I=1 │ I=2 │ I=4 │ I=8 │I=16┃\n      ┃     │     │     │     │    ┃\n  <span style=\"color:var(--green)\">→ 진입 시 (splitting):</span>\n  γ ▸ ┃ <span style=\"color:var(--green)\">γ</span>   │ <span style=\"color:var(--green)\">γγ</span>  │<span style=\"color:var(--green)\">γγγγ</span> │<span style=\"color:var(--green)\">γ×8</span> │<span style=\"color:var(--green)\">γ×16</span>┃\n      ┃     │     │     │     │    ┃\n  <span style=\"color:var(--red)\">← 퇴장 시 (Russian Roulette):</span>\n      ┃  <span style=\"color:var(--red)\">✕</span>  │  <span style=\"color:var(--red)\">✕</span>  │  <span style=\"color:var(--red)\">✕</span>  │  <span style=\"color:var(--red)\">✕</span>  │    ┃\n      ┃ 50%  │ 50% │ 50% │ 50% │    ┃\n       제거    제거   제거   제거</pre>",
+      "related": ["PIT-007", "PIT-023"],
+      "seeAlso": ["vr", "weight-window"]
+    },
+    {
+      "id": "fom",
+      "term": "FOM (Figure of Merit)",
+      "ko": "성능지수",
+      "cat": "geant4",
+      "desc": "분산저감 기법의 효율을 평가하는 지표입니다. FOM = 1/(R² × T)로 계산하며, R은 상대오차, T는 계산시간입니다. FOM이 높을수록 효율적이며, VR 적용 전후를 비교하여 VR의 효과를 정량적으로 평가합니다.",
+      "formula": "FOM = 1 / (R² × T)  (R=상대오차, T=계산시간)",
+      "visual": "<pre style=\"color:var(--cyan)\">  FOM 비교:\n\n  ┌──────────────┬───────┬──────┬────────┐\n  │ 방법         │ R(%)  │ T(s) │ FOM    │\n  ├──────────────┼───────┼──────┼────────┤\n  │ <span style=\"color:var(--red)\">VR 없음</span>      │ 50    │ 100  │ <span style=\"color:var(--red)\">0.004</span>  │\n  │ <span style=\"color:var(--yellow)\">VR (×2/층)</span>   │ 5     │ 120  │ <span style=\"color:var(--yellow)\">3.3</span>    │\n  │ <span style=\"color:var(--green)\">VR (최적화)</span>  │ 3     │ 110  │ <span style=\"color:var(--green)\">10.1</span>   │\n  └──────────────┴───────┴──────┴────────┘\n  <span style=\"color:var(--green)\">FOM 높음 = 더 효율적!</span></pre>",
+      "related": ["PIT-007"],
+      "seeAlso": ["vr"]
+    },
+    {
+      "id": "weight-window",
+      "term": "Weight Window",
+      "ko": "가중창",
+      "cat": "geant4",
+      "desc": "입자의 통계적 가중치를 허용 범위(창) 안에 제한하는 VR 기법입니다. 가중치가 상한을 초과하면 분열, 하한 미만이면 러시안 룰렛을 적용합니다. 극단적 가중치 변동을 방지하여 VR 결과의 신뢰성을 높입니다.",
+      "formula": "w_lower < w < w_upper, 비율: w_upper/w_lower ≈ 5~10",
+      "visual": "<pre style=\"color:var(--cyan)\">  Weight Window 작동:\n\n  w │\n    │<span style=\"color:var(--red)\">━━━━ w_upper ━━━━</span> ← 초과 시 splitting\n    │\n    │  <span style=\"color:var(--green)\">허용 범위</span>\n    │\n    │<span style=\"color:var(--red)\">━━━━ w_lower ━━━━</span> ← 미만 시 roulette\n    │\n    └──────────── 깊이\n\n  극단적 가중치 변동 방지\n  → 분산 안정화</pre>",
+      "related": ["PIT-007"],
+      "seeAlso": ["vr", "importance-biasing"]
+    },
+    {
+      "id": "gps",
+      "term": "GPS (General Particle Source)",
+      "ko": "범용입자소스",
+      "cat": "geant4",
+      "desc": "GEANT4의 유연한 소스 정의 모듈입니다. 점/체적/면 소스, 에너지 스펙트럼(단일에너지/히스토그램/와트 등), 각도 분포를 매크로 명령어로 설정할 수 있습니다. ShieldDose의 모든 핵종 소스 정의에 사용됩니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  GPS 소스 유형:\n\n  <span style=\"color:var(--green)\">점선원:</span>    ●──▸ (isotropic)\n\n  <span style=\"color:var(--yellow)\">면선원:</span>    ┃━━━━━┃──▸ (planar)\n\n  <span style=\"color:var(--red)\">체적선원:</span>  ┃█████┃──▸ (volume)\n\n  에너지 설정:\n  /gps/ene/type User\n  /gps/hist/point 0.662 0.851  ← Cs-137\n\n  각도 설정:\n  /gps/ang/type iso  ← 등방\n  /gps/ang/type beam  ← 빔</pre>",
+      "related": ["PIT-005", "PIT-014", "PIT-016", "PIT-025"],
+      "seeAlso": []
+    },
+    {
+      "id": "physics-list",
+      "term": "Physics List",
+      "ko": "물리 리스트",
+      "cat": "geant4",
+      "desc": "시뮬레이션에서 모델링할 물리 과정의 집합입니다. 어떤 상호작용이 포함되느냐에 따라 결과 정확도와 계산 속도가 달라집니다. 예: 감마 차폐에는 EM 물리만, 중성자에는 QGSP_BERT_HP(고정밀 중성자 수송)가 필요합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ShieldDose 물리 리스트 선택:\n\n  ┌────────────────┬────────────────┐\n  │ 소스 타입      │ 물리 리스트    │\n  ├────────────────┼────────────────┤\n  │ <span style=\"color:var(--green)\">감마 (γ)</span>       │ G4EmStandard   │\n  │ <span style=\"color:var(--yellow)\">중성자 (n)</span>     │ QGSP_BERT_HP   │\n  │ <span style=\"color:var(--red)\">전자 (e⁻/β)</span>   │ Em_option4     │\n  │ 양성자 (p)     │ QGSP_BIC_HP    │\n  └────────────────┴────────────────┘\n  <span style=\"color:var(--yellow)\">_HP = High Precision (중성자 20MeV↓)</span></pre>",
+      "related": ["LT-04", "LT-25", "ISS-019"],
+      "seeAlso": []
+    },
+    {
+      "id": "production-cut",
+      "term": "Production Cut",
+      "ko": "생성 컷",
+      "cat": "geant4",
+      "desc": "2차 입자를 생성할 최소 비정(range) 기준입니다. 이 값보다 비정이 짧은 2차 입자는 생성되지 않고 연속적 에너지 손실로 처리됩니다. 디텍터보다 큰 컷을 설정하면 2차 입자가 누락되어 선량이 과소평가됩니다. 기본값은 1mm입니다.",
+      "formula": "cut(range) → E_threshold (재료마다 다름)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Production Cut 영향:\n\n  <span style=\"color:var(--green)\">Cut &lt; 디텍터 (OK):</span>\n  γ ▸ ┃ <span style=\"color:var(--green)\">e⁻→ ●●●</span> ┃  2차 입자 생성됨\n      ┃ <span style=\"color:var(--green)\">e⁻→ ●●</span>  ┃  선량 정확\n      ┗━━━━━━━━━┛\n\n  <span style=\"color:var(--red)\">Cut &gt; 디텍터 (위험!):</span>\n  γ ▸ ┃ <span style=\"color:var(--red)\">(없음)</span>  ┃  2차 입자 미생성\n      ┃         ┃  <span style=\"color:var(--red)\">선량 과소평가!</span>\n      ┗━━━━━━━━━┛\n\n  기본값: 1mm → 작은 디텍터 주의</pre>",
+      "related": ["PIT-010"],
+      "seeAlso": ["cpe"]
+    },
+    {
+      "id": "scoring-mesh",
+      "term": "Scoring Mesh",
+      "ko": "스코어링 메시",
+      "cat": "geant4",
+      "desc": "기하구조 위에 격자를 겹쳐서 공간적 선량 분포를 측정하는 GEANT4 기능입니다. 복셀별로 독립적인 선량값을 기록하지만, 많은 복셀에 입자가 도달하지 않으면 대부분 0값이 됩니다. ShieldDose에서는 MFD 방식으로 전환하여 이 문제를 해결했습니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  Scoring Mesh:\n\n  ┌─┬─┬─┬─┬─┐\n  │0│0│0│0│0│  ← 대부분 0\n  ├─┼─┼─┼─┼─┤\n  │0│0│<span style=\"color:var(--green)\">●</span>│0│0│  ← 1개만 비영\n  ├─┼─┼─┼─┼─┤     (2500 중 1개)\n  │0│0│0│0│0│\n  └─┴─┴─┴─┴─┘\n\n  <span style=\"color:var(--red)\">→ MFD로 전환하여 해결</span></pre>",
+      "related": ["ISS-006"],
+      "seeAlso": ["mfd"]
+    },
+    {
+      "id": "mfd",
+      "term": "MFD (MultiFunctional Detector)",
+      "ko": "다기능 검출기",
+      "cat": "geant4",
+      "desc": "GEANT4의 감응 검출기(Sensitive Detector)로, 하나의 검출기 볼륨에 여러 스코어러(선량, 플럭스, 에너지 등)를 동시에 등록할 수 있습니다. Scoring Mesh보다 정확한 볼륨별 선량 평가가 가능하며, ShieldDose의 주요 선량 측정 방식입니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  MFD 다중 스코어링:\n\n  ┌─────────────────────┐\n  │  MFD 디텍터 볼륨    │\n  │                     │\n  │  <span style=\"color:var(--green)\">● Scorer 1: Dose</span>   │\n  │  <span style=\"color:var(--yellow)\">● Scorer 2: Flux</span>   │\n  │  <span style=\"color:var(--red)\">● Scorer 3: Energy</span> │\n  │                     │\n  │  동시 측정 가능!    │\n  └─────────────────────┘</pre>",
+      "related": ["ISS-006"],
+      "seeAlso": ["scoring-mesh"]
+    },
+    {
+      "id": "stepping-action",
+      "term": "SteppingAction",
+      "ko": "스테핑액션",
+      "cat": "geant4",
+      "desc": "GEANT4에서 시뮬레이션의 각 스텝(입자의 한 번 이동)마다 호출되는 사용자 정의 액션 클래스입니다. 궤적 기록, 커스텀 스코어링, 조건부 이벤트 중단 등에 사용됩니다. MFD와 중복 스코어링하지 않도록 역할 분리가 중요합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  입자 시뮬레이션 스텝:\n\n  γ ──<span style=\"color:var(--green)\">●</span>────<span style=\"color:var(--green)\">●</span>────<span style=\"color:var(--green)\">●</span>────<span style=\"color:var(--green)\">●</span>──▸\n       │     │     │     │\n       ▼     ▼     ▼     ▼\n     <span style=\"color:var(--yellow)\">Step</span>  <span style=\"color:var(--yellow)\">Step</span>  <span style=\"color:var(--yellow)\">Step</span>  <span style=\"color:var(--yellow)\">Step</span>\n     Action Action Action Action\n       │\n       └─ 궤적 기록\n       └─ 에너지 체크\n       └─ 커스텀 로직</pre>",
+      "related": ["ISS-002", "LT-05"],
+      "seeAlso": []
+    },
+    {
+      "id": "parallel-world",
+      "term": "Parallel World",
+      "ko": "평행세계",
+      "cat": "geant4",
+      "desc": "GEANT4의 실제 기하구조(mass geometry)와 별도로 존재하는 가상 기하구조입니다. Importance biasing에서 바이어싱 레이어를 정의하거나, 질량 기하구조를 수정하지 않고 특수 스코어링을 수행하는 데 사용됩니다. MT 모드와의 호환성 문제가 있습니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  Mass World vs Parallel World:\n\n  <span style=\"color:var(--green)\">Mass World (실제 물질):</span>\n  ┃ Air │<span style=\"color:var(--yellow)\">█████ Shield █████</span>│ Air ┃\n\n  <span style=\"color:var(--red)\">Parallel World (VR 레이어):</span>\n  ┃  │I=1│I=2│I=4│I=8│I=16│  ┃\n\n  → 두 세계가 겹쳐져 동시 작동\n  → <span style=\"color:var(--red)\">MT와 비호환 → Serial 강제</span></pre>",
+      "related": ["PIT-011"],
+      "seeAlso": ["importance-biasing"]
+    },
+    {
+      "id": "cli-spawn",
+      "term": "CLI-Spawn (Hybrid Architecture)",
+      "ko": "CLI 스폰 하이브리드",
+      "cat": "software",
+      "desc": "GUI가 GEANT4 시뮬레이션을 별도 CLI 프로세스로 실행하는 아키텍처입니다. UI 스레드와 시뮬레이션 프로세스가 분리되어 GUI가 동결되지 않으며, 프로세스 간 통신으로 진행 상황을 실시간 전달합니다. BeamOn() 직접 호출의 UI 블로킹 문제를 근본적으로 해결합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  CLI-Spawn 아키텍처:\n\n  ┌─────────────┐     spawn     ┌──────────────┐\n  │  <span style=\"color:var(--green)\">Qt5 GUI</span>    │────────────▸│  <span style=\"color:var(--yellow)\">CLI Process</span> │\n  │             │             │              │\n  │ UI 스레드   │◀──stdout──│  GEANT4      │\n  │ (응답 유지) │  progress   │  BeamOn()    │\n  │             │             │  (블로킹OK)  │\n  └─────────────┘             └──────────────┘\n     별도 프로세스 → GUI 동결 없음</pre>",
+      "related": ["ISS-010"],
+      "seeAlso": []
+    },
+    {
+      "id": "dangling-ref",
+      "term": "Dangling Reference",
+      "ko": "댕글링 참조",
+      "cat": "software",
+      "desc": "이미 해제되었거나 재할당된 메모리를 가리키는 포인터 또는 참조입니다. 이를 통해 접근하면 정의되지 않은 동작(undefined behavior)이 발생합니다. C++에서 벡터의 push_back으로 재할당이 발생하면 기존 참조가 무효화될 수 있습니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  댕글링 참조 발생 과정:\n\n  <span style=\"color:var(--green)\">1. Get() 호출 → 참조 획득</span>\n  vec: [A][B][C]  ref→[B]\n\n  <span style=\"color:var(--yellow)\">2. push_back → 벡터 재할당</span>\n  <span style=\"color:var(--red)\">old: [A][B][C]</span>  ref→<span style=\"color:var(--red)\">[B] (해제됨!)</span>\n  new: [A][B][C][D]\n\n  <span style=\"color:var(--red)\">3. ref 접근 → UNDEFINED BEHAVIOR</span>\n\n  해결: 값 반환 또는 reserve 사용</pre>",
+      "related": ["ISS-010"],
+      "seeAlso": ["use-after-free"]
+    },
+    {
+      "id": "use-after-free",
+      "term": "Use-After-Free",
+      "ko": "해제 후 사용",
+      "cat": "software",
+      "desc": "delete 등으로 해제된 메모리에 다시 접근하는 프로그래밍 오류입니다. 크래시, 데이터 손상, 보안 취약점의 원인이 됩니다. ShieldDose에서는 G4GeometrySampler의 삭제 순서 오류로 이 문제가 발생한 바 있습니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  Use-After-Free 시나리오:\n\n  <span style=\"color:var(--green)\">1. 할당</span>    ptr → [데이터]\n  <span style=\"color:var(--yellow)\">2. 삭제</span>    delete ptr → <span style=\"color:var(--red)\">[해제됨]</span>\n  <span style=\"color:var(--red)\">3. 접근!</span>   ptr→ <span style=\"color:var(--red)\">??? CRASH / UB</span>\n\n  ShieldDose 사례:\n  RunManager 삭제 → Sampler 접근\n  <span style=\"color:var(--red)\">→ 종료 시 크래시</span>\n  해결: 삭제 순서 수정</pre>",
+      "related": ["ISS-056"],
+      "seeAlso": ["dangling-ref"]
+    },
+    {
+      "id": "singleton",
+      "term": "Singleton",
+      "ko": "싱글턴",
+      "cat": "software",
+      "desc": "프로그램 전체에서 단 하나의 인스턴스만 존재하도록 보장하는 디자인 패턴입니다. ShieldDose의 TrackingRecorder가 이 패턴을 사용합니다. 멀티스레딩 환경에서는 스레드 안전성 보장이 필요합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  Singleton 패턴:\n\n  <span style=\"color:var(--red)\">✕ 일반 클래스: 다수 인스턴스</span>\n  new Recorder → [inst1]\n  new Recorder → [inst2]\n  new Recorder → [inst3]\n\n  <span style=\"color:var(--green)\">✓ Singleton: 단일 인스턴스</span>\n  Recorder::Instance() → [유일한 inst]\n  Recorder::Instance() → [같은 inst]\n  Recorder::Instance() → [같은 inst]\n\n  ShieldDose: TrackingRecorder</pre>",
+      "related": ["ISS-013", "ISS-014"],
+      "seeAlso": []
+    },
+    {
+      "id": "mutex",
+      "term": "Mutex",
+      "ko": "뮤텍스",
+      "cat": "software",
+      "desc": "상호 배제(Mutual Exclusion) 잠금으로, 동시에 하나의 스레드만 공유 데이터에 접근할 수 있도록 보장합니다. 멀티스레딩 환경에서 데이터 경쟁(race condition)을 방지하는 핵심 메커니즘입니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  Mutex 작동:\n\n  <span style=\"color:var(--red)\">뮤텍스 없이:</span>\n  Thread 1: read(x)→<span style=\"color:var(--red)\">x+1</span>→write(x)  결과: x=1\n  Thread 2: read(x)→<span style=\"color:var(--red)\">x+1</span>→write(x)  결과: x=1 <span style=\"color:var(--red)\">(기대: 2!)</span>\n\n  <span style=\"color:var(--green)\">뮤텍스 사용:</span>\n  Thread 1: <span style=\"color:var(--green)\">lock</span>→read→x+1→write→<span style=\"color:var(--green)\">unlock</span>\n  Thread 2: <span style=\"color:var(--yellow)\">대기...</span> <span style=\"color:var(--green)\">lock</span>→read→x+1→write→<span style=\"color:var(--green)\">unlock</span>\n  결과: x=2 <span style=\"color:var(--green)\">✓</span></pre>",
+      "related": ["ISS-015", "ISS-058"],
+      "seeAlso": ["mt-mode"]
+    },
+    {
+      "id": "race-condition",
+      "term": "Race Condition",
+      "ko": "경쟁 조건",
+      "cat": "software",
+      "desc": "두 개 이상의 스레드가 동기화 없이 공유 데이터에 동시 접근하여 결과가 실행 순서에 따라 달라지는 버그입니다. 디버깅이 매우 어려우며, 뮤텍스 등의 동기화 메커니즘으로 방지해야 합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  경쟁 조건 시나리오:\n\n  시간 →\n  <span style=\"color:var(--yellow)\">T1:</span> ──read(0)──add 1──write(<span style=\"color:var(--red)\">1</span>)────────\n  <span style=\"color:var(--yellow)\">T2:</span> ────read(0)──add 1──write(<span style=\"color:var(--red)\">1</span>)──────\n                                   ↑\n                            <span style=\"color:var(--red)\">결과: 1 (기대: 2)</span>\n\n  발생 조건:\n  1. 공유 데이터 존재\n  2. 최소 1개 스레드가 쓰기 수행\n  3. 동기화 부재</pre>",
+      "related": ["ISS-014"],
+      "seeAlso": ["mutex", "mt-mode"]
+    },
+    {
+      "id": "toctou",
+      "term": "TOCTOU (Time of Check to Time of Use)",
+      "ko": "검사-사용 간 경합",
+      "cat": "software",
+      "desc": "조건 확인(check)과 해당 조건을 기반으로 한 동작(use) 사이에 상태가 변경될 수 있는 경쟁 조건의 한 유형입니다. 파일 존재 확인 후 열기, 리소스 가용성 확인 후 사용 등에서 발생합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  TOCTOU 시나리오:\n\n  시간 →\n  <span style=\"color:var(--yellow)\">T1:</span> if(exists) ─── <span style=\"color:var(--yellow)\">gap</span> ─── open()\n  <span style=\"color:var(--red)\">T2:</span>         delete() ↑\n                  상태 변경!\n\n  Check와 Use 사이에 상태 변경 가능\n  <span style=\"color:var(--red)\">→ 원자적(atomic) 연산으로 해결</span></pre>",
+      "related": ["ISS-079"],
+      "seeAlso": []
+    },
+    {
+      "id": "odr",
+      "term": "ODR (One Definition Rule)",
+      "ko": "단일정의규칙",
+      "cat": "software",
+      "desc": "C++ 표준 규칙으로, 하나의 엔티티(변수, 함수, 클래스 등)는 모든 번역 단위(translation unit)를 통틀어 정확히 한 번만 정의되어야 합니다. 위반 시 링커 오류가 발생하거나, 같은 이름의 다른 정의가 사용되어 예측 불가한 동작이 발생합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ODR 위반 사례:\n\n  <span style=\"color:var(--red)\">file1.cc:</span> int config = 100;\n  <span style=\"color:var(--red)\">file2.cc:</span> int config = 200;\n  → <span style=\"color:var(--red)\">링커 오류 또는 undefined behavior</span>\n\n  <span style=\"color:var(--green)\">올바른 방법:</span>\n  header.hh: extern int config;  (선언)\n  file1.cc:  int config = 100;   (정의, 1회)\n  file2.cc:  #include \"header.hh\" (참조)</pre>",
+      "related": ["ISS-033", "ISS-043"],
+      "seeAlso": []
+    },
+    {
+      "id": "icrp",
+      "term": "ICRP (International Commission on Radiological Protection)",
+      "ko": "국제방사선방호위원회",
+      "cat": "standards",
+      "desc": "방사선 방호 기준, 선량 한도, 가중치 계수 등을 제정하는 국제기구입니다. ICRP-103(2007)은 현행 방호 체계의 기본 문서이며, 조직가중치와 방사선가중치를 정의합니다. ICRP-74는 중성자 H*(10) 환산 데이터, ICRP-116은 최신 선량 변환 계수를 제공합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ICRP 주요 문서:\n  ┌────────────────────────────────┐\n  │ <span style=\"color:var(--green)\">ICRP-103</span> (2007)               │\n  │  방호 체계, Wr, wT 기본 문서  │\n  ├────────────────────────────────┤\n  │ <span style=\"color:var(--yellow)\">ICRP-74</span>  (1996)               │\n  │  H*(10) 환산계수 (중성자)     │\n  ├────────────────────────────────┤\n  │ <span style=\"color:var(--yellow)\">ICRP-116</span> (2010)               │\n  │  최신 선량 변환 계수          │\n  └────────────────────────────────┘</pre>",
+      "related": ["PIT-024", "ISS-020", "LT-09"],
+      "seeAlso": ["wr", "effective-dose"]
+    },
+    {
+      "id": "nist-xcom",
+      "term": "NIST XCOM",
+      "ko": "NIST 광자단면적 데이터베이스",
+      "cat": "standards",
+      "desc": "미국 국립표준기술연구소(NIST)에서 제공하는 광자 상호작용 단면적 데이터베이스입니다. 모든 원소에 대한 μ/ρ와 μ_en/ρ 데이터를 에너지별로 제공하며, 선량 계산과 차폐 설계의 기준 참조 데이터입니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  NIST XCOM 데이터 구조:\n\n  원소별 에너지 의존 테이블:\n  ┌───────┬────────┬─────────┐\n  │ E(MeV)│ μ/ρ    │ μ_en/ρ  │\n  ├───────┼────────┼─────────┤\n  │ 0.01  │ 26.15  │ 25.43   │  Pb\n  │ 0.1   │ 5.549  │ 2.325   │  (Z=82)\n  │ 0.662 │ 0.1101 │ 0.0328  │\n  │ 1.25  │ 0.0590 │ 0.0297  │\n  └───────┴────────┴─────────┘\n  <span style=\"color:var(--yellow)\">physics.nist.gov/PhysRefData/Xcom</span></pre>",
+      "related": ["PIT-004", "PIT-015", "PIT-017", "LT-21"],
+      "seeAlso": ["mu", "mu-en"]
+    },
+    {
+      "id": "ans-643",
+      "term": "ANS 6.4.3",
+      "ko": "미국원자력학회 6.4.3",
+      "cat": "standards",
+      "desc": "감마선 빌드업팩터 데이터를 제공하는 미국원자력학회(ANS) 표준입니다. 13개 재료에 대해 여러 에너지와 MFP 값에서의 빌드업팩터를 Berger/Taylor 형태로 제공합니다. ShieldDose의 해석적 빌드업 계산의 핵심 데이터 소스입니다.",
+      "formula": "B(E,x) = 1 + aE × x × exp(bE × x)  (Berger form)",
+      "visual": "<pre style=\"color:var(--cyan)\">  ANS 6.4.3 빌드업 테이블 구조:\n\n  13개 재료 × 다중 에너지 × MFP:\n  ┌──────┬───────┬───────┬───────┐\n  │      │ 1 MFP │ 5 MFP │10 MFP │\n  ├──────┼───────┼───────┼───────┤\n  │<span style=\"color:var(--green)\">0.5MeV</span>│  2.1  │  5.8  │ 14.2  │ Pb\n  │<span style=\"color:var(--yellow)\">1.0MeV</span>│  1.7  │  3.7  │  7.1  │\n  │<span style=\"color:var(--red)\">2.0MeV</span>│  1.4  │  2.6  │  4.1  │\n  └──────┴───────┴───────┴───────┘\n  ShieldDose: 86행 CSV, 이중선형 보간</pre>",
+      "related": ["PIT-027", "PIT-028", "LT-09"],
+      "seeAlso": ["buildup-factor", "kalos-kitazume"]
+    },
+    {
+      "id": "qsa",
+      "term": "QSA (QSA Global)",
+      "ko": "QSA 글로벌",
+      "cat": "standards",
+      "desc": "산업 방사선촬영용 선원을 제조하는 회사입니다. QSA 매뉴얼(MAN-027)은 감마상수, HVL 등의 참조 데이터를 제공합니다. 다만 Table 7의 Cs-137/Pb HVL 값에 오류가 발견된 바 있어(22.9mm vs 실제 ~5.56mm), 산업 매뉴얼도 NIST 교차 검증이 필요합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  QSA Table 7 HVL 오류 사례:\n\n  ┌────────┬──────────┬──────────┐\n  │ 핵종   │ Pb (QSA) │ Pb (NIST)│\n  ├────────┼──────────┼──────────┤\n  │ Cs-137 │ <span style=\"color:var(--red)\">22.9 mm</span>  │ <span style=\"color:var(--green)\">~5.56 mm</span>│\n  │        │ <span style=\"color:var(--red)\">← Steel값</span>│ <span style=\"color:var(--green)\">← 정확값</span>│\n  └────────┴──────────┴──────────┘\n\n  <span style=\"color:var(--red)\">⚠ 산업 매뉴얼 맹신 금지!</span>\n  <span style=\"color:var(--green)\">→ NIST XCOM으로 항상 교차 검증</span></pre>",
+      "related": ["PIT-015", "ISS-021"],
+      "seeAlso": []
+    },
+    {
+      "id": "kalos-kitazume",
+      "term": "Kalos-Kitazume Method (1957)",
+      "ko": "칼로스-키타즈메 방법",
+      "cat": "standards",
+      "desc": "다층 차폐에서 각 층의 MFP를 가중 평균하여 등가 단층으로 변환한 후 빌드업팩터를 계산하는 근사법입니다. 각 층의 빌드업을 독립적으로 곱하는 방법보다 물리적으로 정확하며, ShieldDose의 다층 해석적 계산에 적용되어 있습니다.",
+      "formula": "MFP_eq = Σ(μ_i × d_i), B = B_eq(E, MFP_eq)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Kalos-Kitazume 다층 빌드업:\n\n  <span style=\"color:var(--red)\">기존 (독립 곱 — 부정확):</span>\n  B_total = B_Pb × B_Fe × B_Con\n  → 2-5배 과대평가 가능\n\n  <span style=\"color:var(--green)\">Kalos-Kitazume (MFP 가중):</span>\n  ┃<span style=\"color:var(--yellow)\">Pb</span>│<span style=\"color:var(--green)\">Fe</span>│<span style=\"color:var(--red)\">Con</span>┃\n  ┃ 2 │ 3 │ 1 ┃ ← 각 층 MFP\n\n  MFP_eq = 2+3+1 = 6\n  B_total = B_equiv(E, 6 MFP)\n  → <span style=\"color:var(--green)\">등가 단층 빌드업 사용</span></pre>",
+      "related": ["PIT-028", "LT-09"],
+      "seeAlso": ["buildup-factor", "ans-643"]
+    },
+    {
+      "id": "icru",
+      "term": "ICRU (International Commission on Radiation Units and Measurements)",
+      "ko": "국제방사선단위측정위원회",
+      "cat": "standards",
+      "desc": "방사선 관련 물리량과 단위를 정의하는 국제기구입니다. H*(10) 측정의 기준이 되는 ICRU 구(30cm 직경 조직등가 구)를 정의했습니다. 방사선 방호에서 사용되는 물리량 체계의 기초를 제공합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ICRU 구 (H*(10) 기준 팬텀):\n\n       ┌──────────────┐\n      ╱                ╲\n     │   조직등가 구    │\n     │   ρ=1 g/cm³     │  30 cm\n     │                  │\n     │   <span style=\"color:var(--yellow)\">● 10mm 깊이</span>   │\n     │   H*(10) 평가점  │\n      ╲                ╱\n       └──────────────┘\n  76.2% O, 11.1% C, 10.1% H, 2.6% N</pre>",
+      "related": ["LT-09"],
+      "seeAlso": ["h-star-10"]
+    },
+    {
+      "id": "nndc",
+      "term": "NNDC/ENSDF (National Nuclear Data Center)",
+      "ko": "국가핵데이터센터",
+      "cat": "standards",
+      "desc": "미국 BNL(브룩헤이븐국립연구소)의 핵 데이터 센터로, 붕괴 스킴, 분기비, 핵구조 데이터를 제공합니다. ENSDF(Evaluated Nuclear Structure Data File)는 모든 핵종의 평가 데이터를 포함하며, 소스 정의의 최종 권위 참조입니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  NNDC 데이터 활용:\n\n  <span style=\"color:var(--yellow)\">www.nndc.bnl.gov</span>\n        │\n        ▼\n  ┌─────────────────────────────┐\n  │ Co-60 붕괴 스킴:           │\n  │  β⁻ → Ni-60*              │\n  │  γ₁: 1173.2 keV (99.85%)  │\n  │  γ₂: 1332.5 keV (99.98%)  │\n  │  gpd = 1.998               │\n  └─────────────────────────────┘\n        │\n        ▼ GPS 매크로 생성 기준</pre>",
+      "related": ["PIT-012", "PIT-016"],
+      "seeAlso": ["branching-ratio", "gpd"]
+    },
+    {
+      "id": "bragg-gray",
+      "term": "Bragg-Gray Cavity Theory",
+      "ko": "브래그-그레이 공동이론",
+      "cat": "standards",
+      "desc": "디텍터(공동)가 2차 전자의 비정(range)에 비해 매우 작을 때 적용되는 선량 변환 이론입니다. 공동 내 전자 fluence가 주변 매질과 같다고 가정하고, 정지능(stopping power) 비율로 선량을 변환합니다. 가장 단순하지만 적용 조건이 엄격합니다.",
+      "formula": "D_med = D_cav × (S/ρ)_med / (S/ρ)_cav",
+      "visual": "<pre style=\"color:var(--cyan)\">  Bragg-Gray 적용 조건:\n\n  매질 │<span style=\"color:var(--green)\">▪▪</span>│ 매질    (공동 &lt;&lt; 전자 비정)\n       │<span style=\"color:var(--green)\">▪▪</span>│\n  e⁻ ─────────────▸  전자가 관통\n       │<span style=\"color:var(--green)\">▪▪</span>│\n       <span style=\"color:var(--green)\">tiny</span>\n\n  가정: 공동이 전자 fluence에 영향 없음\n  변환: 정지능(S/ρ) 비율 사용\n\n  <span style=\"color:var(--yellow)\">적용: 이온챔버 (기체 공동)</span></pre>",
+      "related": ["PIT-018"],
+      "seeAlso": ["burlin", "large-cavity"]
+    },
+    {
+      "id": "burlin",
+      "term": "Burlin Cavity Theory",
+      "ko": "벌린 공동이론",
+      "cat": "standards",
+      "desc": "Bragg-Gray(소공동)와 대공동 이론을 가중 블렌딩하여 중간 크기 디텍터에 적용하는 공동 이론입니다. 가중 계수 d가 0(대공동)에서 1(Bragg-Gray)까지 변하며, 디텍터 크기와 전자 비정의 비율에 의존합니다. 가장 범용적이지만 불확도가 가장 큽니다.",
+      "formula": "D = d × D_BG + (1-d) × D_large  (d = 가중 계수)",
+      "visual": "<pre style=\"color:var(--cyan)\">  Burlin = BG + Large 가중 혼합:\n\n  d │ <span style=\"color:var(--green)\">1 ──────</span>╲\n    │              ╲\n    │               <span style=\"color:var(--yellow)\">────</span>\n    │                    ╲\n    │ <span style=\"color:var(--red)\">0</span>                    <span style=\"color:var(--red)\">──────</span>\n    └──────────────────────── 크기\n      <span style=\"color:var(--green)\">소공동</span>    <span style=\"color:var(--yellow)\">중간</span>    <span style=\"color:var(--red)\">대공동</span>\n      (BG)    (Burlin)  (Large)\n\n  <span style=\"color:var(--yellow)\">가장 범용적, 불확도 가장 큼</span></pre>",
+      "related": ["PIT-018"],
+      "seeAlso": ["bragg-gray", "large-cavity"]
+    },
+    {
+      "id": "large-cavity",
+      "term": "Large Cavity Theory",
+      "ko": "대공동이론",
+      "cat": "standards",
+      "desc": "디텍터가 2차 전자의 비정(range)보다 충분히 클 때 적용되는 선량 변환 이론입니다. CPE가 성립한다고 가정하고, μ_en/ρ 비율로 선량을 변환합니다. 가장 단순한 접근법이며, 물 디텍터의 선량 변환에 자주 사용됩니다.",
+      "formula": "D_med = D_cav × (μ_en/ρ)_med / (μ_en/ρ)_cav",
+      "visual": "<pre style=\"color:var(--cyan)\">  Large Cavity 적용 조건:\n\n  매질 │<span style=\"color:var(--green)\">████████████</span>│ 매질\n       │<span style=\"color:var(--green)\">████████████</span>│    (공동 &gt;&gt; 전자 비정)\n  e⁻ ──│<span style=\"color:var(--green)\">█ ●●●● stop</span>│    전자가 공동 내 정지\n       │<span style=\"color:var(--green)\">████████████</span>│\n         <span style=\"color:var(--green)\">large cavity</span>\n\n  가정: 공동 내 CPE 성립\n  변환: μ_en/ρ 비율 사용\n\n  <span style=\"color:var(--yellow)\">가장 단순한 접근법</span></pre>",
+      "related": ["PIT-018"],
+      "seeAlso": ["bragg-gray", "burlin", "mu-en"]
+    },
+    {
+      "id": "cavity-theory",
+      "term": "Cavity Theory",
+      "ko": "공동이론",
+      "cat": "standards",
+      "desc": "디텍터(공동) 매질에서 측정한 선량을 기준 매질(공기, 물 등)의 선량으로 변환하는 이론적 프레임워크입니다. 디텍터 크기와 전자 비정의 비율에 따라 Bragg-Gray(소), Burlin(중), Large cavity(대) 이론을 선택합니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  공동이론 선택 가이드:\n\n  디텍터 크기 vs 전자 비정(R):\n\n  ┌───────────────────────────────┐\n  │ <span style=\"color:var(--green)\">d &lt;&lt; R</span> → Bragg-Gray (S/ρ비)  │\n  │ <span style=\"color:var(--yellow)\">d ≈  R</span> → Burlin (혼합)       │\n  │ <span style=\"color:var(--red)\">d &gt;&gt; R</span> → Large (μ_en/ρ비)   │\n  └───────────────────────────────┘\n\n  선택 오류 시 수십% 오차 발생!</pre>",
+      "related": ["PIT-018"],
+      "seeAlso": ["bragg-gray", "burlin", "large-cavity"]
+    },
+    {
+      "id": "endf",
+      "term": "ENDF/B-VIII.0",
+      "ko": "평가핵데이터파일",
+      "cat": "standards",
+      "desc": "미국에서 관리하는 평가핵반응 단면적 데이터 라이브러리입니다. 모든 동위원소의 중성자 반응 단면적을 제공하며, GEANT4는 G4NDL을 통해 이 데이터를 사용합니다. 중성자 수송 시뮬레이션의 정확도를 결정하는 핵심 데이터 소스입니다.",
+      "formula": "",
+      "visual": "<pre style=\"color:var(--cyan)\">  ENDF 데이터 흐름:\n\n  <span style=\"color:var(--yellow)\">ENDF/B-VIII.0</span> (원본)\n        │\n        ▼ 변환\n  <span style=\"color:var(--green)\">G4NDL 4.7</span> (GEANT4 형식)\n        │\n        ▼ 로드\n  <span style=\"color:var(--green)\">QGSP_BERT_HP</span> (물리 리스트)\n        │\n        ▼ 사용\n  중성자 반응 시뮬레이션\n\n  <span style=\"color:var(--yellow)\">_HP = High Precision (E &lt; 20MeV)</span></pre>",
+      "related": ["LT-21"],
+      "seeAlso": []
+    }
+  ]
 }
