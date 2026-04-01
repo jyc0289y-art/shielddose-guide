@@ -102,6 +102,33 @@
   .flash{animation:flash-highlight .8s ease-out}
   @keyframes flash-highlight{0%{background:rgba(210,153,34,.3)}100%{background:transparent}}
 
+  .panel-header-bar{padding:12px 14px;border-radius:6px;margin-bottom:14px}
+  .panel-header-bar.iss{background:rgba(88,166,255,.1);border-left:3px solid var(--accent)}
+  .panel-header-bar.pit{background:rgba(219,109,40,.1);border-left:3px solid var(--orange)}
+  .panel-header-bar.lt{background:rgba(188,140,255,.1);border-left:3px solid var(--purple)}
+  .panel-header-bar.req{background:rgba(224,108,117,.1);border-left:3px solid #e06c75}
+  .panel-severity{display:flex;align-items:center;gap:8px;margin:8px 0}
+  .sev-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+  .sev-fill{height:100%;border-radius:3px;transition:width .3s}
+  .sev-label{font-size:.78em;font-weight:600;min-width:60px}
+  .panel-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+  .panel-info-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:4px;padding:8px}
+  .panel-info-item .info-label{font-size:.7em;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+  .panel-info-item .info-value{font-size:.88em;margin-top:2px}
+  .panel-impact{background:rgba(248,81,73,.05);border:1px solid rgba(248,81,73,.2);border-radius:6px;padding:10px 12px;margin:8px 0;font-size:.85em;line-height:1.6}
+  .panel-impact-title{font-size:.78em;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .panel-solution{background:rgba(63,185,80,.05);border:1px solid rgba(63,185,80,.2);border-radius:6px;padding:10px 12px;margin:8px 0;font-size:.85em;line-height:1.6}
+  .panel-solution-title{font-size:.78em;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .panel-files{background:rgba(188,140,255,.05);border:1px solid rgba(188,140,255,.15);border-radius:6px;padding:10px 12px;margin:8px 0}
+  .panel-files-title{font-size:.78em;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .panel-files code{background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;font-size:.82em}
+  .panel-terms{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+  .panel-term-tag{background:rgba(57,210,192,.1);border:1px solid rgba(57,210,192,.25);color:var(--cyan);padding:2px 8px;border-radius:12px;font-size:.75em;cursor:default}
+  .phase-progress{display:flex;align-items:center;gap:6px;margin:8px 0}
+  .phase-bar{display:flex;gap:2px;flex:1}
+  .phase-seg{height:16px;flex:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.65em;font-weight:600;color:#fff}
+  .phase-done{background:var(--green)}.phase-wip{background:var(--yellow)}.phase-todo{background:var(--border)}
+
   .term-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
   .term-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:12px}
   .term-card h4{color:var(--accent);font-size:.9em;margin-bottom:4px}
@@ -920,6 +947,51 @@ edges:[
 {from:'LT-03',to:'LT-02',r:'의존'},{from:'LT-12',to:'PIT-011',r:'차단'}
 ]};
 
+// === Extended Detail Data ===
+const EXT={
+'P2.2wc-ISS-020':{severity:'critical',impact:'H*(10) 주변선량당량 변환이 없어 MC 결과를 환경 모니터링 실용량으로 직접 비교할 수 없었음. 규제 보고서 작성에 필수적인 물리량 부재.',solution:'P2.14wc에서 ICRP-74 기반 DoseConversion 클래스 신규 구현. icrp74_photon.csv (25개 에너지 포인트) 기반 h_K(E) 보간 메서드 추가. 광자 플루언스→H*(10) 변환 완료.',files:['src/DoseConversion.cc','include/DoseConversion.hh','data/icrp74_photon.csv','data/icrp74_neutron.csv'],terms:['주변선량당량 H*(10)','ICRP-74','방사선가중인자 (Wr)']},
+'P2.2wc-ISS-021':{severity:'critical',impact:'ICRP-74/116 변환계수 없이는 플루언스 기반 선량 평가가 불가능. 중성자 선량당량 평가의 전제 조건.',solution:'P2.14wc에서 ICRP-74 광자/중성자 변환계수 CSV 데이터 통합. DoseConversion 클래스에서 에너지별 보간 지원.',files:['data/icrp74_photon.csv','data/icrp74_neutron.csv','src/DoseConversion.cc'],terms:['ICRP-74','ICRP-116','주변선량당량 H*(10)']},
+'P2.11wc-ISS-002':{severity:'critical',impact:'빌드업 팩터가 에너지 독립적 단일 값을 사용하여 저에너지 감마선 차폐 계산에서 최대 ±50% 오차 발생 가능. 물리적으로 부정확한 결과 도출.',solution:'P2.12wc LT-09에서 ANS 6.4.3 에너지 의존 빌드업 데이터(0.015~15 MeV × 1~40 MFP) 통합. bilinear interpolation으로 임의 에너지/두께 보간.',files:['data/buildup_*.csv','src/AnalyticalCalculator.cc','include/BuildupTable.hh'],terms:['빌드업 팩터','반가층 (HVL)','감쇠계수 (μ)']},
+'P2.11wc-ISS-037':{severity:'critical',impact:'멀티스레딩 비활성화로 대규모 시뮬레이션(10⁷+ 이벤트)에서 실행 시간이 선형 증가. 현재 8코어 중 1코어만 사용하여 이론적 8배 성능 손실.',solution:'미해결. LT-12(MT/MPI 분산 컴퓨팅)에서 해결 예정. G4MTRunManager 전환 + VR 호환성 확인(PIT-011) 필요.',files:['src/ShieldDose.cc','include/RunAction.hh'],terms:['Variance Reduction','Importance Biasing']},
+'P2.12wc-ISS-061':{severity:'critical',impact:'다층 차폐에서 각 레이어 빌드업 팩터를 독립적으로 곱하여 전체 빌드업을 계산. 층간 스펙트럼 경화·산란 효과를 무시하여 두꺼운 다층 차폐에서 과소/과대 평가.',solution:'P2.12wc에서 Kalos-Kitazume 다층 빌드업 방법 구현. 레이어 순서 효과, 등가 두께 개념 적용.',files:['src/AnalyticalCalculator.cc','src/MultiLayerBuildup.cc'],terms:['빌드업 팩터','N-layer 기하']},
+'PIT-001':{severity:'high',impact:'얇은 디텍터(두께 < CPE 성립 범위)에서 2차 전자가 탈출하여 Dose < Kerma. MC 선량과 해석적 커마 비교 시 체계적 불일치 발생. 저에너지 핵종(Am-241)에서 특히 현저.',solution:'인식 수준 관리. 디텍터 두께를 에너지별 2차 전자 비정(range) 이상으로 설정하거나, PIT-002(자기차폐)와의 트레이드오프 최적점 탐색 필요.',files:['src/DetectorConstruction.cc','macros/detector_*.mac'],terms:['CPE (하전입자평형)','KERMA','질량에너지흡수계수 (μ_en/ρ)']},
+'PIT-027':{severity:'critical',impact:'해석적 빌드업 팩터가 에너지에 무관한 단일 상수를 사용. 0.1 MeV vs 1 MeV 감마에 동일 빌드업 적용 → 저에너지에서 과대평가, 고에너지에서 과소평가.',solution:'P2.12wc에서 ANS 6.4.3 에너지 의존 빌드업 데이터 도입. 23개 에너지 × 40 MFP 격자에서 bilinear interpolation. ✅ 해결 완료.',files:['data/buildup_*.csv','src/AnalyticalCalculator.cc'],terms:['빌드업 팩터','ANS 6.4.3','반가층 (HVL)']},
+'PIT-028':{severity:'high',impact:'다층 차폐의 빌드업을 단일층 팩터의 독립 곱으로 계산. 물리적으로 스펙트럼 경화, 층간 산란을 무시하여 총 투과율 오차 ±30% 가능.',solution:'P2.12wc에서 Kalos-Kitazume 방법 구현. 등가 두께 개념으로 다층 효과 근사. ✅ 해결 완료.',files:['src/MultiLayerBuildup.cc','src/AnalyticalCalculator.cc'],terms:['빌드업 팩터','N-layer 기하']},
+'PIT-024':{severity:'high',impact:'중성자 에너지 범위(열중성자~14 MeV)에서 Wr이 5~20으로 크게 변동하나, 단일 값 사용. 열중성자 지배 스펙트럼에서 선량당량 과대평가, 고속 중성자에서 과소평가.',solution:'P2.14wc에서 광자 h_K 변환 구현으로 부분 해결. 중성자 에너지 빈별 플루언스 스코어링은 LT-04 후속 과제로 잔존.',files:['src/DoseConversion.cc','data/icrp74_neutron.csv'],terms:['방사선가중인자 (Wr)','주변선량당량 H*(10)','ICRP-74']},
+'PIT-025':{severity:'medium',impact:'Cf-252 자발핵분열의 다중도(ν̄=3.77) 분포가 GPS에 미반영. 실제로는 0~8개 중성자가 상관적으로 방출되나, GPS는 독립 단일 중성자로 처리.',solution:'P2.14wc에서 입자분리 스코어링(감마/중성자/전자/양성자) 구현으로 부분 해결. 완전한 해결은 커스텀 PrimaryGenerator 구현 필요.',files:['src/PrimaryGeneratorAction.cc','src/TrackingRecorder.cc'],terms:['자발핵분열','다중도','GPS']},
+'LT-04':{severity:'none',phases:[{name:'Ph1 기본 중성자',status:'done',session:'P2.10wc'},{name:'Ph2 H*(10)/ICRP-74',status:'done',session:'P2.14wc'},{name:'Ph3 에너지빈 플루언스',status:'todo',session:''}],impact:'Cf-252 중성자원 지원은 중성자 차폐 설계의 핵심 기능. 방사선 작업종사자 방호 설계에 필수.',solution:'Ph1: NeutronPhysicsConfig + HP physics list + Cf-252 스펙트럼 GPS. Ph2: ICRP-74 기반 DoseConversion + h_K 변환 + 입자분리 스코어링. Ph3 미완: 에너지 빈별 중성자 플루언스 탈리.',files:['src/NeutronPhysicsConfig.cc','src/DoseConversion.cc','macros/cf252_*.mac','data/icrp74_*.csv'],terms:['자발핵분열','주변선량당량 H*(10)','ICRP-74','Importance Biasing']},
+'LT-09':{severity:'none',phases:[{name:'Ph1 에너지 의존 빌드업',status:'done',session:'P2.12wc'},{name:'Ph2 다층 빌드업',status:'done',session:'P2.12wc'},{name:'Ph3 KERMA→Dose 구분',status:'todo',session:''}],impact:'선량 평가의 정확도를 좌우하는 핵심 고도화. 해석적 계산이 MC 결과와 ±5% 이내로 일치하는 것이 목표.',solution:'Ph1: ANS 6.4.3 빌드업 CSV 23개 물질, bilinear interpolation. Ph2: Kalos-Kitazume 다층 방법. PIT-027, PIT-028 해결.',files:['data/buildup_*.csv','src/AnalyticalCalculator.cc','src/MultiLayerBuildup.cc'],terms:['빌드업 팩터','ANS 6.4.3','감쇠계수 (μ)','반가층 (HVL)']},
+'LT-21':{severity:'none',phases:[{name:'Ph1 원소 물질',status:'done',session:'P2.9wc'},{name:'Ph2 합금/화합물',status:'done',session:'P2.9wc'},{name:'Ph3 가스',status:'done',session:'P2.9wc'},{name:'Ph4 농축 동위원소',status:'done',session:'P2.9wc'},{name:'Ph5 커스텀 물질',status:'done',session:'P2.9wc'}],impact:'차폐 물질 선택의 자유도 확장. 15종→57종. 실무 차폐 설계에서 다양한 물질 조합을 시뮬레이션 가능.',solution:'MaterialDataStore 클래스에 57종 내장. NIST 데이터베이스 연동, 가스 밀도 자동 설정, 농축 동위원소 비율 지정, 사용자 정의 물질 파싱.',files:['src/MaterialDataStore.cc','data/materials.csv','src/CustomMaterialParser.cc'],terms:['동위원소 농축']},
+'LT-13':{severity:'none',phases:[{name:'Ph1 SVG 감쇠곡선',status:'done',session:'P2.14wc'},{name:'Ph2 PDF 출력',status:'todo',session:''},{name:'Ph3 대화형 보고서',status:'todo',session:''}],impact:'시뮬레이션 결과를 규제당국 제출용 보고서로 자동 생성. REQ-008의 핵심 구현 수단.',solution:'Ph1: 인라인 SVG 감쇠곡선 + 규제 게이지바 (선량한도 대비 %). HTML 보고서 자동 생성. PDF 출력은 Ph2에서.',files:['src/ReportGenerator.cc','templates/report_*.html'],terms:['ICRP-74','QSA Global']},
+'REQ-001':{severity:'none',impact:'프로젝트의 핵심 요구사항. 기획서 기반 GEANT4 시뮬레이션 코드 전체 구현. CLI+GUI 하이브리드 아키텍처로 ~70% 달성.',solution:'LT-04(Cf-252), LT-05(궤적추적), LT-06(STL), LT-21(물질57종) 완료. 나머지: 전자/베타(LT-07), 양성자(LT-08) 수송 미구현.',files:['ShieldDose/','ShieldDose_GUI_v3/'],terms:['CLI/GUI 하이브리드','Physics List','GPS']}
+};
+
+// === Category description map ===
+const CAT_DESC={
+'C-PHY':'Critical: 물리 결과에 직접 영향을 미치는 오류. 시뮬레이션 결과의 신뢰성 저하.',
+'C-DAT':'Critical: 핵종 데이터, 물질 데이터 등의 무결성 오류.',
+'C-FUN':'Critical: 핵심 기능이 동작하지 않거나 잘못된 결과 생성.',
+'C-STB':'Critical: 크래시, 메모리 누수, 스레드 안전 등 안정성 문제.',
+'M-CLI':'Major: CLI 시뮬레이션 엔진의 코드 품질 이슈.',
+'M-GUI':'Major: Qt5 GUI의 기능/품질 이슈.',
+'M-DAT':'Major: 데이터 파일 품질 이슈.',
+'m':'Minor: 코드 스타일, 미사용 코드, 빌드 설정 등.'
+};
+
+// === Status description map ===
+const STAT_DESC={
+resolved:'해결 완료 — 코드 수정이 적용되어 검증됨',
+confirmed:'확인됨 — 물리적 한계/트레이드오프로 인식 수준에서 관리',
+anticipated:'예상됨 — 이론적으로 발생 가능하나 아직 실측되지 않음',
+'not-started':'미착수 — 향후 구현 예정',
+done:'구현 완료 — 해당 Phase까지 기능 구현 및 검증',
+'in-progress':'진행 중 — 일부 Phase 완료, 후속 작업 잔존',
+unresolved:'미해결 — 알려진 이슈이나 아직 수정되지 않음',
+wontfix:'수정 불요 — 의도적 설계이거나 영향 미미',
+pending:'미착수 — 요구사항으로 등록되었으나 공식 작업 미시작',
+partial:'부분 해결 — 일부 조치 완료, 완전 해결은 후속 필요'
+};
+
 function getFwd(id){return KG.edges.filter(e=>e.from===id)}
 function getBack(id){return KG.edges.filter(e=>e.to===id)}
 function getCluster(id){const s=new Set(),v=new Set();function w(n,d){if(d>2||v.has(n))return;v.add(n);s.add(n);KG.edges.forEach(e=>{if(e.from===n&&!v.has(e.to))w(e.to,d+1);if(e.to===n&&!v.has(e.from))w(e.from,d+1)})}w(id,0);s.delete(id);return[...s]}
@@ -935,21 +1007,102 @@ function openPanel(id,node){
   bc.innerHTML=navH.map((h,i)=>i===navH.length-1?'<b>'+h+'</b>':'<span onclick="navBack('+i+')">'+h+'</span>').join(' > ');
   const tc={iss:'var(--accent)',pit:'var(--orange)',lt:'var(--purple)',req:'#e06c75'};
   const tl={iss:'ISS',pit:'PIT',lt:'LT',req:'REQ'};
+  const tlKo={iss:'이슈 추적',pit:'MC 물리 Pitfall',lt:'장기 로드맵',req:'요구사항'};
   const sc={resolved:'var(--green)',confirmed:'var(--yellow)',anticipated:'var(--gray)','not-started':'var(--gray)',done:'var(--green)','in-progress':'var(--yellow)',unresolved:'var(--red)',wontfix:'var(--gray)',pending:'var(--red)',partial:'var(--cyan)'};
-  tt.innerHTML='<span style="color:'+(tc[node.type]||'var(--text)')+'">['+(tl[node.type]||node.type).toUpperCase()+']</span> '+id;
-  st.innerHTML='<span style="color:'+(sc[node.status]||'var(--text2)')+'">'+node.status.toUpperCase()+'</span> — '+node.title;
+  const sevColors={critical:'var(--red)',high:'var(--orange)',medium:'var(--yellow)',low:'var(--text2)',none:'var(--green)'};
+  const sevPct={critical:100,high:75,medium:50,low:25,none:0};
+  const sevKo={critical:'심각',high:'높음',medium:'보통',low:'낮음',none:'—'};
+  const ext=EXT[id]||{};
+
+  // Header bar with type color
+  tt.innerHTML='<div class="panel-header-bar '+node.type+'"><span style="color:'+(tc[node.type]||'var(--text)')+'">['+(tl[node.type]||'').toUpperCase()+'] '+(tlKo[node.type]||'')+'</span><div style="font-size:1.15em;font-weight:700;margin-top:4px">'+id+'</div><div style="font-size:.92em;margin-top:2px;color:var(--text)">'+node.title+'</div></div>';
+  // Status with description
+  const statDesc=STAT_DESC[node.status]||'';
+  st.innerHTML='<div style="display:flex;align-items:center;gap:8px"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+(sc[node.status]||'var(--text2)')+'"></span><span style="color:'+(sc[node.status]||'var(--text2)')+';font-weight:700">'+node.status.toUpperCase()+'</span></div>'+(statDesc?'<div style="font-size:.8em;color:var(--text2);margin-top:2px">'+statDesc+'</div>':'');
+
   let h='';
-  h+='<div class="panel-section"><div class="panel-section-title">설명</div><div class="panel-desc">'+(node.desc||'설명 없음')+'</div></div>';
-  if(node.category)h+='<div class="panel-section"><div class="panel-section-title">분류</div><div class="panel-desc">'+node.category+'</div></div>';
-  if(node.session)h+='<div class="panel-section"><div class="panel-section-title">기원 세션</div><div class="panel-desc">'+node.session+'</div></div>';
-  if(node.resolvedIn)h+='<div class="panel-section"><div class="panel-section-title">해결 세션</div><div class="panel-desc" style="color:var(--green)">'+node.resolvedIn+'</div></div>';
-  if(node.priority)h+='<div class="panel-section"><div class="panel-section-title">우선순위</div><div class="panel-desc">'+node.priority+'</div></div>';
+
+  // Info grid: category, session, severity
+  h+='<div class="panel-info-grid">';
+  if(node.category){
+    const catDesc=CAT_DESC[node.category]||node.category;
+    h+='<div class="panel-info-item"><div class="info-label">분류</div><div class="info-value" style="font-weight:600">'+node.category+'</div><div style="font-size:.75em;color:var(--text2);margin-top:2px">'+catDesc+'</div></div>';
+  }
+  if(node.session)h+='<div class="panel-info-item"><div class="info-label">기원 세션</div><div class="info-value"><span class="badge b-sess">'+node.session+'</span></div></div>';
+  if(node.resolvedIn)h+='<div class="panel-info-item"><div class="info-label">해결 세션</div><div class="info-value" style="color:var(--green);font-weight:600">'+node.resolvedIn+' ✅</div></div>';
+  if(node.priority)h+='<div class="panel-info-item"><div class="info-label">우선순위</div><div class="info-value" style="font-size:1.1em">'+node.priority+'</div></div>';
+  h+='</div>';
+
+  // Severity meter (for ISS/PIT)
+  if(ext.severity && ext.severity!=='none'){
+    h+='<div class="panel-severity"><div class="sev-label" style="color:'+sevColors[ext.severity]+'">심각도: '+sevKo[ext.severity]+'</div><div class="sev-bar"><div class="sev-fill" style="width:'+sevPct[ext.severity]+'%;background:'+sevColors[ext.severity]+'"></div></div></div>';
+  }
+
+  // Description
+  h+='<div class="panel-section"><div class="panel-section-title">📋 상세 설명</div><div class="panel-desc" style="line-height:1.7">'+(node.desc||'설명 없음')+'</div></div>';
+
+  // Phase progress (for LT)
+  if(ext.phases){
+    h+='<div class="panel-section"><div class="panel-section-title">📊 Phase 진행 현황</div><div class="phase-progress"><div class="phase-bar">';
+    ext.phases.forEach(ph=>{
+      const cls=ph.status==='done'?'phase-done':ph.status==='wip'?'phase-wip':'phase-todo';
+      h+='<div class="phase-seg '+cls+'" title="'+ph.name+(ph.session?' ('+ph.session+')':'')+'">'+ph.name.replace(/Ph\d+ /,'')+'</div>';
+    });
+    h+='</div></div>';
+    h+='<div style="font-size:.78em;color:var(--text2);margin-top:4px">';
+    ext.phases.forEach(ph=>{
+      const icon=ph.status==='done'?'✅':ph.status==='wip'?'🔄':'⬜';
+      h+=icon+' <b>'+ph.name+'</b>'+(ph.session?' — '+ph.session:'')+'<br>';
+    });
+    h+='</div></div>';
+  }
+
+  // Impact analysis
+  if(ext.impact){
+    h+='<div class="panel-impact"><div class="panel-impact-title">⚠️ 영향 분석</div>'+ext.impact+'</div>';
+  }
+
+  // Solution
+  if(ext.solution){
+    h+='<div class="panel-solution"><div class="panel-solution-title">💡 해결 방법 / 조치</div>'+ext.solution+'</div>';
+  }
+
+  // Related files
+  if(ext.files && ext.files.length>0){
+    h+='<div class="panel-files"><div class="panel-files-title">📁 관련 파일</div>';
+    ext.files.forEach(f=>{ h+='<code>'+f+'</code> '; });
+    h+='</div>';
+  }
+
+  // Related terms
+  if(ext.terms && ext.terms.length>0){
+    h+='<div class="panel-section"><div class="panel-section-title">📖 관련 용어</div><div class="panel-terms">';
+    ext.terms.forEach(t=>{ h+='<span class="panel-term-tag">'+t+'</span>'; });
+    h+='</div></div>';
+  }
+
+  // Forward references
   const fwd=getFwd(id);
-  if(fwd.length>0){h+='<div class="panel-section"><div class="panel-section-title">순방향 참조 (이 항목이 참조하는)</div><div class="panel-refs">';fwd.forEach(e=>{const t=KG.nodes[e.to];const c=t?'b-'+t.type:'b-iss';h+='<a href="#'+e.to+'" class="badge '+c+'" onclick="navigateToId(\''+e.to+'\')">'+e.to+' ('+e.r+')</a> '});h+='</div></div>'}
+  if(fwd.length>0){
+    h+='<div class="panel-section"><div class="panel-section-title">➡️ 순방향 참조 (이 항목이 참조하는)</div><div class="panel-refs">';
+    fwd.forEach(e=>{const t=KG.nodes[e.to];const c=t?'b-'+t.type:'b-iss';h+='<a href="#'+e.to+'" class="badge '+c+'" onclick="navigateToId(\''+e.to+'\')" title="'+e.r+'">'+e.to+' <span style="opacity:.6;font-size:.85em">('+e.r+')</span></a> '});
+    h+='</div></div>';
+  }
+  // Back references
   const back=getBack(id);
-  if(back.length>0){h+='<div class="panel-section"><div class="panel-section-title">역방향 참조 (이 항목을 참조하는)</div><div class="panel-refs">';back.forEach(e=>{const f=KG.nodes[e.from];const c=f?'b-'+f.type:'b-iss';h+='<a href="#'+e.from+'" class="badge '+c+'" onclick="navigateToId(\''+e.from+'\')">'+e.from+' ('+e.r+')</a> '});h+='</div></div>'}
+  if(back.length>0){
+    h+='<div class="panel-section"><div class="panel-section-title">⬅️ 역방향 참조 (이 항목을 참조하는)</div><div class="panel-refs">';
+    back.forEach(e=>{const f=KG.nodes[e.from];const c=f?'b-'+f.type:'b-iss';h+='<a href="#'+e.from+'" class="badge '+c+'" onclick="navigateToId(\''+e.from+'\')" title="'+e.r+'">'+e.from+' <span style="opacity:.6;font-size:.85em">('+e.r+')</span></a> '});
+    h+='</div></div>';
+  }
+  // Related cluster
   const cl=getCluster(id);
-  if(cl.length>0){h+='<div class="panel-section"><div class="panel-section-title">관련 클러스터 (2-hop 이웃)</div><div class="panel-refs">';cl.slice(0,15).forEach(cid=>{const cn=KG.nodes[cid];const c=cn?'b-'+cn.type:'b-iss';h+='<a href="#'+cid+'" class="badge '+c+'" onclick="navigateToId(\''+cid+'\')">'+cid+'</a> '});if(cl.length>15)h+='<span style="color:var(--text2);font-size:.8em">+' +(cl.length-15)+' 더보기</span>';h+='</div></div>'}
+  if(cl.length>0){
+    h+='<div class="panel-section"><div class="panel-section-title">🔗 관련 클러스터 (2-hop 이웃)</div><div class="panel-refs">';
+    cl.slice(0,15).forEach(cid=>{const cn=KG.nodes[cid];const c=cn?'b-'+cn.type:'b-iss';const cTitle=cn?' — '+cn.title:'';h+='<a href="#'+cid+'" class="badge '+c+'" onclick="navigateToId(\''+cid+'\')" title="'+cid+cTitle+'">'+cid+'</a> '});
+    if(cl.length>15)h+='<span style="color:var(--text2);font-size:.8em">+' +(cl.length-15)+' 더보기</span>';
+    h+='</div></div>';
+  }
   bd.innerHTML=h;p.classList.add('open');o.classList.add('open');
 }
 function navBack(i){navH.length=i+1;const id=navH[navH.length-1];navH.pop();navigateToId(id)}
